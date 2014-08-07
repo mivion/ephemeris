@@ -9,7 +9,7 @@ $ns.siderial.calc = function (date, tlong) {
 	/* Julian day at given UT */
 	jd = date.universal; // UT
 	jd0 = Math.floor(jd);
-	secs = date.universal - jd0; // UT
+	secs = date.julian - jd0; // UT
 	if( secs < 0.5 ) {
 		jd0 -= 0.5;
 		secs += 0.5;
