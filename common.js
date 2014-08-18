@@ -47,3 +47,4 @@ $ns.assert = function (variable, value) {
 		throw 'Assertion failed: ' + variable + ' != ' + value + '!';
 	}
 };
+

@@ -1,17 +1,18 @@
 $ns.load = function () {
+    var curDate = new Date ();
+	var dateArea = document.getElementById ('$const.date');
+    dateArea.value = curDate.getDate () + '.' + (curDate.getMonth () + 1) + '.' + curDate.getFullYear () + ' ' +
+        curDate.getHours () + ':' + curDate.getMinutes () + ':' + curDate.getSeconds ()
+    ;
+
+    $e.update ();
+};
+
+$ns.update = function () {
 	var textAreas = document.body.getElementsByTagName ('textarea');
 	var selects = document.body.getElementsByTagName ('select');
 	var classes, ids, value;
 	var i, j, key;
-
-	var date = {
-		year: 1986,
-		month: 1,
-		day: 1,
-		hours: 16,
-		minutes: 47,
-		seconds: 0
-	};
 
 	//$processor.test ();
 
@@ -43,6 +44,8 @@ $ns.load = function () {
 		$const.date = date;
 	}
 
+	$processor.init ();
+
 	// fill input bodies
 	if (selects) {
 		for (i = 0; i < selects.length; i ++) {
@@ -51,9 +54,7 @@ $ns.load = function () {
 			if (classes) {
 				try {
 					var selector = eval ('(' + classes + ')');
-					if (selects [i].innerHTML) {
-						eval (ids + ' = ' + classes + '.' + selects [i].value);
-					} else {
+					if (!selects [i].innerHTML) {
 						var selections = [];
 						for (key in selector) {
 							if (selector.hasOwnProperty (key) && selector [key].key == key && key != 'earth') {
@@ -62,13 +63,12 @@ $ns.load = function () {
 						}
 						selects [i].innerHTML = selections;
 					}
+					eval (ids + ' = ' + classes + '.' + selects [i].value);
 				} catch (exception) {
 				}
 			}
 		}
 	}
-
-	$processor.init ();
 
 	$processor.calc (date, $const.body);
 
