@@ -15,8 +15,5 @@
     "Moshier"
   ],
   "author": "mivion",
-  "license": "GPL2",
-  "dependencies": {
-    "ephemeris": "https://github.com/mivion/ephemeris"
-  }
+  "license": "GPL-2"
 }
