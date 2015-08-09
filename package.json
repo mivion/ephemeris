@@ -1,0 +1,22 @@
+{
+  "name": "ephemeris",
+  "version": "0.1.0",
+  "description": "Pure javascript implementation of ephemeris calculations for sun, planets, comets, asteroids and stars.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mivion/ephemeris"
+  },
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "ephemeris",
+    "Moshier"
+  ],
+  "author": "mivion",
+  "license": "GPL2",
+  "dependencies": {
+    "ephemeris": "https://github.com/mivion/ephemeris"
+  }
+}
