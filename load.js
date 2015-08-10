@@ -92,15 +92,6 @@ $ns.update = function () {
 		;
 	}
 
-	var ephemeris = document.getElementById ('ephemeris');
-
-	if (ephemeris) {
-		ephemeris.innerHTML =
-			'<td>earth</td>' +
-			''
-		;
-	}
-
 	// fill output
 	if (textAreas) {
 		for (i = 0; i < textAreas.length; i ++) {
