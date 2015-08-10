@@ -72,26 +72,6 @@ $ns.update = function () {
 
 	$processor.calc (date, $const.body);
 
-	var info = document.getElementById ('info');
-
-	if (info) {
-		info.innerHTML =
-			'julian = ' + date.julian + ', ' +
-			'delta = ' + date.delta + '<br/>' +
-			'terrstrial = ' + date.terrestrial + '<br/>' +
-			'universal = ' + date.universal + ' - ' + (
-				date.universalDate.day + '.' +
-				date.universalDate.month + '.' +
-				date.universalDate.year + ' ' +
-				date.universalDate.hours + ':' +
-				date.universalDate.minutes + ':' +
-				date.universalDate.seconds + '.' +
-				date.universalDate.milliseconds
-			) + '' +
-			''
-		;
-	}
-
 	// fill output
 	if (textAreas) {
 		for (i = 0; i < textAreas.length; i ++) {
