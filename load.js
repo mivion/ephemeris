@@ -11,7 +11,7 @@ $ns.load = function () {
 $ns.update = function () {
 	var textAreas = document.body.getElementsByTagName ('textarea');
 	var selects = document.body.getElementsByTagName ('select');
-	var classes, ids, value;
+	var classes, ids, value, date;
 	var i, j, key;
 
 	//$processor.test ();
