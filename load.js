@@ -11,7 +11,7 @@ $ns.load = function () {
 $ns.update = function () {
 	var textAreas = document.body.getElementsByTagName ('textarea');
 	var selects = document.body.getElementsByTagName ('select');
-	var classes, ids, value;
+	var classes, ids, value, date;
 	var i, j, key;
 
 	//$processor.test ();
@@ -71,35 +71,6 @@ $ns.update = function () {
 	}
 
 	$processor.calc (date, $const.body);
-
-	var info = document.getElementById ('info');
-
-	if (info) {
-		info.innerHTML =
-			'julian = ' + date.julian + ', ' +
-			'delta = ' + date.delta + '<br/>' +
-			'terrstrial = ' + date.terrestrial + '<br/>' +
-			'universal = ' + date.universal + ' - ' + (
-				date.universalDate.day + '.' +
-				date.universalDate.month + '.' +
-				date.universalDate.year + ' ' +
-				date.universalDate.hours + ':' +
-				date.universalDate.minutes + ':' +
-				date.universalDate.seconds + '.' +
-				date.universalDate.milliseconds
-			) + '' +
-			''
-		;
-	}
-
-	var ephemeris = document.getElementById ('ephemeris');
-
-	if (ephemeris) {
-		ephemeris.innerHTML =
-			'<td>earth</td>' +
-			''
-		;
-	}
 
 	// fill output
 	if (textAreas) {
