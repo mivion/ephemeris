@@ -41,6 +41,7 @@ $ns.julian.calc = function (date) {
 				b = Math.floor ((centuries / 4) - centuries);
 			}
 		}
+		else { b = -38; } //**** additional line to fix the bug *****
 	} else {
 		b = Math.floor ((centuries / 4) - centuries);
 	}
