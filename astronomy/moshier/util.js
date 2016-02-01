@@ -343,3 +343,18 @@ $ns.util.angles = function (p, q, e) {
 	}
 	$const.ep /= $const.SE*$const.EO;	/* -cosine of sun-earth-object */
 };
+
+/* Calculate angular separation between two objects
+ * Src1, Src2 are body objects
+ */
+$ns.util.separation = function (Src1, Src2) {
+        var ra1, ra2, dc1, dc2, t; // double
+	
+	ra1 = parseFloat(Src1.position.altaz.topocentric.ra);
+        dc1 = parseFloat(Src1.position.altaz.topocentric.dec);
+        ra2 = parseFloat(Src2.position.altaz.topocentric.ra);
+        dc2 = parseFloat(Src2.position.altaz.topocentric.dec);
+        t = Math.sin(dc1)*Math.sin(dc2) + Math.cos(dc1)*Math.cos(dc2)*Math.cos(ra1-ra2);
+        
+	return $const.RTD * $util.arccos(t);
+};
