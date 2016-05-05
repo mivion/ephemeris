@@ -15,5 +15,12 @@
     "Moshier"
   ],
   "author": "mivion",
-  "license": "GPL-2"
+  "license": "GPL-2",
+  "devDependencies": {
+    "grunt": "^1.0.1",
+    "grunt-cli": "^1.2.0",
+    "load-grunt-tasks": "^3.5.0",
+    "grunt-contrib-concat": "^1.0.1",
+    "grunt-contrib-uglify": "^1.0.1"    
+  }
 }
