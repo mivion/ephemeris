@@ -1,4 +1,4 @@
-Note: Need any help to support this project. Contributors are welcome!
+**Note: Need any help to support this project. Contributors are welcome!**
 
 Pure javascript implementation of ephemeris calculations for sun, planets, comets, asteroids and stars.
 
