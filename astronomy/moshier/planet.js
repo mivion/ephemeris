@@ -16,7 +16,7 @@ $ns.planet.calc = function (body) {
  */
 $ns.planet.reduce = function (body, q, e) {
 	var p = [], temp = [], polar = []; // double
-	var a, b, s; // double
+	var a, b, r, s, x; // double
 	var i; // int
 
 	/* Save the geometric coordinates at TDT
@@ -50,7 +50,16 @@ $ns.planet.reduce = function (body, q, e) {
 	body.position.trueGeocentricDistance = a; /* was EO */
 	body.position.equatorialDiameter = 2.0*body.semiDiameter / $const.EO;
 
-
+	/* Calculate radius.
+	 */
+	r = 0.0;
+	x = 0.0;
+	for( i=0; i<3; i++ ) {
+		x = p[i];
+		r += x * x;
+	}
+	r = Math.sqrt(r);
+	
 	/* Calculate visual magnitude.
 	 * "Visual" refers to the spectrum of visible light.
 	 * Phase = 0.5(1+pq) = geometric fraction of disc illuminated.
@@ -131,7 +140,7 @@ $ns.planet.reduce = function (body, q, e) {
 		Math.floor (body.position.apparentGeocentric [3].seconds) + '"'
 	;
 
-	body.position.geocentricDistance = -1;
+	body.position.geocentricDistance = r;
 
 	/* Go do topocentric reductions.
 	 */
