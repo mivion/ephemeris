@@ -1,26 +1,64 @@
 {
   "name": "ephemeris",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Pure javascript implementation of ephemeris calculations for sun, planets, comets, asteroids and stars.",
   "repository": {
     "type": "git",
     "url": "https://github.com/mivion/ephemeris"
   },
-  "main": "index.js",
+  "main": "dist/ephemeris.cjs.js",
+  "module": "dist/ephemeris.esm.js",
+  "browser": "dist/ephemeris.umd.js",
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "npx rollup -c",
+    "watch": "npx rollup -c -w",
+    "test": "npx jest --coverage",
+    "test:watch": "npx jest --watch",
+    "lint": "npx eslint ."
   },
   "keywords": [
     "ephemeris",
     "Moshier"
   ],
   "author": "mivion",
-  "license": "GPL-2",
+  "contributors": [
+    "mivion <onopin.m.v@gmail.com>",
+    "Kent Bye <kent@kentbye.com>",
+    "blucobalto <blucobalto2012@gmail.com>",
+    "Albert R. Timashev <albert@timashev.com>"
+  ],
+  "license": "GPL-2.0-or-later",
   "devDependencies": {
-    "grunt": "^1.0.1",
-    "grunt-cli": "^1.2.0",
-    "load-grunt-tasks": "^3.5.0",
-    "grunt-contrib-concat": "^1.0.1",
-    "grunt-contrib-uglify": "^1.0.1"    
+    "@babel/cli": "^7.4.4",
+    "@babel/core": "^7.4.4",
+    "@babel/plugin-proposal-class-properties": "^7.4.4",
+    "@babel/plugin-syntax-dynamic-import": "^7.2.0",
+    "@babel/preset-env": "^7.4.4",
+    "babel-core": "7.0.0-bridge.0",
+    "babel-eslint": "^10.0.1",
+    "babel-jest": "^24.8.0",
+    "babel-plugin-dynamic-import-node": "^2.2.0",
+    "eslint": "^5.16.0",
+    "eslint-config-last": "^0.0.5",
+    "eslint-config-prettier": "^4.2.0",
+    "eslint-plugin-babel": "^5.3.0",
+    "eslint-plugin-jest": "^22.5.1",
+    "eslint-plugin-prettier": "^3.0.1",
+    "jest": "^24.8.0",
+    "jest-cli": "^24.8.0",
+    "prettier": "^1.17.0",
+    "rollup": "^1.11.3",
+    "rollup-plugin-babel": "^4.3.2",
+    "rollup-plugin-babel-minify": "^8.0.0",
+    "rollup-plugin-commonjs": "^9.3.4",
+    "rollup-plugin-node-resolve": "^4.2.3"
+  },
+  "dependencies": {
+    "core-js": "^3.0.1",
+    "lodash": "^4.17.11",
+    "luxon": "^1.13.0"
   }
 }

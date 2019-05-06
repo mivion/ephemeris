@@ -1,0 +1,9 @@
+*.test.js.snap
+node_modules
+dist
+coverage
+
+# TODO - remove after migration:
+src/moshier
+src/swisseph
+demo
