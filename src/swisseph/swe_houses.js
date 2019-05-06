@@ -53,33 +53,34 @@
 */
 
 // Define global variables for swe_houses()
-var retc;
-var nutlo = Array();
+export let retc = 0;
+export let nutlo = Array();
 
 // Ported from the swe_houses() function from swehouse.c
 // Calculate the Placidus House Cusps
 /* housasp.c
  * cusps are returned in double cusp[13],
  *                           or cusp[37] with house system 'G'.
- * cusp[1...12]	houses 1 - 12
+ * cusp[1...12]  houses 1 - 12
  * additional points are returned in ascmc[10].
  * ascmc[0] = ascendant
  * ascmc[1] = mc
  * ascmc[2] = armc
  * ascmc[3] = vertex
- * ascmc[4] = equasc		* "equatorial ascendant" *
- * ascmc[5] = coasc1		* "co-ascendant" (W. Koch) *
- * ascmc[6] = coasc2		* "co-ascendant" (M. Munkasey) *
- * ascmc[7] = polasc		* "polar ascendant" (M. Munkasey) *
+ * ascmc[4] = equasc    * "equatorial ascendant" *
+ * ascmc[5] = coasc1    * "co-ascendant" (W. Koch) *
+ * ascmc[6] = coasc2    * "co-ascendant" (M. Munkasey) *
+ * ascmc[7] = polasc    * "polar ascendant" (M. Munkasey) *
  */
-$ns.swe_houses = function (tjd_ut, geolat, geolon, hsys) {
-	var tjde;
-	var eps;
-	var armc;
-		
+export const swe_houses = function(tjd_ut, geolat, geolon, hsys) {
+  var tjde;
+  var eps;
+  var armc;
+
   tjde = tjd_ut + swe_deltat(tjd_ut);
   eps = swi_epsiln(tjde) * RADTODEG;
   swi_nutation(tjde);
+  let i = 0;
   for (i = 0; i < 2; i++) {
     nutlo[i] *= RADTODEG;
   }
@@ -91,34 +92,34 @@ $ns.swe_houses = function (tjd_ut, geolat, geolon, hsys) {
 /* Precession coefficients for remote past and future.
  * One of the following four defines must be true.
  */
-var PREC_WILLIAMS_1994 = true;	// used by Moshier for DE404 
+var PREC_WILLIAMS_1994 = true; // used by Moshier for DE404
 var PREC_SIMON_1994 = false;
-var PREC_LASKAR_1986 = false;
+// var PREC_LASKAR_1986 = false;
 var PREC_BRETAGNON_2003 = false;
 
 // IAU precession 1976 or 2003 for recent centuries.
 // only one of the following two defines may be TRUE */
-var PREC_IAU_2003 = true;  // precession model P03
+var PREC_IAU_2003 = true; // precession model P03
 var PREC_IAU_1976 = false;
-var PREC_IAU_1976_CTIES = 2.0; 	// J2000 +/- two centuries 
+var PREC_IAU_1976_CTIES = 2.0; // J2000 +/- two centuries
 
-// we use P03 for whole ephemeris 
-var PREC_IAU_2003_CTIES = 75.0; 	// J2000 +/- 75 centuries
+// we use P03 for whole ephemeris
+var PREC_IAU_2003_CTIES = 75.0; // J2000 +/- 75 centuries
 
 // choose between the following nutation models
-var NUT_IAU_2000B = true;  // fast, but precision of milli-arcsec 
-var NUT_IAU_1980 = false;
-var NUT_IAU_2000A = false;   // very time consuming! -- NOTE: Removed NUT_IAU_2000A algorithm from swi_nutation()
+// var NUT_IAU_2000B = true; // fast, but precision of milli-arcsec
+// var NUT_IAU_1980 = false;
+// var NUT_IAU_2000A = false; // very time consuming! -- NOTE: Removed NUT_IAU_2000A algorithm from swi_nutation()
 
 // Constants from swephlib.h
-var DEGTORAD = Math.PI/180;
-var RADTODEG = 180/Math.PI;
+var DEGTORAD = Math.PI / 180;
+var RADTODEG = 180 / Math.PI;
 
 // Constant from swehouse.h
-var VERY_SMALL = 1E-10;
+var VERY_SMALL = 1e-10;
 
 // Constant from swephexp.h
-var SE_NASCMC = 8;
+// var SE_NASCMC = 8;
 
 // Constants from swenut2000a.h
 var O1MAS2DEG = 1 / 3600.0 / 10000000.0;
@@ -126,8 +127,9 @@ var NLS_2000B = 77;
 
 // Luni-Solar argument multipliers
 // L L' F D Om
-if (true){
-var nls = [0, 0, 0, 0, 1,
+var nls = [
+/* eslint-disable prettier/prettier */
+0, 0, 0, 0, 1,
 0, 0, 2, -2, 2,
 0, 0, 2, 0, 2,
 0, 0, 0, 0, 2,
@@ -804,12 +806,14 @@ var nls = [0, 0, 0, 0, 1,
 3, 1, 2, 2, 2,
 5, 0, 2, 0, 1,
 2, -1, 2, 4, 2,
-2, 0, 2, 4, 1,
+2, 0, 2, 4, 1
+  /* eslint-enable prettier/prettier */
 ];
 
 // Luni-Solar nutation coefficients, unit 1e-7 arcsec
 // longitude (sin, t*sin, cos), obliquity (cos, t*cos, sin)
 var cls = [
+/* eslint-disable prettier/prettier */
 -172064161, -174666, 33386, 92052331, 9086, 15377,
 -13170906, -1675, -13696, 5730336, -3015, -4587,
 -2276413, -234, 2796, 978459, -485, 1374,
@@ -1487,15 +1491,14 @@ var cls = [
 3, 0, 0, -1, 0, 0,
 -3, 0, 0, 1, 0, 0,
 -3, 0, 0, 1, 0, 0,
--3, 0, 0, 2, 0, 0,
+-3, 0, 0, 2, 0, 0
+  /* eslint-enable prettier/prettier */
 ];
-}
 
 // Constants from sweph.h
-var J2000 = 2451545.0  	// 2000 January 1.5
-var SE_TIDAL_DE406 = -25.826  // was (-25.7376) until V. 1.76.2
+var J2000 = 2451545.0; // 2000 January 1.5
+var SE_TIDAL_DE406 = -25.826; // was (-25.7376) until V. 1.76.2
 var SE_TIDAL_DEFAULT = SE_TIDAL_DE406;
-
 
 // Ported from the swi_epsiln() function from swephlib.c
 /* Obliquity of the ecliptic at Julian date J
@@ -1513,8 +1516,8 @@ var SE_TIDAL_DEFAULT = SE_TIDAL_DE406;
  *
  * Bretagnon, P. et al.: 2003, "Expressions for Precession Consistent with
  * the IAU 2000A Model". A&A 400,785
- *B03  	84381.4088  	-46.836051*t  	-1667*10-7*t2  	+199911*10-8*t3  	-523*10-9*t4  	-248*10-10*t5  	-3*10-11*t6
- *C03   84381.406  	-46.836769*t  	-1831*10-7*t2  	+20034*10-7*t3  	-576*10-9*t4  	-434*10-10*t5
+ *B03    84381.4088    -46.836051*t    -1667*10-7*t2    +199911*10-8*t3    -523*10-9*t4    -248*10-10*t5    -3*10-11*t6
+ *C03   84381.406    -46.836769*t    -1831*10-7*t2    +20034*10-7*t3    -576*10-9*t4    -434*10-10*t5
  *
  *  See precess and page B18 of the Astronomical Almanac.
  */
@@ -1522,55 +1525,80 @@ function swi_epsiln(J) {
   var T;
   var epsiln;
 
-	T = (J - 2451545.0)/36525.0;
-	if (PREC_IAU_1976 && Math.abs(T) <= PREC_IAU_1976_CTIES ) {
-	    epsiln = (((1.813e-3*T-5.9e-4)*T-46.8150)*T+84381.448)*DEGTORAD/3600;
-	} else if (PREC_IAU_2003 && Math.abs(T) <= PREC_IAU_2003_CTIES) {
-			// NOTE: This is the code that will likely execute
-	    epsiln =  (((((-4.34e-8 * T -5.76e-7) * T +2.0034e-3) * T -1.831e-4) * T -46.836769) * T + 84381.406) * DEGTORAD / 3600.0;
-	} else if (PREC_BRETAGNON_2003) {
-	    epsiln =  ((((((-3e-11 * T - 2.48e-8) * T -5.23e-7) * T +1.99911e-3) * T -1.667e-4) * T -46.836051) * T + 84381.40880) * DEGTORAD / 3600.0;
-	} else if (PREC_SIMON_1994) {
-	    epsiln =  (((((2.5e-8 * T -5.1e-7) * T +1.9989e-3) * T -1.52e-4) * T -46.80927) * T + 84381.412) * DEGTORAD / 3600.0;
-	} else if (PREC_WILLIAMS_1994) {
-	    epsiln =  ((((-1.0e-6 * T +2.0e-3) * T -1.74e-4) * T -46.833960) * T + 84381.409) * DEGTORAD / 3600.0;
-	} else { // PREC_LASKAR_1986 
-	    T /= 10.0;
-	    epsiln = ((((((((( 2.45e-10*T + 5.79e-9)*T + 2.787e-7)*T
-	                 + 7.12e-7)*T - 3.905e-5)*T - 2.4967e-3)*T
-	              - 5.138e-3)*T + 1.99925)*T - 0.0155)*T - 468.093)*T
-	          + 84381.448;
-	    epsiln *= DEGTORAD/3600;
-	}
-	return epsiln;
-};
+  T = (J - 2451545.0) / 36525.0;
+  if (PREC_IAU_1976 && Math.abs(T) <= PREC_IAU_1976_CTIES) {
+    epsiln = ((((1.813e-3 * T - 5.9e-4) * T - 46.815) * T + 84381.448) * DEGTORAD) / 3600;
+  } else if (PREC_IAU_2003 && Math.abs(T) <= PREC_IAU_2003_CTIES) {
+    // NOTE: This is the code that will likely execute
+    epsiln =
+      ((((((-4.34e-8 * T - 5.76e-7) * T + 2.0034e-3) * T - 1.831e-4) * T - 46.836769) * T +
+        84381.406) *
+        DEGTORAD) /
+      3600.0;
+  } else if (PREC_BRETAGNON_2003) {
+    epsiln =
+      (((((((-3e-11 * T - 2.48e-8) * T - 5.23e-7) * T + 1.99911e-3) * T - 1.667e-4) * T -
+        46.836051) *
+        T +
+        84381.4088) *
+        DEGTORAD) /
+      3600.0;
+  } else if (PREC_SIMON_1994) {
+    epsiln =
+      ((((((2.5e-8 * T - 5.1e-7) * T + 1.9989e-3) * T - 1.52e-4) * T - 46.80927) * T + 84381.412) *
+        DEGTORAD) /
+      3600.0;
+  } else if (PREC_WILLIAMS_1994) {
+    epsiln =
+      (((((-1.0e-6 * T + 2.0e-3) * T - 1.74e-4) * T - 46.83396) * T + 84381.409) * DEGTORAD) /
+      3600.0;
+  } else {
+    // PREC_LASKAR_1986
+    T /= 10.0;
+    epsiln =
+      (((((((((2.45e-10 * T + 5.79e-9) * T + 2.787e-7) * T + 7.12e-7) * T - 3.905e-5) * T -
+        2.4967e-3) *
+        T -
+        5.138e-3) *
+        T +
+        1.99925) *
+        T -
+        0.0155) *
+        T -
+        468.093) *
+        T +
+      84381.448;
+    epsiln *= DEGTORAD / 3600;
+  }
+  return epsiln;
+}
 
 // Ported from swe_degnorm() function from swephlib.c
 // Reduce x modulo 360 degrees
 function swe_degnorm(x) {
-	var y;
-	y = x % 360.0;
-	if (Math.abs(y) < 1e-13) {
-	    y = 0;    // Alois fix 11-dec-1999
-	}
-	if( y < 0.0 ) {
-	    y += 360.0;
-	}
-	return y;
-};
+  var y;
+  y = x % 360.0;
+  if (Math.abs(y) < 1e-13) {
+    y = 0; // Alois fix 11-dec-1999
+  }
+  if (y < 0.0) {
+    y += 360.0;
+  }
+  return y;
+}
 
 // Ported from swe_radnorm() from swephlib.c
 // Reduce x modulo TWOPI degrees
 function swe_radnorm(x) {
-	var y;
-	y = x % (2*Math.PI);
-	if (Math.abs(y) < 1e-13) {
-	    y = 0;    // Alois fix 11-dec-1999
-	}
-	if( y < 0.0 ) {
-	    y += 2*Math.PI;
-	}
-	return y;
+  var y;
+  y = x % (2 * Math.PI);
+  if (Math.abs(y) < 1e-13) {
+    y = 0; // Alois fix 11-dec-1999
+  }
+  if (y < 0.0) {
+    y += 2 * Math.PI;
+  }
+  return y;
 }
 
 // Ported from swi_nutation() function from swephlib.c
@@ -1628,68 +1656,66 @@ function swi_nutation(J) {
   var darg, sinarg, cosarg;
   var dpsi = 0;
   var deps = 0;
-  var T = (J - J2000 ) / 36525.0;
-  // luni-solar nutation 
+  var T = (J - J2000) / 36525.0;
+  // luni-solar nutation
   // Fundamental arguments, Simon & al. (1994)
-  // Mean anomaly of the Moon. 
-  M  = swe_degnorm(( 485868.249036 +
-                     T*( 1717915923.2178 +
-                         T*(         31.8792 +
-                                     T*(          0.051635 +
-                                             T*(        - 0.00024470 ))))) / 3600.0) * DEGTORAD;
-  // Mean anomaly of the Sun 
-  SM = swe_degnorm((1287104.79305 +
-                    T*(  129596581.0481 +
-                         T*(        - 0.5532 +
-                                    T*(          0.000136 +
-                                            T*(        - 0.00001149 ))))) / 3600.0) * DEGTORAD;
-  // Mean argument of the latitude of the Moon. 
-  F   = swe_degnorm(( 335779.526232 +
-                      T*( 1739527262.8478 +
-                          T*(       - 12.7512 +
-                                    T*(       -  0.001037 +
-                                            T*(          0.00000417 ))))) / 3600.0) * DEGTORAD;
+  // Mean anomaly of the Moon.
+  M =
+    swe_degnorm(
+      (485868.249036 + T * (1717915923.2178 + T * (31.8792 + T * (0.051635 + T * -0.0002447)))) /
+        3600.0
+    ) * DEGTORAD;
+  // Mean anomaly of the Sun
+  SM =
+    swe_degnorm(
+      (1287104.79305 + T * (129596581.0481 + T * (-0.5532 + T * (0.000136 + T * -0.00001149)))) /
+        3600.0
+    ) * DEGTORAD;
+  // Mean argument of the latitude of the Moon.
+  F =
+    swe_degnorm(
+      (335779.526232 + T * (1739527262.8478 + T * (-12.7512 + T * (-0.001037 + T * 0.00000417)))) /
+        3600.0
+    ) * DEGTORAD;
   // Mean elongation of the Moon from the Sun.
-  D   = swe_degnorm((1072260.70369 +
-                     T*( 1602961601.2090 +
-                         T*(        - 6.3706 +
-                                    T*(          0.006593 +
-                                            T*(        - 0.00003169 ))))) / 3600.0) * DEGTORAD;
+  D =
+    swe_degnorm(
+      (1072260.70369 + T * (1602961601.209 + T * (-6.3706 + T * (0.006593 + T * -0.00003169)))) /
+        3600.0
+    ) * DEGTORAD;
   // Mean longitude of the ascending node of the Moon.
-  OM  = swe_degnorm(( 450160.398036 +
-                      T*(  - 6962890.5431 +
-                           T*(          7.4722 +
-                                        T*(          0.007702 +
-                                                T*(        - 0.00005939 ))))) / 3600.0) * DEGTORAD;
-  // luni-solar nutation series, in reverse order, starting with small terms 
+  OM =
+    swe_degnorm(
+      (450160.398036 + T * (-6962890.5431 + T * (7.4722 + T * (0.007702 + T * -0.00005939)))) /
+        3600.0
+    ) * DEGTORAD;
+  // luni-solar nutation series, in reverse order, starting with small terms
   inls = NLS_2000B;
   for (i = inls - 1; i >= 0; i--) {
     j = i * 5;
-    darg = swe_radnorm(nls[j + 0] * M  +
-                       nls[j + 1] * SM +
-                       nls[j + 2] * F   +
-                       nls[j + 3] * D   +
-                       nls[j + 4] * OM);
+    darg = swe_radnorm(
+      nls[j + 0] * M + nls[j + 1] * SM + nls[j + 2] * F + nls[j + 3] * D + nls[j + 4] * OM
+    );
     sinarg = Math.sin(darg);
     cosarg = Math.cos(darg);
     k = i * 6;
-    dpsi += (cls[k+0] + cls[k+1] * T) * sinarg + cls[k+2] * cosarg;
-    deps += (cls[k+3] + cls[k+4] * T) * cosarg + cls[k+5] * sinarg;
+    dpsi += (cls[k + 0] + cls[k + 1] * T) * sinarg + cls[k + 2] * cosarg;
+    deps += (cls[k + 3] + cls[k + 4] * T) * cosarg + cls[k + 5] * sinarg;
   }
   nutlo[0] = dpsi * O1MAS2DEG;
   nutlo[1] = deps * O1MAS2DEG;
   nutlo[0] *= DEGTORAD;
   nutlo[1] *= DEGTORAD;
-};
+}
 
 // Constants from swephlib.c
 var TABEND = 2017;
 var TABSTART = 1620;
-var TAB2_END = 1600;
-var TAB2_STEP = 100;
-var TAB2_START = -1000;
-var ESPENAK_MEEUS_2006 = true;
-var TABSIZ = TABEND-TABSTART+1;
+// var TAB2_END = 1600;
+// var TAB2_STEP = 100;
+// var TAB2_START = -1000;
+// var ESPENAK_MEEUS_2006 = true;
+var TABSIZ = TABEND - TABSTART + 1;
 var tid_acc = SE_TIDAL_DEFAULT;
 /* DeltaT = Ephemeris Time - Universal Time, in days.
  *
@@ -1797,124 +1823,127 @@ var tid_acc = SE_TIDAL_DEFAULT;
 //var TABSIZ_SPACE = TABSIZ+100; // Variable isn't used
 
 var dt = [
-    /* 1620.0 thru 1659.0 */
-    124.00, 119.00, 115.00, 110.00, 106.00, 102.00, 98.00, 95.00, 91.00, 88.00,
-    85.00, 82.00, 79.00, 77.00, 74.00, 72.00, 70.00, 67.00, 65.00, 63.00,
-    62.00, 60.00, 58.00, 57.00, 55.00, 54.00, 53.00, 51.00, 50.00, 49.00,
-    48.00, 47.00, 46.00, 45.00, 44.00, 43.00, 42.00, 41.00, 40.00, 38.00,
-    /* 1660.0 thru 1699.0 */
-    37.00, 36.00, 35.00, 34.00, 33.00, 32.00, 31.00, 30.00, 28.00, 27.00,
-    26.00, 25.00, 24.00, 23.00, 22.00, 21.00, 20.00, 19.00, 18.00, 17.00,
-    16.00, 15.00, 14.00, 14.00, 13.00, 12.00, 12.00, 11.00, 11.00, 10.00,
-    10.00, 10.00, 9.00, 9.00, 9.00, 9.00, 9.00, 9.00, 9.00, 9.00,
-    /* 1700.0 thru 1739.0 */
-    9.00, 9.00, 9.00, 9.00, 9.00, 9.00, 9.00, 9.00, 10.00, 10.00,
-    10.00, 10.00, 10.00, 10.00, 10.00, 10.00, 10.00, 11.00, 11.00, 11.00,
-    11.00, 11.00, 11.00, 11.00, 11.00, 11.00, 11.00, 11.00, 11.00, 11.00,
-    11.00, 11.00, 11.00, 11.00, 12.00, 12.00, 12.00, 12.00, 12.00, 12.00,
-    /* 1740.0 thru 1779.0 */
-    12.00, 12.00, 12.00, 12.00, 13.00, 13.00, 13.00, 13.00, 13.00, 13.00,
-    13.00, 14.00, 14.00, 14.00, 14.00, 14.00, 14.00, 14.00, 15.00, 15.00,
-    15.00, 15.00, 15.00, 15.00, 15.00, 16.00, 16.00, 16.00, 16.00, 16.00,
-    16.00, 16.00, 16.00, 16.00, 16.00, 17.00, 17.00, 17.00, 17.00, 17.00,
-    /* 1780.0 thru 1799.0 */
-    17.00, 17.00, 17.00, 17.00, 17.00, 17.00, 17.00, 17.00, 17.00, 17.00,
-    17.00, 17.00, 16.00, 16.00, 16.00, 16.00, 15.00, 15.00, 14.00, 14.00,
-    /* 1800.0 thru 1819.0 */
-    13.70, 13.40, 13.10, 12.90, 12.70, 12.60, 12.50, 12.50, 12.50, 12.50,
-    12.50, 12.50, 12.50, 12.50, 12.50, 12.50, 12.50, 12.40, 12.30, 12.20,
-    /* 1820.0 thru 1859.0 */
-    12.00, 11.70, 11.40, 11.10, 10.60, 10.20, 9.60, 9.10, 8.60, 8.00,
-    7.50, 7.00, 6.60, 6.30, 6.00, 5.80, 5.70, 5.60, 5.60, 5.60,
-    5.70, 5.80, 5.90, 6.10, 6.20, 6.30, 6.50, 6.60, 6.80, 6.90,
-    7.10, 7.20, 7.30, 7.40, 7.50, 7.60, 7.70, 7.70, 7.80, 7.80,
-    /* 1860.0 thru 1899.0 */
-    7.88, 7.82, 7.54, 6.97, 6.40, 6.02, 5.41, 4.10, 2.92, 1.82,
-    1.61, .10, -1.02, -1.28, -2.69, -3.24, -3.64, -4.54, -4.71, -5.11,
-    -5.40, -5.42, -5.20, -5.46, -5.46, -5.79, -5.63, -5.64, -5.80, -5.66,
-    -5.87, -6.01, -6.19, -6.64, -6.44, -6.47, -6.09, -5.76, -4.66, -3.74,
-    /* 1900.0 thru 1939.0 */
-    -2.72, -1.54, -.02, 1.24, 2.64, 3.86, 5.37, 6.14, 7.75, 9.13,
-    10.46, 11.53, 13.36, 14.65, 16.01, 17.20, 18.24, 19.06, 20.25, 20.95,
-    21.16, 22.25, 22.41, 23.03, 23.49, 23.62, 23.86, 24.49, 24.34, 24.08,
-    24.02, 24.00, 23.87, 23.95, 23.86, 23.93, 23.73, 23.92, 23.96, 24.02,
-    /* 1940.0 thru 1979.0 */
-    24.33, 24.83, 25.30, 25.70, 26.24, 26.77, 27.28, 27.78, 28.25, 28.71,
-    29.15, 29.57, 29.97, 30.36, 30.72, 31.07, 31.35, 31.68, 32.18, 32.68,
-    33.15, 33.59, 34.00, 34.47, 35.03, 35.73, 36.54, 37.43, 38.29, 39.20,
-    40.18, 41.17, 42.23, 43.37, 44.49, 45.48, 46.46, 47.52, 48.53, 49.59,
-    /* 1980.0 thru 1999.0 */
-    50.54, 51.38, 52.17, 52.96, 53.79, 54.34, 54.87, 55.32, 55.82, 56.30,
-    56.86, 57.57, 58.31, 59.12, 59.98, 60.78, 61.63, 62.30, 62.97, 63.47,
-    /* 2000.0 thru 2009.0 */
-    63.83, 64.09, 64.30, 64.47, 64.57, 64.69, 64.85, 65.15, 65.46, 65.78,
-    /* 2010.0 thru 2019.0 */
-    66.07, 66.32,
-    /* Extrapolated values, 2011 - 2014 */
-    67.00, 67.50, 68.00, 68.50, 69.00, 69.50,
+  /* eslint-disable prettier/prettier */
+  /* 1620.0 thru 1659.0 */
+  124.00, 119.00, 115.00, 110.00, 106.00, 102.00, 98.00, 95.00, 91.00, 88.00,
+  85.00, 82.00, 79.00, 77.00, 74.00, 72.00, 70.00, 67.00, 65.00, 63.00,
+  62.00, 60.00, 58.00, 57.00, 55.00, 54.00, 53.00, 51.00, 50.00, 49.00,
+  48.00, 47.00, 46.00, 45.00, 44.00, 43.00, 42.00, 41.00, 40.00, 38.00,
+  /* 1660.0 thru 1699.0 */
+  37.00, 36.00, 35.00, 34.00, 33.00, 32.00, 31.00, 30.00, 28.00, 27.00,
+  26.00, 25.00, 24.00, 23.00, 22.00, 21.00, 20.00, 19.00, 18.00, 17.00,
+  16.00, 15.00, 14.00, 14.00, 13.00, 12.00, 12.00, 11.00, 11.00, 10.00,
+  10.00, 10.00, 9.00, 9.00, 9.00, 9.00, 9.00, 9.00, 9.00, 9.00,
+  /* 1700.0 thru 1739.0 */
+  9.00, 9.00, 9.00, 9.00, 9.00, 9.00, 9.00, 9.00, 10.00, 10.00,
+  10.00, 10.00, 10.00, 10.00, 10.00, 10.00, 10.00, 11.00, 11.00, 11.00,
+  11.00, 11.00, 11.00, 11.00, 11.00, 11.00, 11.00, 11.00, 11.00, 11.00,
+  11.00, 11.00, 11.00, 11.00, 12.00, 12.00, 12.00, 12.00, 12.00, 12.00,
+  /* 1740.0 thru 1779.0 */
+  12.00, 12.00, 12.00, 12.00, 13.00, 13.00, 13.00, 13.00, 13.00, 13.00,
+  13.00, 14.00, 14.00, 14.00, 14.00, 14.00, 14.00, 14.00, 15.00, 15.00,
+  15.00, 15.00, 15.00, 15.00, 15.00, 16.00, 16.00, 16.00, 16.00, 16.00,
+  16.00, 16.00, 16.00, 16.00, 16.00, 17.00, 17.00, 17.00, 17.00, 17.00,
+  /* 1780.0 thru 1799.0 */
+  17.00, 17.00, 17.00, 17.00, 17.00, 17.00, 17.00, 17.00, 17.00, 17.00,
+  17.00, 17.00, 16.00, 16.00, 16.00, 16.00, 15.00, 15.00, 14.00, 14.00,
+  /* 1800.0 thru 1819.0 */
+  13.70, 13.40, 13.10, 12.90, 12.70, 12.60, 12.50, 12.50, 12.50, 12.50,
+  12.50, 12.50, 12.50, 12.50, 12.50, 12.50, 12.50, 12.40, 12.30, 12.20,
+  /* 1820.0 thru 1859.0 */
+  12.00, 11.70, 11.40, 11.10, 10.60, 10.20, 9.60, 9.10, 8.60, 8.00,
+  7.50, 7.00, 6.60, 6.30, 6.00, 5.80, 5.70, 5.60, 5.60, 5.60,
+  5.70, 5.80, 5.90, 6.10, 6.20, 6.30, 6.50, 6.60, 6.80, 6.90,
+  7.10, 7.20, 7.30, 7.40, 7.50, 7.60, 7.70, 7.70, 7.80, 7.80,
+  /* 1860.0 thru 1899.0 */
+  7.88, 7.82, 7.54, 6.97, 6.40, 6.02, 5.41, 4.10, 2.92, 1.82,
+  1.61, .10, -1.02, -1.28, -2.69, -3.24, -3.64, -4.54, -4.71, -5.11,
+  -5.40, -5.42, -5.20, -5.46, -5.46, -5.79, -5.63, -5.64, -5.80, -5.66,
+  -5.87, -6.01, -6.19, -6.64, -6.44, -6.47, -6.09, -5.76, -4.66, -3.74,
+  /* 1900.0 thru 1939.0 */
+  -2.72, -1.54, -.02, 1.24, 2.64, 3.86, 5.37, 6.14, 7.75, 9.13,
+  10.46, 11.53, 13.36, 14.65, 16.01, 17.20, 18.24, 19.06, 20.25, 20.95,
+  21.16, 22.25, 22.41, 23.03, 23.49, 23.62, 23.86, 24.49, 24.34, 24.08,
+  24.02, 24.00, 23.87, 23.95, 23.86, 23.93, 23.73, 23.92, 23.96, 24.02,
+  /* 1940.0 thru 1979.0 */
+  24.33, 24.83, 25.30, 25.70, 26.24, 26.77, 27.28, 27.78, 28.25, 28.71,
+  29.15, 29.57, 29.97, 30.36, 30.72, 31.07, 31.35, 31.68, 32.18, 32.68,
+  33.15, 33.59, 34.00, 34.47, 35.03, 35.73, 36.54, 37.43, 38.29, 39.20,
+  40.18, 41.17, 42.23, 43.37, 44.49, 45.48, 46.46, 47.52, 48.53, 49.59,
+  /* 1980.0 thru 1999.0 */
+  50.54, 51.38, 52.17, 52.96, 53.79, 54.34, 54.87, 55.32, 55.82, 56.30,
+  56.86, 57.57, 58.31, 59.12, 59.98, 60.78, 61.63, 62.30, 62.97, 63.47,
+  /* 2000.0 thru 2009.0 */
+  63.83, 64.09, 64.30, 64.47, 64.57, 64.69, 64.85, 65.15, 65.46, 65.78,
+  /* 2010.0 thru 2019.0 */
+  66.07, 66.32,
+  /* Extrapolated values, 2011 - 2014 */
+  67.00, 67.50, 68.00, 68.50, 69.00, 69.50
+  /* eslint-enable prettier/prettier */
 ];
 
 // Port of swe_deltat() from swephlib.c
 // returns DeltaT (ET - UT) in days
-// tjd 	= 	julian day in UT
+// tjd   =   julian day in UT
 function swe_deltat(tjd) {
-	var ans = 0;
-	var B, Y, Ygreg, dd;
-	var iy;
-	// read additional values from swedelta.txt
-	// var use_espenak_meeus = ESPENAK_MEEUS_2006; // Not used
-	Y = 2000.0 + (tjd - J2000)/365.25;
+  var ans = 0;
+  var Y;
+  // var B, Ygreg, dd;
+  // var iy;
+  // read additional values from swedelta.txt
+  // var use_espenak_meeus = ESPENAK_MEEUS_2006; // Not used
+  Y = 2000.0 + (tjd - J2000) / 365.25;
 
-	// COMMENTING THIS SECTION OUT. UNCOMMENT for Dates < 1620 
-	/*
-	Ygreg = 2000.0 + (tjd - J2000)/365.2425;
-	
-	// Before 1633 AD, if the macro ESPENAK_MEEUS_2006 is TRUE:
-	// Polynomials by Espenak & Meeus 2006, derived from Stephenson & Morrison
-	// 2004.
-	// Note, Espenak & Meeus use their formulae only from 2000 BC on.
-	// However, they use the long-term formula of Morrison & Stephenson,
-	// which can be used even for the remoter past.
-	if (use_espenak_meeus && tjd < 2317746.13090277789) {
-	    return deltat_espenak_meeus_1620(tjd);
-	}
-	// If the macro ESPENAK_MEEUS_2006 is FALSE:
-	// Before 1620, we follow Stephenson & Morrsion 2004. For the tabulated
-	// values 1000 BC through 1600 AD, we use linear interpolation.
-	if (Y < TABSTART) {
-	    if (Y < TAB2_END) {
-	        return deltat_stephenson_morrison_1600(tjd);
-	    } else {
-	        // between 1600 and 1620:
-	        // linear interpolation between
-	        // end of table dt2 and start of table dt
-	        if (Y >= TAB2_END) {
-	            B = TABSTART - TAB2_END;
-	            iy = (TAB2_END - TAB2_START) / TAB2_STEP;
-	            dd = (Y - TAB2_END) / B;
-	            // ans = dt2[iy] + dd * (dt[0] / 100.0 - dt2[iy]);
-	            ans = dt2[iy] + dd * (dt[0] - dt2[iy]);
-	            ans = adjust_for_tidacc(ans, Ygreg);
-	            return ans / 86400.0;
-	        }
-	    }
-	}
-	*/
+  // COMMENTING THIS SECTION OUT. UNCOMMENT for Dates < 1620
+  /*
+  Ygreg = 2000.0 + (tjd - J2000)/365.2425;
+  
+  // Before 1633 AD, if the macro ESPENAK_MEEUS_2006 is TRUE:
+  // Polynomials by Espenak & Meeus 2006, derived from Stephenson & Morrison
+  // 2004.
+  // Note, Espenak & Meeus use their formulae only from 2000 BC on.
+  // However, they use the long-term formula of Morrison & Stephenson,
+  // which can be used even for the remoter past.
+  if (use_espenak_meeus && tjd < 2317746.13090277789) {
+      return deltat_espenak_meeus_1620(tjd);
+  }
+  // If the macro ESPENAK_MEEUS_2006 is FALSE:
+  // Before 1620, we follow Stephenson & Morrsion 2004. For the tabulated
+  // values 1000 BC through 1600 AD, we use linear interpolation.
+  if (Y < TABSTART) {
+      if (Y < TAB2_END) {
+          return deltat_stephenson_morrison_1600(tjd);
+      } else {
+          // between 1600 and 1620:
+          // linear interpolation between
+          // end of table dt2 and start of table dt
+          if (Y >= TAB2_END) {
+              B = TABSTART - TAB2_END;
+              iy = (TAB2_END - TAB2_START) / TAB2_STEP;
+              dd = (Y - TAB2_END) / B;
+              // ans = dt2[iy] + dd * (dt[0] / 100.0 - dt2[iy]);
+              ans = dt2[iy] + dd * (dt[0] - dt2[iy]);
+              ans = adjust_for_tidacc(ans, Ygreg);
+              return ans / 86400.0;
+          }
+      }
+  }
+  */
 
-	// NOTE: MOST OF THE YEARS WILL USE THIS LOGIC. Year > 1620
-	// 1620 - today + a few years (tabend):
-	// Besselian interpolation from tabulated values in table dt.
-	// See AA page K11.
-	if (Y >= TABSTART) {
-	  return deltat_aa(tjd);
-	}
-	return ans / 86400.0;
+  // NOTE: MOST OF THE YEARS WILL USE THIS LOGIC. Year > 1620
+  // 1620 - today + a few years (tabend):
+  // Besselian interpolation from tabulated values in table dt.
+  // See AA page K11.
+  if (Y >= TABSTART) {
+    return deltat_aa(tjd);
+  }
+  return ans / 86400.0;
 }
 
 // Ported deltat_aa() function from swephlib.c
 function deltat_aa(tjd) {
   var ans = 0;
-  var ans2
+  var ans2;
   var ans3;
   var p, B, B2, Y, dd;
   var d = Array();
@@ -1923,8 +1952,8 @@ function deltat_aa(tjd) {
   // var tabsiz = init_dt(); // Removed this function because there is no swedelta.txt file
   var tabsiz = TABSIZ; // Set the tabsiz to default of 398 since there is no init_dt() & swedelta.txt
   var tabend = TABSTART + tabsiz - 1;
-  Y = 2000.0 + (tjd - J2000)/365.2425;
-  
+  Y = 2000.0 + (tjd - J2000) / 365.2425;
+
   if (Y <= tabend) {
     // Index into the table.
     p = Math.floor(Y);
@@ -1932,60 +1961,60 @@ function deltat_aa(tjd) {
     // Zeroth order estimate is value at start of year
     ans = dt[iy];
     k = iy + 1;
-    if( k >= tabsiz ) {
-        continueCalculation = false;    // No data, can't go on.
+    if (k >= tabsiz) {
+      continueCalculation = false; // No data, can't go on.
     }
 
     if (continueCalculation) {
-	    // The fraction of tabulation interval
-	    p = Y - p;
-	    // First order interpolated value
-	    ans += p*(dt[k] - dt[iy]);
-	    if( (iy-1 < 0) || (iy+2 >= tabsiz) ) {
-	        continueCalculation = false;    // can't do second differences
-	    }
-	  }
+      // The fraction of tabulation interval
+      p = Y - p;
+      // First order interpolated value
+      ans += p * (dt[k] - dt[iy]);
+      if (iy - 1 < 0 || iy + 2 >= tabsiz) {
+        continueCalculation = false; // can't do second differences
+      }
+    }
     if (continueCalculation) {
-	    // Make table of first differences
-	    k = iy - 2;
-	    for( i=0; i<5; i++ ) {
-	        if( (k < 0) || (k+1 >= tabsiz) ) {
-	            d[i] = 0;
-	        } else {
-	            d[i] = dt[k+1] - dt[k];
-	        }
-	        k += 1;
-	    }
-	
-	    // Compute second differences
-	    for( i=0; i<4; i++ ) {
-	        d[i] = d[i+1] - d[i];
-	    }
-	    B = 0.25*p*(p-1.0);
-	    ans += B*(d[1] + d[2]);
-	    if( iy+2 >= tabsiz ) {
-	        continueCalculation = false;
-	    }
-	  }
+      // Make table of first differences
+      k = iy - 2;
+      for (i = 0; i < 5; i++) {
+        if (k < 0 || k + 1 >= tabsiz) {
+          d[i] = 0;
+        } else {
+          d[i] = dt[k + 1] - dt[k];
+        }
+        k += 1;
+      }
+
+      // Compute second differences
+      for (i = 0; i < 4; i++) {
+        d[i] = d[i + 1] - d[i];
+      }
+      B = 0.25 * p * (p - 1.0);
+      ans += B * (d[1] + d[2]);
+      if (iy + 2 >= tabsiz) {
+        continueCalculation = false;
+      }
+    }
     if (continueCalculation) {
-	    // Compute third differences
-	    for( i=0; i<3; i++ ) {
-	        d[i] = d[i+1] - d[i];
-	    }
-	    B = 2.0*B/3.0;
-	    ans += (p-0.5)*B*d[1];
-	
-	    if( (iy-2 < 0) || (iy+3 > tabsiz) ) {
-	        continueCalculation = false;
-	    }
-	  }
+      // Compute third differences
+      for (i = 0; i < 3; i++) {
+        d[i] = d[i + 1] - d[i];
+      }
+      B = (2.0 * B) / 3.0;
+      ans += (p - 0.5) * B * d[1];
+
+      if (iy - 2 < 0 || iy + 3 > tabsiz) {
+        continueCalculation = false;
+      }
+    }
     if (continueCalculation) {
-	    // Compute fourth differences
-	    for( i=0; i<2; i++ ) {
-	        d[i] = d[i+1] - d[i];
-	    }
-	    B = 0.125*B*(p+1.0)*(p-2.0);
-	    ans += B*(d[0] + d[1]);
+      // Compute fourth differences
+      for (i = 0; i < 2; i++) {
+        d[i] = d[i + 1] - d[i];
+      }
+      B = 0.125 * B * (p + 1.0) * (p - 2.0);
+      ans += B * (d[0] + d[1]);
     }
     ans = adjust_for_tidacc(ans, Y);
     return ans / 86400.0;
@@ -1998,16 +2027,15 @@ function deltat_aa(tjd) {
   B = 0.01 * (Y - 1820);
   ans = -20 + 31 * B * B;
   // slow transition from tabulated values to Stephenson formula:
-  if (Y <= tabend+100) {
-      B2 = 0.01 * (tabend - 1820);
-      ans2 = -20 + 31 * B2 * B2;
-      ans3 = dt[tabsiz-1];
-      dd = (ans2 - ans3);
-      ans += dd * (Y - (tabend + 100)) * 0.01;
+  if (Y <= tabend + 100) {
+    B2 = 0.01 * (tabend - 1820);
+    ans2 = -20 + 31 * B2 * B2;
+    ans3 = dt[tabsiz - 1];
+    dd = ans2 - ans3;
+    ans += dd * (Y - (tabend + 100)) * 0.01;
   }
   return ans / 86400.0;
 }
-
 
 // Ported adjust_for_tidacc() function from swephlib.c
 /* Astronomical Almanac table is corrected by adding the expression
@@ -2020,9 +2048,9 @@ function deltat_aa(tjd) {
  */
 function adjust_for_tidacc(ans, Y) {
   var B;
-  if( Y < 1955.0 ) {
-      B = (Y - 1955.0);
-      ans += -0.000091 * (tid_acc + 26.0) * B * B;
+  if (Y < 1955.0) {
+    B = Y - 1955.0;
+    ans += -0.000091 * (tid_acc + 26.0) * B * B;
   }
   return ans;
 }
@@ -2040,46 +2068,54 @@ function adjust_for_tidacc(ans, Y) {
  * to approximately 24 microseconds.
  *
  * program returns sidereal hours since sidereal midnight
- * tjd 		julian day UT
- * eps 		obliquity of ecliptic, degrees
- * nut 		nutation, degrees
+ * tjd     julian day UT
+ * eps     obliquity of ecliptic, degrees
+ * nut     nutation, degrees
  */
 function swe_sidtime0(tjd, eps, nut) {
-  var jd0;    	// Julian day at midnight Universal Time
-  var secs;   	// Time of day, UT seconds since UT midnight
+  var jd0; // Julian day at midnight Universal Time
+  var secs; // Time of day, UT seconds since UT midnight
   var eqeq, jd, tu, tt, msday;
   var gmst;
-  
+
   // Julian day at given UT
   jd = tjd;
   jd0 = Math.floor(jd);
   secs = tjd - jd0;
   if (secs < 0.5) {
-      jd0 -= 0.5;
-      secs += 0.5;
+    jd0 -= 0.5;
+    secs += 0.5;
   } else {
-      jd0 += 0.5;
-      secs -= 0.5;
+    jd0 += 0.5;
+    secs -= 0.5;
   }
   secs *= 86400.0;
-  tu = (jd0 - J2000)/36525.0; // UT1 in centuries after J2000
+  tu = (jd0 - J2000) / 36525.0; // UT1 in centuries after J2000
   if (PREC_IAU_2003) {
-      tt = (jd0 + swe_deltat(jd0) - J2000)/36525.0; // TT in centuries after J2000 
-      gmst = (((-0.000000002454*tt - 0.00000199708)*tt - 0.0000002926)*tt + 0.092772110)*tt*tt + 307.4771013*(tt-tu) + 8640184.79447825*tu + 24110.5493771;
-      // mean solar days per sidereal day at date tu;
-      // for the derivative of gmst, we can assume UT1 =~ TT 
-      msday = 1 + ((((-0.000000012270*tt - 0.00000798832)*tt - 0.0000008778)*tt + 0.185544220)*tt + 8640184.79447825)/(86400.*36525.);
+    tt = (jd0 + swe_deltat(jd0) - J2000) / 36525.0; // TT in centuries after J2000
+    gmst =
+      (((-0.000000002454 * tt - 0.00000199708) * tt - 0.0000002926) * tt + 0.09277211) * tt * tt +
+      307.4771013 * (tt - tu) +
+      8640184.79447825 * tu +
+      24110.5493771;
+    // mean solar days per sidereal day at date tu;
+    // for the derivative of gmst, we can assume UT1 =~ TT
+    msday =
+      1 +
+      ((((-0.00000001227 * tt - 0.00000798832) * tt - 0.0000008778) * tt + 0.18554422) * tt +
+        8640184.79447825) /
+        (86400 * 36525);
   } else {
-      // Greenwich Mean Sidereal Time at 0h UT of date 
-      gmst = (( -6.2e-6*tu + 9.3104e-2)*tu + 8640184.812866)*tu + 24110.54841;
-      // mean solar days per sidereal day at date tu, = 1.00273790934 in 1986 
-      msday = 1.0 + ((-1.86e-5*tu + 0.186208)*tu + 8640184.812866)/(86400.*36525.);
+    // Greenwich Mean Sidereal Time at 0h UT of date
+    gmst = ((-6.2e-6 * tu + 9.3104e-2) * tu + 8640184.812866) * tu + 24110.54841;
+    // mean solar days per sidereal day at date tu, = 1.00273790934 in 1986
+    msday = 1.0 + ((-1.86e-5 * tu + 0.186208) * tu + 8640184.812866) / (86400 * 36525);
   }
-  // Local apparent sidereal time at given UT at Greenwich 
+  // Local apparent sidereal time at given UT at Greenwich
   eqeq = 240.0 * nut * Math.cos(eps * DEGTORAD);
-  gmst = gmst + msday*secs + eqeq;  // + 240.0*tlong 
-  // Sidereal seconds modulo 1 sidereal day 
-  gmst = gmst - 86400.0 * Math.floor(gmst/86400.0 );
+  gmst = gmst + msday * secs + eqeq; // + 240.0*tlong
+  // Sidereal seconds modulo 1 sidereal day
+  gmst = gmst - 86400.0 * Math.floor(gmst / 86400.0);
   // return in hours
   gmst /= 3600;
   return gmst;
@@ -2092,32 +2128,32 @@ function swe_sidtime0(tjd, eps, nut) {
  * e.g. for composite charts or progressive charts.
  * cusps are returned in double cusp[13],
  *                           or cusp[37] with house system 'G'.
- * cusp[1...12]	houses 1 - 12
+ * cusp[1...12]  houses 1 - 12
  */
 function swe_houses_armc(armc, geolat, eps, hsys) {
-  var i, retc = 0;
+  // var i, retc = 0;
   // var cusp = Array();
-  var ito;
-  if (hsys == 'G') {
-      ito = 36;
-  } else {
-      ito = 12;
-  }
+  // var ito;
+  // if (hsys == 'G') {
+  //   ito = 36;
+  // } else {
+  //   ito = 12;
+  // }
   armc = swe_degnorm(armc);
   retc = CalcH(armc, geolat, eps, hsys, 2);
 }
 
 // Define the houses structure as specified in swehouse.h
 var hsp = {
-	cusp: Array(),
-	ac: 0,
-	mc: 0,
-	vertex: 0,
-	equasc: 0,
-	coasc1: 0,
-	coasc2: 0,
-	polasc: 0	
-}
+  cusp: Array(),
+  ac: 0,
+  mc: 0,
+  vertex: 0,
+  equasc: 0,
+  coasc1: 0,
+  coasc2: 0,
+  polasc: 0
+};
 
 // Ported CalcH() function from swehouse.c
 /* *********************************************************
@@ -2151,58 +2187,59 @@ var hsp = {
  *  implemented for arguments in degrees.
  ***********************************************************/
 function CalcH(th, fi, ekl, hsy, iteration_count) {
-  var tane, tanfi, cosfi, tant, sina, cosa, th2;
-  var a, c, f, fh1, fh2, xh1, xh2, rectasc, ad3, acmc, vemc;
-  var i, ih, ih2;
+  var tane, tanfi, tant, sina, cosa, th2;
+  var a, c, f, fh1, fh2, rectasc, ad3, acmc, vemc;
+  var i;
+  // var cosfi, xh1, xh2, ih, ih2;
   var sine, cose;
-  var x = Array();
-  cose  = cosd(ekl);
-  sine  = sind(ekl);
-  tane  = tand(ekl);
+  // var x = Array();
+  cose = cosd(ekl);
+  sine = sind(ekl);
+  tane = tand(ekl);
   // north and south poles
   if (Math.abs(Math.abs(fi) - 90) < VERY_SMALL) {
-      if (fi < 0) {
-          fi = -90 + VERY_SMALL;
-      } else {
-          fi = 90 - VERY_SMALL;
-      }
+    if (fi < 0) {
+      fi = -90 + VERY_SMALL;
+    } else {
+      fi = 90 - VERY_SMALL;
+    }
   }
   tanfi = tand(fi);
   // mc
-  if (Math.abs(th - 90) > VERY_SMALL
-          && Math.abs(th - 270) > VERY_SMALL) {
-      tant = tand(th);
-      hsp.mc = atand(tant / cose);
-      if (th > 90 && th <= 270) {
-          hsp.mc = swe_degnorm(hsp.mc + 180);
-      }
+  if (Math.abs(th - 90) > VERY_SMALL && Math.abs(th - 270) > VERY_SMALL) {
+    tant = tand(th);
+    hsp.mc = atand(tant / cose);
+    if (th > 90 && th <= 270) {
+      hsp.mc = swe_degnorm(hsp.mc + 180);
+    }
   } else {
-      if (Math.abs(th - 90) <= VERY_SMALL) {
-          hsp.mc = 90;
-      } else {
-          hsp.mc = 270;
-      }
+    if (Math.abs(th - 90) <= VERY_SMALL) {
+      hsp.mc = 90;
+    } else {
+      hsp.mc = 270;
+    }
   } // if
   hsp.mc = swe_degnorm(hsp.mc);
   // ascendant
-  hsp.ac = Asc1 (th + 90, fi, sine, cose);
+  hsp.ac = Asc1(th + 90, fi, sine, cose);
   hsp.cusp[1] = hsp.ac;
   hsp.cusp[10] = hsp.mc;
 
   // Koch houses
-  if (hsy == 'K') { 
-    if (Math.abs(fi) >= 90 - ekl) {  // within polar circle
-      retc = ERR;
-      // goto porphyry;
+  if (hsy == 'K') {
+    if (Math.abs(fi) >= 90 - ekl) {
+      // within polar circle
+      retc = -1; // ERR;
+      // goto porphyry; // TODO: Rerun the House calculations with Porphyry
     }
-    sina = sind(hsp.mc) * sine / cosd(fi);
+    sina = (sind(hsp.mc) * sine) / cosd(fi);
     if (sina > 1) {
       sina = 1;
     }
     if (sina < -1) {
       sina = -1;
     }
-    cosa = Math.sqrt(1 - sina * sina);		// always >> 0 
+    cosa = Math.sqrt(1 - sina * sina); // always >> 0
     c = atand(tanfi / cosa);
     ad3 = asind(sind(c) * sina) / 3.0;
     hsp.cusp[11] = Asc1(th + 30 - 2 * ad3, fi, sine, cose);
@@ -2210,9 +2247,9 @@ function CalcH(th, fi, ekl, hsy, iteration_count) {
     hsp.cusp[2] = Asc1(th + 120 + ad3, fi, sine, cose);
     hsp.cusp[3] = Asc1(th + 150 + 2 * ad3, fi, sine, cose);
   }
-  
+
   // Porphyry houses
-  if (hsy == 'O') { 
+  if (hsy == 'O') {
     // within polar circle we swap AC/DC if AC is on wrong side
     acmc = swe_difdeg2n(hsp.ac, hsp.mc);
     if (acmc < 0) {
@@ -2221,113 +2258,114 @@ function CalcH(th, fi, ekl, hsy, iteration_count) {
       acmc = swe_difdeg2n(hsp.ac, hsp.mc);
     }
     hsp.cusp[2] = swe_degnorm(hsp.ac + (180 - acmc) / 3);
-    hsp.cusp[3] = swe_degnorm(hsp.ac + (180 - acmc) / 3 * 2);
+    hsp.cusp[3] = swe_degnorm(hsp.ac + ((180 - acmc) / 3) * 2);
     hsp.cusp[11] = swe_degnorm(hsp.mc + acmc / 3);
-    hsp.cusp[12] = swe_degnorm(hsp.mc + acmc / 3 * 2);
+    hsp.cusp[12] = swe_degnorm(hsp.mc + (acmc / 3) * 2);
   }
 
   // Equal, Whole-Sign houses
-  if (hsy == 'W') {  
+  if (hsy == 'W') {
     // within polar circle we swap AC/DC if AC is on wrong side
     acmc = swe_difdeg2n(hsp.ac, hsp.mc);
     if (acmc < 0) {
       hsp.ac = swe_degnorm(hsp.ac + 180);
       hsp.cusp[1] = hsp.ac;
     }
-    hsp.cusp [1] = hsp.ac - (hsp.ac % 30);
-    for (i = 2; i <=12; i++) {
-      hsp.cusp[i] = swe_degnorm(hsp.cusp[1] + (i-1) * 30);
+    hsp.cusp[1] = hsp.ac - (hsp.ac % 30);
+    for (i = 2; i <= 12; i++) {
+      hsp.cusp[i] = swe_degnorm(hsp.cusp[1] + (i - 1) * 30);
     }
   }
 
   // Placidus houses
-  if (hsy == 'P') { 
-		if (Math.abs(fi) >= 90 - ekl) {  // within polar circle
-		    retc = ERR;
-		    // goto porphyry; // TODO: Rerun the House calculations with Porphyry
-		}
-		a = asind(tand(fi) * tane);
-		fh1 = atand(sind(a / 3) / tane);
-		fh2 = atand(sind(a * 2 / 3) / tane);
-		// ************  house 11 ********************
-		rectasc = swe_degnorm(30 + th);
-		tant = tand(asind(sine * sind(Asc1 (rectasc, fh1, sine, cose))));
-		if (Math.abs(tant) < VERY_SMALL) {
-        hsp.cusp[11] = rectasc;
+  if (hsy == 'P') {
+    if (Math.abs(fi) >= 90 - ekl) {
+      // within polar circle
+      retc = -1; // ERR;
+      // goto porphyry; // TODO: Rerun the House calculations with Porphyry
+    }
+    a = asind(tand(fi) * tane);
+    fh1 = atand(sind(a / 3) / tane);
+    fh2 = atand(sind((a * 2) / 3) / tane);
+    // ************  house 11 ********************
+    rectasc = swe_degnorm(30 + th);
+    tant = tand(asind(sine * sind(Asc1(rectasc, fh1, sine, cose))));
+    if (Math.abs(tant) < VERY_SMALL) {
+      hsp.cusp[11] = rectasc;
     } else {
+      // pole height
+      f = atand(sind(asind(tanfi * tant) / 3) / tant);
+      hsp.cusp[11] = Asc1(rectasc, f, sine, cose);
+      for (i = 1; i <= iteration_count; i++) {
+        tant = tand(asind(sine * sind(hsp.cusp[11])));
+        if (Math.abs(tant) < VERY_SMALL) {
+          hsp.cusp[11] = rectasc;
+          break;
+        }
         // pole height
-        f = atand(sind(asind(tanfi * tant) / 3)  /tant);
-        hsp.cusp[11] = Asc1 (rectasc, f, sine, cose);
-        for (i = 1; i <= iteration_count; i++) {
-            tant = tand(asind(sine * sind(hsp.cusp[11])));
-            if (Math.abs(tant) < VERY_SMALL) {
-                hsp.cusp[11] = rectasc;
-                break;
-            }
-            // pole height 
-            f = atand(sind(asind(tanfi * tant) / 3) / tant);
-            hsp.cusp[11] = Asc1 (rectasc, f, sine, cose);
-        }
+        f = atand(sind(asind(tanfi * tant) / 3) / tant);
+        hsp.cusp[11] = Asc1(rectasc, f, sine, cose);
+      }
     }
-		// ************  house 12 ******************** 
-		rectasc = swe_degnorm(60 + th);
-		tant = tand(asind(sine*sind(Asc1 (rectasc,  fh2, sine, cose))));
-		if (Math.abs(tant) < VERY_SMALL) {
-        hsp.cusp[12] = rectasc;
+    // ************  house 12 ********************
+    rectasc = swe_degnorm(60 + th);
+    tant = tand(asind(sine * sind(Asc1(rectasc, fh2, sine, cose))));
+    if (Math.abs(tant) < VERY_SMALL) {
+      hsp.cusp[12] = rectasc;
     } else {
+      f = atand(sind(asind(tanfi * tant) / 1.5) / tant);
+      //  pole height
+      hsp.cusp[12] = Asc1(rectasc, f, sine, cose);
+      for (i = 1; i <= iteration_count; i++) {
+        tant = tand(asind(sine * sind(hsp.cusp[12])));
+        if (Math.abs(tant) < VERY_SMALL) {
+          hsp.cusp[12] = rectasc;
+          break;
+        }
         f = atand(sind(asind(tanfi * tant) / 1.5) / tant);
         //  pole height
-        hsp.cusp[12] = Asc1 (rectasc, f, sine, cose);
-        for (i = 1; i <= iteration_count; i++) {
-            tant = tand(asind(sine * sind(hsp.cusp[12])));
-            if (Math.abs(tant) < VERY_SMALL) {
-                hsp.cusp[12] = rectasc;
-                break;
-            }
-            f = atand(sind(asind(tanfi * tant) / 1.5) / tant);
-            //  pole height
-            hsp.cusp[12] = Asc1 (rectasc, f, sine, cose);
-        }
+        hsp.cusp[12] = Asc1(rectasc, f, sine, cose);
+      }
     }
-		// ************  house  2 ********************
-		rectasc = swe_degnorm(120 + th);
-		tant = tand(asind(sine * sind(Asc1 (rectasc, fh2, sine, cose))));
-		if (Math.abs(tant) < VERY_SMALL) {
-        hsp.cusp[2] = rectasc;
+    // ************  house  2 ********************
+    rectasc = swe_degnorm(120 + th);
+    tant = tand(asind(sine * sind(Asc1(rectasc, fh2, sine, cose))));
+    if (Math.abs(tant) < VERY_SMALL) {
+      hsp.cusp[2] = rectasc;
     } else {
+      f = atand(sind(asind(tanfi * tant) / 1.5) / tant);
+      //  pole height
+      hsp.cusp[2] = Asc1(rectasc, f, sine, cose);
+      for (i = 1; i <= iteration_count; i++) {
+        tant = tand(asind(sine * sind(hsp.cusp[2])));
+        if (Math.abs(tant) < VERY_SMALL) {
+          hsp.cusp[2] = rectasc;
+          break;
+        }
         f = atand(sind(asind(tanfi * tant) / 1.5) / tant);
         //  pole height
-        hsp.cusp[2] = Asc1 (rectasc, f, sine, cose);
-        for (i = 1; i <= iteration_count; i++) {
-            tant = tand(asind(sine * sind(hsp.cusp[2])));
-            if (Math.abs(tant) < VERY_SMALL) {
-                hsp.cusp[2] = rectasc;
-                break;
-            }
-            f = atand(sind(asind(tanfi * tant) / 1.5) / tant);
-            //  pole height
-            hsp.cusp[2] = Asc1 (rectasc, f, sine, cose);
-        }
+        hsp.cusp[2] = Asc1(rectasc, f, sine, cose);
+      }
     }
-		// ************  house  3 ********************
-		rectasc = swe_degnorm(150 + th);
-		tant = tand(asind(sine * sind(Asc1 (rectasc, fh1, sine, cose))));
-		if (Math.abs(tant) < VERY_SMALL) {
-        hsp.cusp[3] = rectasc;
+    // ************  house  3 ********************
+    rectasc = swe_degnorm(150 + th);
+    tant = tand(asind(sine * sind(Asc1(rectasc, fh1, sine, cose))));
+    if (Math.abs(tant) < VERY_SMALL) {
+      hsp.cusp[3] = rectasc;
     } else {
+      f = atand(sind(asind(tanfi * tant) / 3) / tant);
+      //  pole height
+      hsp.cusp[3] = Asc1(rectasc, f, sine, cose);
+      for (i = 1; i <= iteration_count; i++) {
+        tant = tand(asind(sine * sind(hsp.cusp[3])));
+        if (Math.abs(tant) < VERY_SMALL) {
+          hsp.cusp[3] = rectasc;
+          break;
+        }
         f = atand(sind(asind(tanfi * tant) / 3) / tant);
         //  pole height
         hsp.cusp[3] = Asc1(rectasc, f, sine, cose);
-        for (i = 1; i <= iteration_count; i++) {
-            tant = tand(asind(sine * sind(hsp.cusp[3])));
-            if (Math.abs(tant) < VERY_SMALL) {
-                hsp.cusp[3] = rectasc;
-                break;
-            }
-            f = atand(sind(asind(tanfi * tant) / 3) / tant);
-            //  pole height 
-            hsp.cusp[3] = Asc1 (rectasc, f, sine, cose);
-        }
+      }
     }
   }
 
@@ -2340,47 +2378,47 @@ function CalcH(th, fi, ekl, hsy, iteration_count) {
 
   // vertex
   if (fi >= 0) {
-      f = 90 - fi;
+    f = 90 - fi;
   } else {
-      f = -90 - fi;
+    f = -90 - fi;
   }
-  hsp.vertex = Asc1 (th - 90, f, sine, cose);
+  hsp.vertex = Asc1(th - 90, f, sine, cose);
   // with tropical latitudes, the vertex behaves strange,
   // in a similar way as the ascendant within the polar
   // circle. we keep it always on the western hemisphere.
   if (Math.abs(fi) <= ekl) {
-      vemc = swe_difdeg2n(hsp.vertex, hsp.mc);
-      if (vemc > 0) {
-          hsp.vertex = swe_degnorm(hsp.vertex + 180);
-      }
+    vemc = swe_difdeg2n(hsp.vertex, hsp.mc);
+    if (vemc > 0) {
+      hsp.vertex = swe_degnorm(hsp.vertex + 180);
+    }
   }
   // some strange points:
   // equasc (equatorial ascendant)
   th2 = swe_degnorm(th + 90);
-  if (Math.abs(th2 - 90) > VERY_SMALL
-          && Math.abs(th2 - 270) > VERY_SMALL) {
-      tant = tand(th2);
-      hsp.equasc = atand(tant / cose);
-      if (th2 > 90 && th2 <= 270) {
-          hsp.equasc = swe_degnorm(hsp.equasc + 180);
-      }
+  if (Math.abs(th2 - 90) > VERY_SMALL && Math.abs(th2 - 270) > VERY_SMALL) {
+    tant = tand(th2);
+    hsp.equasc = atand(tant / cose);
+    if (th2 > 90 && th2 <= 270) {
+      hsp.equasc = swe_degnorm(hsp.equasc + 180);
+    }
   } else {
-      if (Math.abs(th2 - 90) <= VERY_SMALL) {
-          hsp.equasc = 90;
-      } else {
-          hsp.equasc = 270;
-      }
-  } //  if 
+    if (Math.abs(th2 - 90) <= VERY_SMALL) {
+      hsp.equasc = 90;
+    } else {
+      hsp.equasc = 270;
+    }
+  } //  if
   hsp.equasc = swe_degnorm(hsp.equasc);
-  // "co-ascendant" W. Koch 
-  hsp.coasc1 = swe_degnorm(Asc1 (th - 90, fi, sine, cose) + 180);
+  // "co-ascendant" W. Koch
+  hsp.coasc1 = swe_degnorm(Asc1(th - 90, fi, sine, cose) + 180);
   // "co-ascendant" M. Munkasey
   if (fi >= 0) {
-      hsp.coasc2 = Asc1(th + 90, 90 - fi, sine, cose);
-  } else { // southern hemisphere
-      hsp.coasc2 = Asc1(th + 90, -90 - fi, sine, cose);
+    hsp.coasc2 = Asc1(th + 90, 90 - fi, sine, cose);
+  } else {
+    // southern hemisphere
+    hsp.coasc2 = Asc1(th + 90, -90 - fi, sine, cose);
   }
-  // "polar ascendant" M. Munkasey 
+  // "polar ascendant" M. Munkasey
   hsp.polasc = Asc1(th - 90, fi, sine, cose);
 }
 
@@ -2388,8 +2426,8 @@ function CalcH(th, fi, ekl, hsy, iteration_count) {
 function swe_difdeg2n(p1, p2) {
   var dif;
   dif = swe_degnorm(p1 - p2);
-  if (dif  >= 180.0) {
-    return (dif - 360.0);
+  if (dif >= 180.0) {
+    return dif - 360.0;
   }
   return dif;
 }
@@ -2399,90 +2437,92 @@ function Asc1(x1, f, sine, cose) {
   var n;
   var ass;
   x1 = swe_degnorm(x1);
-  n  = Math.floor((x1 / 90) + 1);
+  n = Math.floor(x1 / 90 + 1);
   if (n == 1) {
-      ass = (Asc2(x1, f, sine, cose));
+    ass = Asc2(x1, f, sine, cose);
   } else if (n == 2) {
-      ass = (180 - Asc2(180 - x1, - f, sine, cose));
+    ass = 180 - Asc2(180 - x1, -f, sine, cose);
   } else if (n == 3) {
-      ass = (180 + Asc2(x1 - 180, - f, sine, cose));
+    ass = 180 + Asc2(x1 - 180, -f, sine, cose);
   } else {
-      ass = (360 - Asc2(360- x1,  f, sine, cose));
+    ass = 360 - Asc2(360 - x1, f, sine, cose);
   }
   ass = swe_degnorm(ass);
-  if (Math.abs(ass - 90) < VERY_SMALL) {	// rounding, e.g.: if 
-      ass = 90;    // fi = 0 & st = 0, ac = 89.999...
+  if (Math.abs(ass - 90) < VERY_SMALL) {
+    // rounding, e.g.: if
+    ass = 90; // fi = 0 & st = 0, ac = 89.999...
   }
   if (Math.abs(ass - 180) < VERY_SMALL) {
-      ass = 180;
+    ass = 180;
   }
-  if (Math.abs(ass - 270) < VERY_SMALL) {	// rounding, e.g.: if 
-      ass = 270;    // fi = 0 & st = 0, ac = 89.999...
+  if (Math.abs(ass - 270) < VERY_SMALL) {
+    // rounding, e.g.: if
+    ass = 270; // fi = 0 & st = 0, ac = 89.999...
   }
   if (Math.abs(ass - 360) < VERY_SMALL) {
-      ass = 0;
+    ass = 0;
   }
   return ass;
-}  
+}
 
 // Ported Asc2() from swehouse.c
 function Asc2(x, f, sine, cose) {
   var ass, sinx;
-  ass = - tand(f) * sine + cose * cosd(x);
+  ass = -tand(f) * sine + cose * cosd(x);
   if (Math.abs(ass) < VERY_SMALL) {
-      ass = 0;
+    ass = 0;
   }
   sinx = sind(x);
   if (Math.abs(sinx) < VERY_SMALL) {
-      sinx = 0;
+    sinx = 0;
   }
   if (sinx == 0) {
-      if (ass < 0) {
-          ass = -VERY_SMALL;
-      } else {
-          ass = VERY_SMALL;
-      }
+    if (ass < 0) {
+      ass = -VERY_SMALL;
+    } else {
+      ass = VERY_SMALL;
+    }
   } else if (ass == 0) {
-      if (sinx < 0) {
-          ass = -90;
-      } else {
-          ass = 90;
-      }
+    if (sinx < 0) {
+      ass = -90;
+    } else {
+      ass = 90;
+    }
   } else {
-      ass = atand(sinx / ass);
+    ass = atand(sinx / ass);
   }
   if (ass < 0) {
-      ass = 180 + ass;
+    ass = 180 + ass;
   }
   return ass;
-} 
+}
 
 // Ported sind() function from swehouse.h
 function sind(x) {
-	return Math.sin(x * DEGTORAD);
+  return Math.sin(x * DEGTORAD);
 }
 
 // Ported cosd() function from swehouse.h
 function cosd(x) {
-	return Math.cos(x * DEGTORAD);
+  return Math.cos(x * DEGTORAD);
 }
 
 // Ported tand() function from swehouse.h
 function tand(x) {
-	return Math.tan(x * DEGTORAD);
+  return Math.tan(x * DEGTORAD);
 }
 
 // Ported asind() function from swehouse.h
 function asind(x) {
-	return (Math.asin(x) * RADTODEG);
+  return Math.asin(x) * RADTODEG;
 }
 
 // Ported acosd() function from swehouse.h
-function acosd(x) {
-	return (Math.acos(x) * RADTODEG);
-}
+// function acosd(x) {
+//   return Math.acos(x) * RADTODEG;
+// }
 
 // Ported atand() function from swehouse.h
 function atand(x) {
-	return (Math.atan(x) * RADTODEG);
+  return Math.atan(x) * RADTODEG;
 }

@@ -1,4 +1,4 @@
-$ns.mars = {
+const mars = {
 	maxargs: 9,
 	max_harmonic: [0, 5, 12, 24, 9, 7, 3, 2, 0],
 	max_power_of_t: 5,
@@ -933,3 +933,5 @@ $ns.mars = {
 		-1
 	]
 };
+
+export default mars;

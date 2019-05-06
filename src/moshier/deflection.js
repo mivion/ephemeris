@@ -1,19 +1,21 @@
-$ns.deflectioon = {};
+import { showcor } from './util';
+import constant from './constant';
+import variable from './variable';
 
-$ns.deflectioon.calc = function (p, q, e, result) {
-	var C; // double
-	var i; // int
+export const calc = function(p, q, e, result) {
+  var C; // double
+  var i; // int
 
-	C = 1.974e-8/($const.SE*(1.0+$const.qe));
-	for( i=0; i<3; i++ ) {
-		$const.dp[i] = C*($const.pq*e[i]/$const.SE - $const.ep*q[i]/$const.SO);
-		p[i] += $const.dp[i];
-	}
+  C = 1.974e-8 / (variable.SE * (1.0 + variable.qe));
+  for (i = 0; i < 3; i++) {
+    variable.dp[i] = C * ((variable.pq * e[i]) / variable.SE - (variable.ep * q[i]) / variable.SO);
+    p[i] += variable.dp[i];
+  }
 
-	result = result || {};
+  result = result || {};
 
-	result.sunElongation = Math.acos ( -$const.ep )/$const.DTR;
-	result.lightDeflection = $util.showcor( p, $const.dp );
+  result.sunElongation = Math.acos(-variable.ep) / constant.DTR;
+  result.lightDeflection = showcor(p, variable.dp);
 
-	return result;
+  return result;
 };

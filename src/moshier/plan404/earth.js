@@ -1,4 +1,4 @@
-$ns.earth = {
+const earth = {
 	maxargs: 12,
 	max_harmonic: [2, 11, 14, 19,  6, 10,  2,  2,  0,  1,  1,  4,  0,  0,  0,  0,  0,  0],
 	max_power_of_t: 3,
@@ -1034,3 +1034,5 @@ $ns.earth = {
 		-1
 	]
 };
+
+export default earth;

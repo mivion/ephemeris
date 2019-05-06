@@ -1,4 +1,4 @@
-$ns.moonlr = {
+const moonlr = {
 	maxargs: 14,
 	max_harmonic: [3, 26, 29, 23, 5, 10, 0, 0, 0, 8, 4, 4, 6, 2, 0, 0, 0, 0],
 	max_power_of_t: 3,
@@ -1955,3 +1955,5 @@ $ns.moonlr = {
 		-1
 	]
 };
+
+export default moonlr;

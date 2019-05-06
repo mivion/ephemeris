@@ -1,4 +1,4 @@
-$ns.venus = {
+const venus = {
 	maxargs: 9,
 	max_harmonic: [5, 14, 13, 8, 4, 5, 1, 0, 0],
 	max_power_of_t: 5,
@@ -477,3 +477,5 @@ $ns.venus = {
 		-1
 	]
 };
+
+export default venus;

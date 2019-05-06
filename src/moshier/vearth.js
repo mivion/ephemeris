@@ -1,25 +1,30 @@
-$ns.vearth = {
-	jvearth: -1.0,
-	vearth: []
+import { calc as keplerCalc } from './kepler';
+import bodies from './body';
+
+const vearth = {
+  jvearth: -1.0,
+  vearth: []
 };
 
-$ns.vearth.calc = function (date) {
-	var e = [], p = [], t; // double
-	var i; // int
+export const calc = function(date) {
+  var e = [],
+    p = [],
+    t; // double
+  var i; // int
 
-	if( date.julian == this.jvearth ) {
-		return;
-	}
+  if (date.julian == vearth.jvearth) {
+    return;
+  }
 
-	this.jvearth = date.julian;
+  vearth.jvearth = date.julian;
 
-	/* calculate heliocentric position of the earth
-	 * as of a short time ago.
-	 */
-	t = 0.005;
-	$moshier.kepler.calc ({julian: date.julian - t}, $moshier.body.earth, e, p);
+  /* calculate heliocentric position of the earth as of a short time ago. */
+  t = 0.005;
+  keplerCalc({ julian: date.julian - t }, bodies.earth, e, p);
 
-	for( i=0; i<3; i++ ) {
-		this.vearth [i] = ($moshier.body.earth.position.rect [i] - e[i])/t;
-	}
+  for (i = 0; i < 3; i++) {
+    vearth.vearth[i] = (bodies.earth.position.rect[i] - e[i]) / t;
+  }
 };
+
+export default vearth;

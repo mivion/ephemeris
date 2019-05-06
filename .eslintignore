@@ -2,8 +2,6 @@
 node_modules
 dist
 coverage
-
-# TODO - remove after migration:
-src/moshier
+src/moshier/plan404
 src/swisseph
 demo
