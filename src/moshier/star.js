@@ -10,39 +10,23 @@ import constant from './constant';
 import bodies from './body';
 import variable from './variable';
 
-export const calc = function(body) {
-  if (!body.isPrepared) {
-    prepare(body);
-    body.isPrepared = true;
-  }
-  reduce(body);
-};
-
 export const reduce = function(body) {
-  var p = [],
-    q = [],
-    e = [],
-    m = [],
-    temp = [],
-    polar = []; // double
-  var T, vpi, epoch; // double
-  var cosdec, sindec, cosra, sinra; // double
-  var i; // int
-
-  /* Convert from RA and Dec to equatorial rectangular direction
-   */
+  /* Convert from RA and Dec to equatorial rectangular direction */
+  const q = [];
+  const m = [];
+  let epoch;
   // loop:
   do {
-    cosdec = Math.cos(body.dec);
-    sindec = Math.sin(body.dec);
-    cosra = Math.cos(body.ra);
-    sinra = Math.sin(body.ra);
+    const cosdec = Math.cos(body.dec);
+    const sindec = Math.sin(body.dec);
+    const cosra = Math.cos(body.ra);
+    const sinra = Math.sin(body.ra);
     q[0] = cosra * cosdec;
     q[1] = sinra * cosdec;
     q[2] = sindec;
 
     /* space motion */
-    vpi = 21.094952663 * body.velocity * body.parallax;
+    const vpi = 21.094952663 * body.velocity * body.parallax;
     m[0] = -body.raMotion * cosdec * sinra - body.decMotion * sindec * cosra + vpi * q[0];
 
     m[1] = body.raMotion * cosdec * cosra - body.decMotion * sindec * sinra + vpi * q[1];
@@ -58,24 +42,25 @@ export const reduce = function(body) {
     }
   } while (epoch == constant.b1950);
 
-  for (i = 0; i < 3; i++) {
+  const e = [];
+  for (let i = 0; i < 3; i++) {
     e[i] = bodies.earth.position.rect[i];
   }
 
   /* precess the earth to the star epoch */
   precessCalc(e, { julian: epoch }, -1);
 
-  /* Correct for proper motion and parallax
-   */
-  T = (bodies.earth.position.date.julian - epoch) / 36525.0;
-  for (i = 0; i < 3; i++) {
+  /* Correct for proper motion and parallax */
+  const T = (bodies.earth.position.date.julian - epoch) / 36525.0;
+  const p = [];
+  for (let i = 0; i < 3; i++) {
     p[i] = q[i] + T * m[i] - body.parallax * e[i];
   }
 
   /* precess the star to J2000 */
   precessCalc(p, { julian: epoch }, 1);
   /* reset the earth to J2000 */
-  for (i = 0; i < 3; i++) {
+  for (let i = 0; i < 3; i++) {
     e[i] = bodies.earth.position.rect[i];
   }
 
@@ -84,9 +69,9 @@ export const reduce = function(body) {
    */
   angles(p, p, e);
 
-  /* Find unit vector from earth in direction of object
-   */
-  for (i = 0; i < 3; i++) {
+  /* Find unit vector from earth in direction of object */
+  const temp = [];
+  for (let i = 0; i < 3; i++) {
     p[i] /= variable.EO;
     temp[i] = p[i];
   }
@@ -94,18 +79,17 @@ export const reduce = function(body) {
   body.position = {};
   body.position.approxVisualMagnitude = body.magnitude;
 
-  /* Report astrometric position
-   */
+  /* Report astrometric position */
+  const polar = [];
   body.position.astrimetricJ2000 = showrd(p, polar);
 
-  /* Also in 1950 coordinates
-   */
+  /* Also in 1950 coordinates */
   precessCalc(temp, { julian: constant.b1950 }, -1);
 
   body.position.astrimetricB1950 = showrd(temp, polar);
 
   /* For equinox of date: */
-  for (i = 0; i < 3; i++) {
+  for (let i = 0; i < 3; i++) {
     temp[i] = p[i];
   }
 
@@ -117,29 +101,22 @@ export const reduce = function(body) {
    */
   body.position.deflection = deflectionCalc(p, p, e); // relativity
 
-  /* Correct for annual aberration
-   */
+  /* Correct for annual aberration */
   body.position.aberration = aberrationCalc(p);
 
-  /* Precession of the equinox and ecliptic
-   * from J2000.0 to ephemeris date
-   */
+  /* Precession of the equinox and ecliptic from J2000.0 to ephemeris date */
   precessCalc(p, bodies.earth.position.date, -1);
 
-  /* Ajust for nutation
-   * at current ecliptic.
-   */
+  /* Ajust for nutation at current ecliptic. */
   epsilonCalc(bodies.earth.position.date);
   nutationCalc(bodies.earth.position.date, p);
 
-  /* Display the final apparent R.A. and Dec.
-   * for equinox of date.
-   */
+  /* Display the final apparent R.A. and Dec. for equinox of date. */
   body.position.apparent = showrd(p, polar);
 
   // prepare for display
   body.position.apparentLongitude = body.position.apparent.dRA;
-  var dmsLongitude = dms(body.position.apparentLongitude);
+  const dmsLongitude = dms(body.position.apparentLongitude);
   body.position.apparentLongitudeString =
     dmsLongitude.degree +
     '\u00B0' +
@@ -167,15 +144,12 @@ export const reduce = function(body) {
 };
 
 export const prepare = function(body) {
-  var sign; // int
-  var x, z; // double
-
   /* Read in the ASCII string data and name of the object */
   //  sscanf( s, "%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %s",
   //    &body->epoch, &rh, &rm, &rs, &dd, &dm, &ds,
   //  &body->mura, &body->mudec, &body->v, &body->px, &body->mag, &body->obname[0] );
 
-  x = body.epoch;
+  let x = body.epoch;
   if (x == 2000.0) {
     x = constant.j2000;
   } else if (x == 1950.0) {
@@ -190,21 +164,17 @@ export const prepare = function(body) {
   /* read the right ascension */
   if (!body.ra) {
     body.ra =
-      (2.0 *
-        Math.PI *
+      (constant.TPI *
         (3600.0 * body.hmsRa.hours + 60.0 * body.hmsRa.minutes + body.hmsRa.seconds)) /
       86400.0;
   }
 
   /* read the declination */
   if (!body.dec) {
-    sign = 1;
-
     /* the '-' sign may appaer at any part of hmsDec */
-    if (body.hmsDec.hours < 0.0 || body.hmsDec.minutes < 0.0 || body.hmsDec.seconds < 0.0) {
-      sign = -1;
-    }
-    z =
+    const sign =
+      body.hmsDec.hours < 0.0 || body.hmsDec.minutes < 0.0 || body.hmsDec.seconds < 0.0 ? -1 : 1;
+    let z =
       (3600.0 * Math.abs(body.hmsDec.hours) +
         60.0 * Math.abs(body.hmsDec.minutes) +
         Math.abs(body.hmsDec.seconds)) /
@@ -217,7 +187,7 @@ export const prepare = function(body) {
 
   body.raMotion *= 15.0 / constant.RTS; /* s/century -> "/century -> rad/century */
   body.decMotion /= constant.RTS;
-  z = body.parallax;
+  const z = body.parallax;
   if (z < 1.0) {
     if (z <= 0.0) {
       body.parallax = 0.0;
@@ -227,4 +197,12 @@ export const prepare = function(body) {
   } else {
     body.parallax = 1.0 / (constant.RTS * z); /* parsecs -> radians */
   }
+};
+
+export const calc = function(body) {
+  if (!body.isPrepared) {
+    prepare(body);
+    body.isPrepared = true;
+  }
+  reduce(body);
 };

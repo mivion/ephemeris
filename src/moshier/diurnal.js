@@ -12,25 +12,21 @@ const diurnal = {
  * annual aberration.  However, the correction is small.
  */
 export const aberration = function(last, ra, dec, result) {
-  var lha, coslha, sinlha, cosdec, sindec; // double
-  var coslat, N, D; // double
-
   result = result || {};
   result.ra = ra;
   result.dec = dec;
 
-  lha = last - result.ra;
-  coslha = Math.cos(lha);
-  sinlha = Math.sin(lha);
-  cosdec = Math.cos(result.dec);
-  sindec = Math.sin(result.dec);
-  coslat = Math.cos(constant.DTR * variable.tlat);
+  const lha = last - result.ra;
+  const coslha = Math.cos(lha);
+  const sinlha = Math.sin(lha);
+  const cosdec = Math.cos(result.dec);
+  const sindec = Math.sin(result.dec);
+  const coslat = Math.cos(constant.DTR * variable.tlat);
 
-  if (cosdec != 0.0) N = (1.5472e-6 * variable.trho * coslat * coslha) / cosdec;
-  else N = 0.0;
+  const N = cosdec != 0.0 ? (1.5472e-6 * variable.trho * coslat * coslha) / cosdec : 0.0;
   result.ra += N;
 
-  D = 1.5472e-6 * variable.trho * coslat * sinlha * sindec;
+  const D = 1.5472e-6 * variable.trho * coslat * sinlha * sindec;
   result.dec += D;
 
   result.dRA = (constant.RTS * N) / 15.0;
@@ -41,14 +37,6 @@ export const aberration = function(last, ra, dec, result) {
 
 /* Diurnal parallax, AA page D3 */
 export const parallax = function(last, ra, dec, dist, result) {
-  var cosdec, sindec, coslat, sinlat; // double
-  var p = [],
-    dp = [],
-    x,
-    y,
-    z,
-    D; // double
-
   result = result || {};
   result.ra = ra;
   result.dec = dec;
@@ -59,33 +47,35 @@ export const parallax = function(last, ra, dec, dist, result) {
   }
 
   diurnal.DISFAC = constant.au / (0.001 * constant.aearth);
-  cosdec = Math.cos(result.dec);
-  sindec = Math.sin(result.dec);
+  const cosdec = Math.cos(result.dec);
+  const sindec = Math.sin(result.dec);
 
   /* Observer's astronomical latitude */
-  x = variable.tlat * constant.DTR;
-  coslat = Math.cos(x);
-  sinlat = Math.sin(x);
+  const xx = variable.tlat * constant.DTR;
+  const coslat = Math.cos(xx);
+  const sinlat = Math.sin(xx);
 
   /* Convert to equatorial rectangular coordinates in which unit distance = earth radius */
-  D = dist * diurnal.DISFAC;
+  const D = dist * diurnal.DISFAC;
+  const p = [];
   p[0] = D * cosdec * Math.cos(result.ra);
   p[1] = D * cosdec * Math.sin(result.ra);
   p[2] = D * sindec;
 
+  const dp = [];
   dp[0] = -variable.trho * coslat * Math.cos(last);
   dp[1] = -variable.trho * coslat * Math.sin(last);
   dp[2] = -variable.trho * sinlat;
 
-  x = p[0] + dp[0];
-  y = p[1] + dp[1];
-  z = p[2] + dp[2];
-  D = x * x + y * y + z * z;
-  D = Math.sqrt(D); /* topocentric distance */
+  const x = p[0] + dp[0];
+  const y = p[1] + dp[1];
+  const z = p[2] + dp[2];
+  const D2 = x * x + y * y + z * z;
+  const D3 = Math.sqrt(D2); /* topocentric distance */
 
   /* recompute ra and dec */
   result.ra = zatan2(x, y);
-  result.dec = Math.asin(z / D);
+  result.dec = Math.asin(z / D3);
   showcor(p, dp, result);
   return result;
 };

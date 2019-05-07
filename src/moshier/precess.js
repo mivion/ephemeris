@@ -46,11 +46,7 @@ const precess = {
  * to go from J2000 to J2.
  */
 export const calc = function(R, date, direction) {
-  var A, B, T, pA, W, z; // double
-  var x = []; // double
-  var p; // double array
-  var p_i = 0;
-  var i; // int
+  let p_i = 0;
 
   if (date.julian == constant.j2000) {
     return;
@@ -58,7 +54,7 @@ export const calc = function(R, date, direction) {
   /* Each precession angle is specified by a polynomial in
    * T = Julian centuries from J2000.0.  See AA page B18.
    */
-  T = (date.julian - constant.j2000) / 36525.0;
+  let T = (date.julian - constant.j2000) / 36525.0;
 
   /* Implementation by elementary rotations using Laskar's expansions.
    * First rotate about the x axis from the initial equator
@@ -69,86 +65,72 @@ export const calc = function(R, date, direction) {
   } else {
     epsilonCalc({ julian: constant.j2000 }); /* From J2000 */
   }
+  const x = []; // double
   x[0] = R[0];
-  z = epsilon.coseps * R[1] + epsilon.sineps * R[2];
   x[2] = -epsilon.sineps * R[1] + epsilon.coseps * R[2];
-  x[1] = z;
+  x[1] = epsilon.coseps * R[1] + epsilon.sineps * R[2];
 
   /* Precession in longitude
    */
   T /= 10.0; /* thousands of years */
-  p = precess.pAcof;
-  pA = p[p_i++]; //*p++;
-  for (i = 0; i < 9; i++) {
-    pA = pA * T + p[p_i++]; //*p++;
+  const pp1 = precess.pAcof;
+  let pA = pp1[p_i++]; //*p++;
+  for (let i = 0; i < 9; i++) {
+    pA = pA * T + pp1[p_i++]; //*p++;
   }
   pA *= constant.STR * T;
 
-  /* Node of the moving ecliptic on the J2000 ecliptic.
-   */
-  p = precess.nodecof;
+  /* Node of the moving ecliptic on the J2000 ecliptic. */
+  const pp2 = precess.nodecof;
   p_i = 0;
-  W = p[p_i++]; //*p++;
-  for (i = 0; i < 10; i++) {
-    W = W * T + p[p_i++]; //*p++;
+  let W = pp2[p_i++]; //*p++;
+  for (let i = 0; i < 10; i++) {
+    W = W * T + pp2[p_i++]; //*p++;
   }
 
-  /* Rotate about z axis to the node.
-   */
-  if (direction == 1) {
-    z = W + pA;
-  } else {
-    z = W;
-  }
-  B = Math.cos(z);
-  A = Math.sin(z);
-  z = B * x[0] + A * x[1];
-  x[1] = -A * x[0] + B * x[1];
-  x[0] = z;
+  /* Rotate about z axis to the node. */
+  const zz1 = direction == 1 ? W + pA : W;
+  const BB1 = Math.cos(zz1);
+  const AA1 = Math.sin(zz1);
+  const tt1 = BB1 * x[0] + AA1 * x[1];
+  x[1] = -AA1 * x[0] + BB1 * x[1];
+  x[0] = tt1;
 
-  /* Rotate about new x axis by the inclination of the moving
-   * ecliptic on the J2000 ecliptic.
-   */
-  p = precess.inclcof;
+  /* Rotate about new x axis by the inclination of the moving ecliptic on the J2000 ecliptic. */
+  const pp3 = precess.inclcof;
   p_i = 0;
-  z = p[p_i++]; //*p++;
-  for (i = 0; i < 10; i++) {
-    z = z * T + p[p_i++]; //*p++;
+  let zz2 = pp3[p_i++]; //*p++;
+  for (let i = 0; i < 10; i++) {
+    zz2 = zz2 * T + pp3[p_i++]; //*p++;
   }
   if (direction == 1) {
-    z = -z;
+    zz2 = -zz2;
   }
-  B = Math.cos(z);
-  A = Math.sin(z);
-  z = B * x[1] + A * x[2];
-  x[2] = -A * x[1] + B * x[2];
-  x[1] = z;
+  const BB2 = Math.cos(zz2);
+  const AA2 = Math.sin(zz2);
+  const tt2 = BB2 * x[1] + AA2 * x[2];
+  x[2] = -AA2 * x[1] + BB2 * x[2];
+  x[1] = tt2;
 
-  /* Rotate about new z axis back from the node.
-   */
-  if (direction == 1) {
-    z = -W;
-  } else {
-    z = -W - pA;
-  }
-  B = Math.cos(z);
-  A = Math.sin(z);
-  z = B * x[0] + A * x[1];
-  x[1] = -A * x[0] + B * x[1];
-  x[0] = z;
+  /* Rotate about new z axis back from the node. */
+  const zz3 = direction == 1 ? -W : -W - pA;
+  const BB3 = Math.cos(zz3);
+  const AA3 = Math.sin(zz3);
+  const tt3 = BB3 * x[0] + AA3 * x[1];
+  x[1] = -AA3 * x[0] + BB3 * x[1];
+  x[0] = tt3;
 
-  /* Rotate about x axis to final equator.
-   */
+  /* Rotate about x axis to final equator. */
   if (direction == 1) {
     epsilonCalc({ julian: constant.j2000 });
   } else {
     epsilonCalc(date);
   }
-  z = epsilon.coseps * x[1] - epsilon.sineps * x[2];
+  const z = epsilon.coseps * x[1] - epsilon.sineps * x[2];
   x[2] = epsilon.sineps * x[1] + epsilon.coseps * x[2];
   x[1] = z;
 
-  for (i = 0; i < 3; i++) {
+  for (let i = 0; i < 3; i++) {
     R[i] = x[i];
   }
 };

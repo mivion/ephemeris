@@ -1,9 +1,9 @@
 export const copy = function(target /*, source ... */) {
   if (target) {
-    for (var i = arguments.length - 1; i > 0; i--) {
-      var source = arguments[i];
+    for (let i = arguments.length - 1; i > 0; i--) {
+      const source = arguments[i];
       if (source && source.hasOwnProperty) {
-        for (var key in source) {
+        for (const key in source) {
           if (source.hasOwnProperty(key)) {
             target[key] = source[key];
           }
@@ -15,7 +15,7 @@ export const copy = function(target /*, source ... */) {
 };
 
 export const is = function(object, type) {
-  var typeName = Object.prototype.toString.call(object).slice(8, -1);
+  const typeName = Object.prototype.toString.call(object).slice(8, -1);
   return object !== undefined && object !== null && type.name === typeName;
 };
 
@@ -25,8 +25,8 @@ export const make = function(context, path) {
     context = document;
   }
   if (path) {
-    var paths = path.split('.');
-    var key = paths.shift();
+    const paths = path.split('.');
+    const key = paths.shift();
     context[key] = context[key] || {};
     context = make(context[key], paths.join('.'));
   }

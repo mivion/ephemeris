@@ -13,19 +13,15 @@ const altaz = {
 };
 
 export const calc = function(pol, date, result) {
-  var dec, cosdec, sindec, lha, coslha, sinlha; // double
-  var ra, dist, last, alt, az, coslat, sinlat; // double
-  var N, D, x, y, z; // double
-
   result = result || {};
 
-  ra = pol[0];
-  dec = pol[1];
-  dist = pol[2];
+  let ra = pol[0];
+  let dec = pol[1];
+  const dist = pol[2];
 
   /* local apparent sidereal time, seconds converted to radians */
-  last = (siderialCalc(date, input.tlong) * constant.DTR) / 240.0;
-  lha = last - ra; /* local hour angle, radians */
+  const last = (siderialCalc(date, input.tlong) * constant.DTR) / 240.0;
+  let lha = last - ra; /* local hour angle, radians */
   result.dLocalApparentSiderialTime = last;
   result.localApparentSiderialTime = hms(last);
 
@@ -60,21 +56,21 @@ export const calc = function(pol, date, result) {
   /*diurab( last, &ra, &dec );*/
 
   /* Convert ra and dec to altitude and azimuth */
-  cosdec = Math.cos(dec);
-  sindec = Math.sin(dec);
+  const cosdec = Math.cos(dec);
+  let sindec = Math.sin(dec);
   lha = last - ra;
-  coslha = Math.cos(lha);
-  sinlha = Math.sin(lha);
+  let coslha = Math.cos(lha);
+  let sinlha = Math.sin(lha);
 
   /* Use the geodetic latitude for altitude and azimuth */
-  x = constant.DTR * input.glat;
-  coslat = Math.cos(x);
-  sinlat = Math.sin(x);
+  let x = constant.DTR * input.glat;
+  const coslat = Math.cos(x);
+  const sinlat = Math.sin(x);
 
-  N = -cosdec * sinlha;
-  D = sindec * coslat - cosdec * coslha * sinlat;
-  az = constant.RTD * zatan2(D, N);
-  alt = sindec * sinlat + cosdec * coslha * coslat;
+  const N = -cosdec * sinlha;
+  let D = sindec * coslat - cosdec * coslha * sinlat;
+  const az = constant.RTD * zatan2(D, N);
+  let alt = sindec * sinlat + cosdec * coslha * coslat;
   alt = constant.RTD * Math.asin(alt);
 
   /* Store results */
@@ -89,9 +85,9 @@ export const calc = function(pol, date, result) {
   altaz.refracted_elevation = alt;
 
   /* Convert back to R.A. and Dec. */
-  y = Math.sin(constant.DTR * alt);
+  let y = Math.sin(constant.DTR * alt);
   x = Math.cos(constant.DTR * alt);
-  z = Math.cos(constant.DTR * az);
+  let z = Math.cos(constant.DTR * az);
   sinlha = -x * Math.sin(constant.DTR * az);
   coslha = y * coslat - x * z * sinlat;
   sindec = y * sinlat + x * z * coslat;

@@ -3,49 +3,34 @@ import { calc as precessCalc } from './precess';
 import epsilon, { calc as epsilonCalc } from './epsilon';
 
 export const calc = function(pp, date, polar, ofdate, result) {
-  var s = [],
-    x,
-    y,
-    z,
-    yy,
-    zz,
-    r; // double
-  var i; // int
-
   result = result || {};
 
-  /* Make local copy of position vector
-   * and calculate radius.
-   */
-  r = 0.0;
-  for (i = 0; i < 3; i++) {
-    x = pp[i];
+  /* Make local copy of position vector and calculate radius. */
+  const s = [];
+  let r = 0.0;
+  for (let i = 0; i < 3; i++) {
+    const x = pp[i];
     s[i] = x;
     r += x * x;
   }
   r = Math.sqrt(r);
 
-  /* Precess to equinox of date J
-   */
+  /* Precess to equinox of date J */
   if (ofdate) {
     precessCalc(s, date, -1);
   }
 
-  /* Convert from equatorial to ecliptic coordinates
-   */
+  /* Convert from equatorial to ecliptic coordinates */
   epsilonCalc(date);
-  yy = s[1];
-  zz = s[2];
-  x = s[0];
-  y = epsilon.coseps * yy + epsilon.sineps * zz;
-  z = -epsilon.sineps * yy + epsilon.coseps * zz;
-
-  yy = zatan2(x, y);
-  zz = Math.asin(z / r);
+  const yy = s[1];
+  const zz = s[2];
+  const x = s[0];
+  const y = epsilon.coseps * yy + epsilon.sineps * zz;
+  const z = -epsilon.sineps * yy + epsilon.coseps * zz;
 
   // longitude and latitude in decimal
-  polar[0] = yy;
-  polar[1] = zz;
+  polar[0] = zatan2(x, y);
+  polar[1] = Math.asin(z / r);
   polar[2] = r;
 
   // longitude and latitude in h,m,s

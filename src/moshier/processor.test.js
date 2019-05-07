@@ -20,7 +20,7 @@ describe('Ephemeris', () => {
 
   // test the moon
   describe('Moon', () => {
-    var body, date;
+    let body, date;
 
     beforeAll(() => {
       date = { year: 1986, month: 1, day: 1, hours: 1, minutes: 52, seconds: 0 };
@@ -82,7 +82,7 @@ describe('Ephemeris', () => {
       expect(body.position.apparent.dDec).toBeCloseTo(0.23362556081599462, 16);
     });
 
-    // TODO: fix altaz
+    // TODO: fix altaz?
     // test('diurnal aberation RA', () => {
     //   expect(body.position.altaz.diurnalAberation.ra).toBeCloseTo(2.7844805966970942, 16);
     // });
@@ -98,7 +98,7 @@ describe('Ephemeris', () => {
     // });
 
     // test('atmospheric refraction degree', () => {
-    //   expect(body.position.altaz.atmosphericRefraction.deg).toBeCloseTo(0.635656879986131, 15);
+    //   expect(body.position.altaz.atmosphericRefraction.deg).toBeCloseTo(0.6356568799861307, 15);
     // });
     // test('atmospheric refraction RA', () => {
     //   expect(body.position.altaz.atmosphericRefraction.dRA).toBeCloseTo(-112.9014532718829, 13);
@@ -108,7 +108,7 @@ describe('Ephemeris', () => {
     // });
 
     // test('topocentric altitude', () => {
-    //   expect(body.position.altaz.topocentric.altitude).toBeCloseTo(-0.29893797708468, 14);
+    //   expect(body.position.altaz.topocentric.altitude).toBeCloseTo(-0.2989379770846806, 14);
     // });
     // test('topocentric RA', () => {
     //   expect(body.position.altaz.topocentric.ra).toBeCloseTo(-3.4946025585162133, 16);
@@ -123,7 +123,7 @@ describe('Ephemeris', () => {
 
   // test the sun
   describe('Sun', () => {
-    var body, date;
+    let body, date;
 
     beforeAll(() => {
       date = { year: 1986, month: 1, day: 1, hours: 16, minutes: 47, seconds: 0 };
@@ -175,7 +175,7 @@ describe('Ephemeris', () => {
       expect(body.position.apparentLongitude).toBeCloseTo(280.9781321178379, 13);
     });
 
-    // TODO: fix altaz
+    // TODO: fix altaz?
     // test('diurnal parallax RA', () => {
     //   expect(body.position.altaz.diurnalParallax.ra).toBeCloseTo(4.920758543965699, 15);
     // });
@@ -209,7 +209,7 @@ describe('Ephemeris', () => {
 
   // test Sirius
   describe('Sirius', () => {
-    var body, date;
+    let body, date;
 
     beforeAll(() => {
       date = { year: 1986, month: 1, day: 1, hours: 0, minutes: 0, seconds: 0 };
@@ -239,7 +239,7 @@ describe('Ephemeris', () => {
       expect(body.position.astrimetricDate.dDec).toBeCloseTo(-0.29140596467162816, 16);
     });
 
-    // TODO: fix altaz
+    // TODO: fix altaz?
     // test('topocentric altitude', () => {
     //   expect(body.position.altaz.topocentric.altitude).toBeCloseTo(1.7060953673767152, 16);
     // });

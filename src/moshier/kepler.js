@@ -6,14 +6,41 @@ import constant from './constant';
 import input from './input';
 import variable from './variable';
 
-export const calc = function(date, body, rect, polar) {
-  var alat, E, M, W, temp; // double
-  var epoch, inclination, ascnode, argperih; // double
-  var meandistance, dailymotion, eccent, meananomaly; // double
-  var r, coso, sino, cosa; // double
+/* Adjust position from Earth-Moon barycenter to Earth
+ *
+ * J = Julian day number
+ * emb = Equatorial rectangular coordinates of EMB.
+ * return = Earth's distance to the Sun (au)
+ */
+export const embofs = function(date, ea) {
+  const pm = [];
+  const polm = [];
 
+  /* Compute the vector Moon - Earth.  */
+  gplanMoon(date, pm, polm);
+
+  /* Precess the lunar position
+   * to ecliptic and equinox of J2000.0
+   */
+  precessCalc(pm, date, 1);
+
+  /* Adjust the coordinates of the Earth
+   */
+  const a = 1.0 / (constant.emrat + 1.0);
+  let b = 0.0;
+  for (let i = 0; i < 3; i++) {
+    ea[i] = ea[i] - a * pm[i];
+    b = b + ea[i] * ea[i];
+  }
+  /* Sun-Earth distance.  */
+  return Math.sqrt(b);
+};
+
+export const calc = function(date, body, rect, polar) {
   rect = rect || [];
   polar = polar || [];
+
+  let E, W, r;
 
   /* Call program to compute position, if one is supplied.  */
   if (body.ptable) {
@@ -31,27 +58,28 @@ export const calc = function(date, body, rect, polar) {
     body.equinox = { julian: constant.j2000 };
     // goto kepdon;
   } else {
-    /* Decant the parameters from the data structure
-     */
-    epoch = body.epoch;
-    inclination = body.inclination;
-    ascnode = body.node * constant.DTR;
-    argperih = body.perihelion;
-    meandistance = body.semiAxis; /* semimajor axis */
-    dailymotion = body.dailyMotion;
-    eccent = body.eccentricity;
-    meananomaly = body.anomaly;
+    let alat;
+
+    /* Decant the parameters from the data structure */
+    const epoch = body.epoch;
+    let inclination = body.inclination;
+    const ascnode = body.node * constant.DTR;
+    const argperih = body.perihelion;
+    let meandistance = body.semiAxis; /* semimajor axis */
+    let dailymotion = body.dailyMotion;
+    const eccent = body.eccentricity;
+    let meananomaly = body.anomaly;
     /* Check for parabolic orbit. */
     if (eccent == 1.0) {
       /* meandistance = perihelion distance, q
        * epoch = perihelion passage date
        */
-      temp = meandistance * Math.sqrt(meandistance);
+      let temp = meandistance * Math.sqrt(meandistance);
       W = ((date.julian - epoch) * 0.0364911624) / temp;
       /* The constant above is 3 k / sqrt(2),
        * k = Gaussian gravitational constant = 0.01720209895 . */
-      E = 0.0;
-      M = 1.0;
+      let E = 0.0;
+      let M = 1.0;
       while (Math.abs(M) > 1.0e-11) {
         temp = E * E;
         temp = (2.0 * E * temp + W) / (3.0 * (1.0 + temp));
@@ -74,18 +102,16 @@ export const calc = function(date, body, rect, polar) {
          * the "mean distance"  a = q/(e-1).
          */
         meandistance = meandistance / (eccent - 1.0);
-        temp = meandistance * Math.sqrt(meandistance);
-        W = ((date.julian - epoch) * 0.01720209895) / temp;
+        W = ((date.julian - epoch) * 0.01720209895) / (meandistance * Math.sqrt(meandistance));
         /* solve M = -E + e sinh E */
         E = W / (eccent - 1.0);
-        M = 1.0;
+        let M = 1.0;
         while (Math.abs(M) > 1.0e-11) {
           M = -E + eccent * sinh(E) - W;
           E += M / (1.0 - eccent * cosh(E));
         }
         r = meandistance * (-1.0 + eccent * cosh(E));
-        temp = (eccent + 1.0) / (eccent - 1.0);
-        M = Math.sqrt(temp) * tanh(0.5 * E);
+        M = Math.sqrt((eccent + 1.0) / (eccent - 1.0)) * tanh(0.5 * E);
         M = 2.0 * Math.atan(M);
         alat = M + constant.DTR * argperih;
         // goto parabcon;
@@ -104,7 +130,7 @@ export const calc = function(date, body, rect, polar) {
          * perihelion passage and Julian date J.
          * It is the mean anomaly at time J.
          */
-        M = constant.DTR * (meananomaly + dailymotion);
+        let M = constant.DTR * (meananomaly + dailymotion);
         M = modtp(M);
         /* If mean longitude was calculated, adjust it also
          * for motion since epoch of elements.
@@ -131,7 +157,7 @@ export const calc = function(date, body, rect, polar) {
          */
 
         E = M; /* Initial guess is same as circular orbit. */
-        temp = 1.0;
+        let temp = 1.0;
         do {
           /* The approximate area swept out in the ellipse */
           temp =
@@ -156,8 +182,7 @@ export const calc = function(date, body, rect, polar) {
         temp = Math.sqrt((1.0 + eccent) / (1.0 - eccent));
         W = 2.0 * Math.atan(temp * Math.tan(0.5 * E));
 
-        /* The true anomaly.
-         */
+        /* The true anomaly. */
         W = modtp(W);
 
         meananomaly *= constant.DTR;
@@ -181,14 +206,13 @@ export const calc = function(date, body, rect, polar) {
      * is given by
      *   tan( longitude - ascnode )  =  cos( inclination ) * tan( alat ).
      */
-    coso = Math.cos(alat);
-    sino = Math.sin(alat);
+    const coso = Math.cos(alat);
+    const sino = Math.sin(alat);
     inclination *= constant.DTR;
     W = sino * Math.cos(inclination);
     E = zatan2(coso, W) + ascnode;
 
-    /* The ecliptic latitude of the object
-     */
+    /* The ecliptic latitude of the object */
     W = sino * Math.sin(inclination);
     W = Math.asin(W);
   }
@@ -198,7 +222,7 @@ export const calc = function(date, body, rect, polar) {
    * using the perturbed latitude.
    */
   rect[2] = r * Math.sin(W);
-  cosa = Math.cos(W);
+  const cosa = Math.cos(W);
   rect[1] = r * cosa * Math.sin(E);
   rect[0] = r * cosa * Math.cos(E);
 
@@ -208,19 +232,14 @@ export const calc = function(date, body, rect, polar) {
    */
   epsilonCalc(body.equinox);
   W = epsilon.coseps * rect[1] - epsilon.sineps * rect[2];
-  M = epsilon.sineps * rect[1] + epsilon.coseps * rect[2];
+  const M = epsilon.sineps * rect[1] + epsilon.coseps * rect[2];
   rect[1] = W;
   rect[2] = M;
 
-  /* Precess the position
-   * to ecliptic and equinox of J2000.0
-   * if not already there.
-   */
+  /* Precess the position to ecliptic and equinox of J2000.0 if not already there. */
   precessCalc(rect, body.equinox, 1);
 
-  /* If earth, adjust from earth-moon barycenter to earth
-   * by AA page E2.
-   */
+  /* If earth, adjust from earth-moon barycenter to earth by AA page E2. */
   if (body.key == 'earth') {
     r = embofs(date, rect); /* see below */
   }
@@ -228,14 +247,13 @@ export const calc = function(date, body, rect, polar) {
   /* Rotate back into the ecliptic.  */
   epsilonCalc({ julian: constant.j2000 });
   W = epsilon.coseps * rect[1] + epsilon.sineps * rect[2];
-  M = -epsilon.sineps * rect[1] + epsilon.coseps * rect[2];
+  const M2 = -epsilon.sineps * rect[1] + epsilon.coseps * rect[2];
 
   /* Convert to polar coordinates */
   E = zatan2(rect[0], W);
-  W = Math.asin(M / r);
+  W = Math.asin(M2 / r);
 
-  /* Output the polar cooordinates
-   */
+  /* Output the polar cooordinates */
   polar[0] = E; /* longitude */
   polar[1] = W; /* latitude */
   polar[2] = r; /* radius */
@@ -250,54 +268,20 @@ export const calc = function(date, body, rect, polar) {
   }
 };
 
-/* Adjust position from Earth-Moon barycenter to Earth
- *
- * J = Julian day number
- * emb = Equatorial rectangular coordinates of EMB.
- * return = Earth's distance to the Sun (au)
- */
-export const embofs = function(date, ea) {
-  var pm = [],
-    polm = []; // double
-  var a, b; // double
-  var i; // int
-
-  /* Compute the vector Moon - Earth.  */
-  gplanMoon(date, pm, polm);
-
-  /* Precess the lunar position
-   * to ecliptic and equinox of J2000.0
-   */
-  precessCalc(pm, date, 1);
-
-  /* Adjust the coordinates of the Earth
-   */
-  a = 1.0 / (constant.emrat + 1.0);
-  b = 0.0;
-  for (i = 0; i < 3; i++) {
-    ea[i] = ea[i] - a * pm[i];
-    b = b + ea[i] * ea[i];
-  }
-  /* Sun-Earth distance.  */
-  return Math.sqrt(b);
-};
-
 export const init = function() {
-  var a, b, fl, co, si, u; // double
-
-  u = input.glat * constant.DTR;
+  const u1 = input.glat * constant.DTR;
 
   /* Reduction from geodetic latitude to geocentric latitude
    * AA page K5
    */
-  co = Math.cos(u);
-  si = Math.sin(u);
-  fl = 1.0 - 1.0 / constant.flat;
+  const co = Math.cos(u1);
+  let si = Math.sin(u1);
+  let fl = 1.0 - 1.0 / constant.flat;
   fl = fl * fl;
   si = si * si;
-  u = 1.0 / Math.sqrt(co * co + fl * si);
-  a = constant.aearth * u + input.height;
-  b = constant.aearth * fl * u + input.height;
+  const u2 = 1.0 / Math.sqrt(co * co + fl * si);
+  const a = constant.aearth * u2 + input.height;
+  const b = constant.aearth * fl * u2 + input.height;
   variable.trho = Math.sqrt(a * a * co * co + b * b * si);
   variable.tlat = constant.RTD * Math.acos((a * co) / variable.trho);
   if (input.glat < 0.0) {

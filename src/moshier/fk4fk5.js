@@ -31,38 +31,32 @@ const fk4fk5 = {
  * AA page B58.
  */
 export const calc = function(p, m, el) {
-  var a, b, c; // double
-  var u, v; // double array
-  var R = []; // double
-  var i, j; // int
-
   /* Note the direction vector and motion vector
    * are already supplied by rstar.c.
    */
-  a = 0.0;
-  b = 0.0;
-  for (i = 0; i < 3; i++) {
+  let a = 0.0;
+  let b = 0.0;
+  for (let i = 0; i < 3; i++) {
     m[i] *= constant.RTS; /* motion must be in arc seconds per century */
     a += fk4fk5.A[i] * p[i];
     b += fk4fk5.Ad[i] * p[i];
   }
-  /* Remove E terms of aberration from FK4
-   */
-  for (i = 0; i < 3; i++) {
+  /* Remove E terms of aberration from FK4 */
+  const R = [];
+  for (let i = 0; i < 3; i++) {
     R[i] = p[i] - fk4fk5.A[i] + a * p[i];
     R[i + 3] = m[i] - fk4fk5.Ad[i] + b * p[i];
   }
 
-  var u_i = 0;
-  var v_i = 0;
+  let u_i = 0;
+  let v_i = 0;
 
-  /* Perform matrix multiplication
-   */
-  v = fk4fk5.Mat;
-  for (i = 0; i < 6; i++) {
+  /* Perform matrix multiplication */
+  const v = fk4fk5.Mat;
+  for (let i = 0; i < 6; i++) {
     a = 0.0;
-    u = R;
-    for (j = 0; j < 6; j++) {
+    const u = R;
+    for (let j = 0; j < 6; j++) {
       a += u[u_i++] * v[v_i++]; //*u++ * *v++;
     }
     if (i < 3) {
@@ -72,12 +66,10 @@ export const calc = function(p, m, el) {
     }
   }
 
-  /* Transform the answers into J2000 catalogue entries
-   * in radian measure.
-   */
+  /* Transform the answers into J2000 catalogue entries in radian measure. */
   b = p[0] * p[0] + p[1] * p[1];
   a = b + p[2] * p[2];
-  c = a;
+  const c = a;
   a = Math.sqrt(a);
 
   el.ra = zatan2(p[0], p[1]);
@@ -89,15 +81,12 @@ export const calc = function(p, m, el) {
     (m[2] * b - p[2] * (p[0] * m[0] + p[1] * m[1])) / (constant.RTS * c * Math.sqrt(b));
 
   if (el.parallax > 0.0) {
-    c = 0.0;
-    for (i = 0; i < 3; i++) {
-      c += p[i] * m[i];
+    let c1 = 0.0;
+    for (let i = 0; i < 3; i++) {
+      c1 += p[i] * m[i];
     }
-
-    /* divide by RTS to deconvert m (and therefore c)
-     * from arc seconds back to radians
-     */
-    el.velocity = c / (21.094952663 * el.parallax * constant.RTS * a);
+    /* divide by RTS to deconvert m (and therefore c) from arc seconds back to radians */
+    el.velocity = c1 / (21.094952663 * el.parallax * constant.RTS * a);
   }
   el.parallax = el.parallax / a; /* a is dimensionless */
   el.epoch = constant.j2000;

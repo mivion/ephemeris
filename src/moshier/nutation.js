@@ -152,74 +152,34 @@ const nutation = {
   cc: []
 };
 
-/* Nutation -- AA page B20
- * using nutation in longitude and obliquity from nutlo()
- * and obliquity of the ecliptic from epsiln()
- * both calculated for Julian date J.
- *
- * p[] = equatorial rectangular position vector of object for
- * mean ecliptic and equinox of date.
- */
-export const calc = function(date, p) {
-  var ce, se, cl, sl, sino, f; // double
-  var dp = [],
-    p1 = []; // double
-  var i; // int
-  var result;
+/* Prepare lookup table of sin and cos ( i*Lj ) for required multiple angles */
+export const sscc = function(k, arg, n) {
+  const su = Math.sin(arg);
+  const cu = Math.cos(arg);
+  nutation.ss[k] = [];
+  nutation.cc[k] = [];
 
-  calclo(date); /* be sure we calculated nutl and nuto */
-  epsilonCalc(date); /* and also the obliquity of date */
-
-  f = epsilon.eps + nutation.nuto;
-  ce = Math.cos(f);
-  se = Math.sin(f);
-  sino = Math.sin(nutation.nuto);
-  cl = Math.cos(nutation.nutl);
-  sl = Math.sin(nutation.nutl);
-
-  /* Apply adjustment
-   * to equatorial rectangular coordinates of object.
-   *
-   * This is a composite of three rotations: rotate about x axis
-   * to ecliptic of date; rotate about new z axis by the nutation
-   * in longitude; rotate about new x axis back to equator of date
-   * plus nutation in obliquity.
-   */
-  p1[0] = cl * p[0] - sl * epsilon.coseps * p[1] - sl * epsilon.sineps * p[2];
-
-  p1[1] =
-    sl * ce * p[0] +
-    (cl * epsilon.coseps * ce + epsilon.sineps * se) * p[1] -
-    (sino + (1.0 - cl) * epsilon.sineps * ce) * p[2];
-
-  p1[2] =
-    sl * se * p[0] +
-    (sino + (cl - 1.0) * se * epsilon.coseps) * p[1] +
-    (cl * epsilon.sineps * se + epsilon.coseps * ce) * p[2];
-
-  for (i = 0; i < 3; i++) {
-    dp[i] = p1[i] - p[i];
+  nutation.ss[k][0] = su; /* sin(L) */
+  nutation.cc[k][0] = cu; /* cos(L) */
+  let sv = 2.0 * su * cu;
+  let cv = cu * cu - su * su;
+  nutation.ss[k][1] = sv; /* sin(2L) */
+  nutation.cc[k][1] = cv;
+  for (let i = 2; i < n; i++) {
+    const s = su * cv + cu * sv;
+    cv = cu * cv - su * sv;
+    sv = s;
+    nutation.ss[k][i] = sv; /* sin( i+1 L ) */
+    nutation.cc[k][i] = cv;
   }
-
-  result = showcor(p, dp);
-
-  for (i = 0; i < 3; i++) {
-    p[i] = p1[i];
-  }
-
-  return result;
 };
 
-/* Nutation in longitude and obliquity
- * computed at Julian date J.
- */
+/* Nutation in longitude and obliquity computed at Julian date J. */
 export const calclo = function(date) {
-  var f, g, T, T2, T10; // double
-  var MM, MS, FF, DD, OM; // double
-  var cu, su, cv, sv, sw; // double
-  var C, D; // double
-  var i, j, k, k1, m; // int
-  var p; // short array
+  let f, g; // double
+  let cu, su, cv, sv, sw; // double
+  let C, D; // double
+  let i, j, k, k1, m; // int
 
   if (nutation.jdnut.julian == date.julian) return 0;
   nutation.jdnut = date;
@@ -227,38 +187,37 @@ export const calclo = function(date) {
   /* Julian centuries from 2000 January 1.5,
    * barycentric dynamical time
    */
-  T = (date.julian - 2451545.0) / 36525.0;
-  T2 = T * T;
-  T10 = T / 10.0;
+  const T = (date.julian - 2451545.0) / 36525.0;
+  const T2 = T * T;
+  const T10 = T / 10.0;
 
   /* Fundamental arguments in the FK5 reference system.  */
 
   /* longitude of the mean ascending node of the lunar orbit
    * on the ecliptic, measured from the mean equinox of date
    */
-  OM = (mods3600(-6962890.539 * T + 450160.28) + (0.008 * T + 7.455) * T2) * constant.STR;
+  const OM = (mods3600(-6962890.539 * T + 450160.28) + (0.008 * T + 7.455) * T2) * constant.STR;
 
   /* mean longitude of the Sun minus the
    * mean longitude of the Sun's perigee
    */
-  MS = (mods3600(129596581.224 * T + 1287099.804) - (0.012 * T + 0.577) * T2) * constant.STR;
+  const MS = (mods3600(129596581.224 * T + 1287099.804) - (0.012 * T + 0.577) * T2) * constant.STR;
 
   /* mean longitude of the Moon minus the
    * mean longitude of the Moon's perigee
    */
-  MM = (mods3600(1717915922.633 * T + 485866.733) + (0.064 * T + 31.31) * T2) * constant.STR;
+  const MM = (mods3600(1717915922.633 * T + 485866.733) + (0.064 * T + 31.31) * T2) * constant.STR;
 
   /* mean longitude of the Moon minus the
    * mean longitude of the Moon's node
    */
-  FF = (mods3600(1739527263.137 * T + 335778.877) + (0.011 * T - 13.257) * T2) * constant.STR;
+  const FF = (mods3600(1739527263.137 * T + 335778.877) + (0.011 * T - 13.257) * T2) * constant.STR;
 
   /* mean elongation of the Moon from the Sun.
    */
-  DD = (mods3600(1602961601.328 * T + 1072261.307) + (0.019 * T - 6.891) * T2) * constant.STR;
+  const DD = (mods3600(1602961601.328 * T + 1072261.307) + (0.019 * T - 6.891) * T2) * constant.STR;
 
-  /* Calculate sin( i*MM ), etc. for needed multiple angles
-   */
+  /* Calculate sin( i*MM ), etc. for needed multiple angles */
   sscc(0, MM, 3);
   sscc(1, MS, 2);
   sscc(2, FF, 4);
@@ -267,9 +226,9 @@ export const calclo = function(date) {
 
   C = 0.0;
   D = 0.0;
-  p = nutation.nt; /* point to start of table */
+  const p = nutation.nt; /* point to start of table */
 
-  var p_i = 0;
+  let p_i = 0;
 
   for (i = 0; i < 105; i++) {
     /* argument of sine and cosine */
@@ -326,31 +285,56 @@ export const calclo = function(date) {
   nutation.nuto = 0.0001 * constant.STR * D;
 };
 
-/* Prepare lookup table of sin and cos ( i*Lj )
- * for required multiple angles
+/* Nutation -- AA page B20
+ * using nutation in longitude and obliquity from nutlo()
+ * and obliquity of the ecliptic from epsiln()
+ * both calculated for Julian date J.
+ *
+ * p[] = equatorial rectangular position vector of object for
+ * mean ecliptic and equinox of date.
  */
-export const sscc = function(k, arg, n) {
-  var cu, su, cv, sv, s; // double
-  var i; // int
+export const calc = function(date, p) {
+  calclo(date); /* be sure we calculated nutl and nuto */
+  epsilonCalc(date); /* and also the obliquity of date */
 
-  su = Math.sin(arg);
-  cu = Math.cos(arg);
-  nutation.ss[k] = [];
-  nutation.cc[k] = [];
+  const f = epsilon.eps + nutation.nuto;
+  const ce = Math.cos(f);
+  const se = Math.sin(f);
+  const sino = Math.sin(nutation.nuto);
+  const cl = Math.cos(nutation.nutl);
+  const sl = Math.sin(nutation.nutl);
 
-  nutation.ss[k][0] = su; /* sin(L) */
-  nutation.cc[k][0] = cu; /* cos(L) */
-  sv = 2.0 * su * cu;
-  cv = cu * cu - su * su;
-  nutation.ss[k][1] = sv; /* sin(2L) */
-  nutation.cc[k][1] = cv;
-  for (i = 2; i < n; i++) {
-    s = su * cv + cu * sv;
-    cv = cu * cv - su * sv;
-    sv = s;
-    nutation.ss[k][i] = sv; /* sin( i+1 L ) */
-    nutation.cc[k][i] = cv;
+  /* Apply adjustment
+   * to equatorial rectangular coordinates of object.
+   *
+   * This is a composite of three rotations: rotate about x axis
+   * to ecliptic of date; rotate about new z axis by the nutation
+   * in longitude; rotate about new x axis back to equator of date
+   * plus nutation in obliquity.
+   */
+  const p1 = [];
+  p1[0] = cl * p[0] - sl * epsilon.coseps * p[1] - sl * epsilon.sineps * p[2];
+  p1[1] =
+    sl * ce * p[0] +
+    (cl * epsilon.coseps * ce + epsilon.sineps * se) * p[1] -
+    (sino + (1.0 - cl) * epsilon.sineps * ce) * p[2];
+  p1[2] =
+    sl * se * p[0] +
+    (sino + (cl - 1.0) * se * epsilon.coseps) * p[1] +
+    (cl * epsilon.sineps * se + epsilon.coseps * ce) * p[2];
+
+  const dp = [];
+  for (let i = 0; i < 3; i++) {
+    dp[i] = p1[i] - p[i];
   }
+
+  const result = showcor(p, dp);
+
+  for (let i = 0; i < 3; i++) {
+    p[i] = p1[i];
+  }
+
+  return result;
 };
 
 export default nutation;

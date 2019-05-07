@@ -42,20 +42,38 @@ const gplan = {
   pA_precession: 0
 };
 
+/* Prepare lookup table of sin and cos ( i*Lj ) for required multiple angles */
+export const sscc = function(k, arg, n) {
+  const su = Math.sin(arg);
+  const cu = Math.cos(arg);
+  gplan.ss[k] = [];
+  gplan.cc[k] = [];
+
+  gplan.ss[k][0] = su; /* sin(L) */
+  gplan.cc[k][0] = cu; /* cos(L) */
+  let sv = 2.0 * su * cu;
+  let cv = cu * cu - su * su;
+  gplan.ss[k][1] = sv; /* sin(2L) */
+  gplan.cc[k][1] = cv;
+  for (let i = 2; i < n; i++) {
+    const s = su * cv + cu * sv;
+    cv = cu * cv - su * sv;
+    sv = s;
+    gplan.ss[k][i] = sv; /* sin( i+1 L ) */
+    gplan.cc[k][i] = cv;
+  }
+};
+
 /*
  Routines to chew through tables of perturbations.
 */
 export const calc = function(date, body_ptable, polar) {
-  var su, cu, sv, cv, T; // double
-  var t, sl, sb, sr; // double
-  var i, j, k, m, n, k1, ip, np, nt; // int
-  var p; // char array
-  var pl; // double array
-  var pb; // double array
-  var pr; // double array
+  let su, cu, sv, cv; // double
+  let t, sl, sb, sr; // double
+  let i, j, k, m, k1, ip, np, nt; // int
 
-  T = (date.julian - constant.j2000) / body_ptable.timescale;
-  n = body_ptable.maxargs;
+  const T = (date.julian - constant.j2000) / body_ptable.timescale;
+  const n = body_ptable.maxargs;
   /* Calculate sin( i*MM ), etc. for needed multiple angles.  */
   for (i = 0; i < n; i++) {
     if ((j = body_ptable.max_harmonic[i]) > 0) {
@@ -65,21 +83,21 @@ export const calc = function(date, body_ptable, polar) {
   }
 
   /* Point to start of table of arguments. */
-  p = body_ptable.arg_tbl;
+  const p = body_ptable.arg_tbl;
 
   /* Point to tabulated cosine and sine amplitudes.  */
-  pl = body_ptable.lon_tbl;
-  pb = body_ptable.lat_tbl;
-  pr = body_ptable.rad_tbl;
+  const pl = body_ptable.lon_tbl;
+  const pb = body_ptable.lat_tbl;
+  const pr = body_ptable.rad_tbl;
 
   sl = 0.0;
   sb = 0.0;
   sr = 0.0;
 
-  var p_i = 0;
-  var pl_i = 0;
-  var pb_i = 0;
-  var pr_i = 0;
+  let p_i = 0;
+  let pl_i = 0;
+  let pb_i = 0;
+  let pr_i = 0;
 
   for (;;) {
     /* argument of sine and cosine */
@@ -172,46 +190,17 @@ export const calc = function(date, body_ptable, polar) {
   polar[2] = constant.STR * body_ptable.distance * sr + body_ptable.distance;
 };
 
-/* Prepare lookup table of sin and cos ( i*Lj )
- * for required multiple angles
- */
-export const sscc = function(k, arg, n) {
-  var cu, su, cv, sv, s; // double
-  var i; // int
-
-  su = Math.sin(arg);
-  cu = Math.cos(arg);
-  gplan.ss[k] = [];
-  gplan.cc[k] = [];
-
-  gplan.ss[k][0] = su; /* sin(L) */
-  gplan.cc[k][0] = cu; /* cos(L) */
-  sv = 2.0 * su * cu;
-  cv = cu * cu - su * su;
-  gplan.ss[k][1] = sv; /* sin(2L) */
-  gplan.cc[k][1] = cv;
-  for (i = 2; i < n; i++) {
-    s = su * cv + cu * sv;
-    cv = cu * cv - su * sv;
-    sv = s;
-    gplan.ss[k][i] = sv; /* sin( i+1 L ) */
-    gplan.cc[k][i] = cv;
-  }
-};
-
 /* Compute mean elements at Julian date J.  */
 export const meanElements = function(date) {
-  var x, T, T2; // double
-
   /* Time variables.  T is in Julian centuries.  */
-  T = (date.julian - 2451545.0) / 36525.0;
-  T2 = T * T;
+  const T = (date.julian - 2451545.0) / 36525.0;
+  const T2 = T * T;
 
   /* Mean longitudes of planets (Simon et al, 1994)
    .047" subtracted from constant term for offset to DE403 origin. */
 
   /* Mercury */
-  x = mods3600(538101628.6889819 * T + 908103.213);
+  let x = mods3600(538101628.6889819 * T + 908103.213);
   x += (6.39e-6 * T - 0.0192789) * T2;
   gplan.Args[0] = constant.STR * x;
 
@@ -351,87 +340,76 @@ export const meanElements = function(date) {
  in three variables (e.g., longitude, latitude, radius)
  of the same list of arguments.  */
 export const calc3 = function(date, body_ptable, polar, body_number) {
-  var i, j, k, m, n, k1, ip, np, nt; // int
-  var p; // int array
-  var pl; // double array
-  var pb; // double array
-  var pr; // double array
-
-  var su, cu, sv, cv; // double
-  var T, t, sl, sb, sr; // double
-
   meanElements(date);
 
-  T = (date.julian - constant.j2000) / body_ptable.timescale;
-  n = body_ptable.maxargs;
+  const T = (date.julian - constant.j2000) / body_ptable.timescale;
+  const n = body_ptable.maxargs;
   /* Calculate sin( i*MM ), etc. for needed multiple angles.  */
-  for (i = 0; i < n; i++) {
-    if ((j = body_ptable.max_harmonic[i]) > 0) {
-      sscc(i, gplan.Args[i], j);
-    }
+  for (let i = 0; i < n; i++) {
+    const j = body_ptable.max_harmonic[i];
+    if (j > 0) sscc(i, gplan.Args[i], j);
   }
 
   /* Point to start of table of arguments. */
-  p = body_ptable.arg_tbl;
+  const p = body_ptable.arg_tbl;
   /* Point to tabulated cosine and sine amplitudes.  */
-  pl = body_ptable.lon_tbl;
-  pb = body_ptable.lat_tbl;
-  pr = body_ptable.rad_tbl;
+  const pl = body_ptable.lon_tbl;
+  const pb = body_ptable.lat_tbl;
+  const pr = body_ptable.rad_tbl;
 
-  sl = 0.0;
-  sb = 0.0;
-  sr = 0.0;
+  let sl = 0.0;
+  let sb = 0.0;
+  let sr = 0.0;
 
-  var p_i = 0;
-  var pl_i = 0;
-  var pb_i = 0;
-  var pr_i = 0;
+  let p_i = 0;
+  let pl_i = 0;
+  let pb_i = 0;
+  let pr_i = 0;
 
   for (;;) {
     /* argument of sine and cosine */
     /* Number of periodic arguments. */
-    np = p[p_i++]; //*p++;
+    const np = p[p_i++]; //*p++;
     if (np < 0) break;
     if (np == 0) {
       /* It is a polynomial term.  */
-      nt = p[p_i++]; //*p++;
+      const nt = p[p_i++]; //*p++;
       /* "Longitude" polynomial (phi). */
-      cu = pl[pl_i++]; //*pl++;
-      for (ip = 0; ip < nt; ip++) {
+      let cu = pl[pl_i++]; //*pl++;
+      for (let ip = 0; ip < nt; ip++) {
         cu = cu * T + pl[pl_i++]; //*pl++;
       }
       /*    sl +=  mods3600 (cu); */
       sl += cu;
       /* "Latitude" polynomial (theta). */
       cu = pb[pb_i++]; //*pb++;
-      for (ip = 0; ip < nt; ip++) {
+      for (let ip = 0; ip < nt; ip++) {
         cu = cu * T + pb[pb_i++]; //*pb++;
       }
       sb += cu;
       /* Radius polynomial (psi). */
       cu = pr[pr_i++]; //*pr++;
-      for (ip = 0; ip < nt; ip++) {
+      for (let ip = 0; ip < nt; ip++) {
         cu = cu * T + pr[pr_i++]; //*pr++;
       }
       sr += cu;
       continue;
     }
-    k1 = 0;
-    cv = 0.0;
-    sv = 0.0;
-    for (ip = 0; ip < np; ip++) {
+    let k1 = 0;
+    let cv = 0.0;
+    let sv = 0.0;
+    for (let ip = 0; ip < np; ip++) {
       /* What harmonic.  */
-      j = p[p_i++]; //*p++;
+      const j = p[p_i++]; //*p++;
       /* Which planet.  */
-      m = p[p_i++] - 1; //*p++ - 1;
+      const m = p[p_i++] - 1; //*p++ - 1;
       if (j) {
-        /*        k = abs (j); */
-        if (j < 0) k = -j;
-        else k = j;
+        /* k = abs (j); */
+        let k = j < 0 ? -j : j;
         k -= 1;
-        su = gplan.ss[m][k]; /* sin(k*angle) */
+        let su = gplan.ss[m][k]; /* sin(k*angle) */
         if (j < 0) su = -su;
-        cu = gplan.cc[m][k];
+        const cu = gplan.cc[m][k];
         if (k1 == 0) {
           /* set first angle */
           sv = su;
@@ -439,18 +417,18 @@ export const calc3 = function(date, body_ptable, polar, body_number) {
           k1 = 1;
         } else {
           /* combine angles */
-          t = su * cv + cu * sv;
+          const t = su * cv + cu * sv;
           cv = cu * cv - su * sv;
           sv = t;
         }
       }
     }
     /* Highest power of T.  */
-    nt = p[p_i++]; //*p++;
+    const nt = p[p_i++]; //*p++;
     /* Longitude. */
-    cu = pl[pl_i++]; //*pl++;
-    su = pl[pl_i++]; //*pl++;
-    for (ip = 0; ip < nt; ip++) {
+    let cu = pl[pl_i++]; //*pl++;
+    let su = pl[pl_i++]; //*pl++;
+    for (let ip = 0; ip < nt; ip++) {
       cu = cu * T + pl[pl_i++]; //*pl++;
       su = su * T + pl[pl_i++]; //*pl++;
     }
@@ -458,7 +436,7 @@ export const calc3 = function(date, body_ptable, polar, body_number) {
     /* Latitiude. */
     cu = pb[pb_i++]; //*pb++;
     su = pb[pb_i++]; //*pb++;
-    for (ip = 0; ip < nt; ip++) {
+    for (let ip = 0; ip < nt; ip++) {
       cu = cu * T + pb[pb_i++]; //*pb++;
       su = su * T + pb[pb_i++]; //*pb++;
     }
@@ -466,13 +444,13 @@ export const calc3 = function(date, body_ptable, polar, body_number) {
     /* Radius. */
     cu = pr[pr_i++]; //*pr++;
     su = pr[pr_i++]; //*pr++;
-    for (ip = 0; ip < nt; ip++) {
+    for (let ip = 0; ip < nt; ip++) {
       cu = cu * T + pr[pr_i++]; //*pr++;
       su = su * T + pr[pr_i++]; //*pr++;
     }
     sr += cu * cv + su * sv;
   }
-  t = body_ptable.trunclvl;
+  const t = body_ptable.trunclvl;
   polar[0] = gplan.Args[body_number - 1] + constant.STR * t * sl;
   polar[1] = constant.STR * t * sb;
   polar[2] = body_ptable.distance * (1.0 + constant.STR * t * sr);
@@ -482,77 +460,67 @@ export const calc3 = function(date, body_ptable, polar, body_number) {
  in two variables (e.g., longitude, radius)
  of the same list of arguments.  */
 export const calc2 = function(date, body_ptable, polar) {
-  var i, j, k, m, n, k1, ip, np, nt; // int
-  var p; // int array
-  var pl; // double array
-  var pr; // double array
-
-  var su, cu, sv, cv; // double
-  var T, t, sl, sr; // double
-
   meanElements(date);
 
-  T = (date.julian - constant.j2000) / body_ptable.timescale;
-  n = body_ptable.maxargs;
+  const T = (date.julian - constant.j2000) / body_ptable.timescale;
+  const n = body_ptable.maxargs;
   /* Calculate sin( i*MM ), etc. for needed multiple angles.  */
-  for (i = 0; i < n; i++) {
-    if ((j = body_ptable.max_harmonic[i]) > 0) {
-      sscc(i, gplan.Args[i], j);
-    }
+  for (let i = 0; i < n; i++) {
+    const j = body_ptable.max_harmonic[i];
+    if (j > 0) sscc(i, gplan.Args[i], j);
   }
 
   /* Point to start of table of arguments. */
-  p = body_ptable.arg_tbl;
+  const p = body_ptable.arg_tbl;
   /* Point to tabulated cosine and sine amplitudes.  */
-  pl = body_ptable.lon_tbl;
-  pr = body_ptable.rad_tbl;
+  const pl = body_ptable.lon_tbl;
+  const pr = body_ptable.rad_tbl;
 
-  var p_i = 0;
-  var pl_i = 0;
-  var pr_i = 0;
+  let p_i = 0;
+  let pl_i = 0;
+  let pr_i = 0;
 
-  sl = 0.0;
-  sr = 0.0;
+  let sl = 0.0;
+  let sr = 0.0;
 
   for (;;) {
     /* argument of sine and cosine */
     /* Number of periodic arguments. */
-    np = p[p_i++]; //*p++;
+    const np = p[p_i++]; //*p++;
     if (np < 0) break;
     if (np == 0) {
       /* It is a polynomial term.  */
-      nt = p[p_i++]; //*p++;
+      const nt = p[p_i++]; //*p++;
       /* Longitude polynomial. */
-      cu = pl[pl_i++]; //*pl++;
-      for (ip = 0; ip < nt; ip++) {
+      let cu = pl[pl_i++]; //*pl++;
+      for (let ip = 0; ip < nt; ip++) {
         cu = cu * T + pl[pl_i++]; //*pl++;
       }
       /*    sl +=  mods3600 (cu); */
       sl += cu;
       /* Radius polynomial. */
       cu = pr[pr_i++]; //*pr++;
-      for (ip = 0; ip < nt; ip++) {
+      for (let ip = 0; ip < nt; ip++) {
         cu = cu * T + pr[pr_i++]; //*pr++;
       }
       sr += cu;
       continue;
     }
-    k1 = 0;
-    cv = 0.0;
-    sv = 0.0;
-    for (ip = 0; ip < np; ip++) {
+    let k1 = 0;
+    let cv = 0.0;
+    let sv = 0.0;
+    for (let ip = 0; ip < np; ip++) {
       /* What harmonic.  */
-      j = p[p_i++]; //*p++;
+      const j = p[p_i++]; //*p++;
       /* Which planet.  */
-      m = p[p_i++] - 1; //*p++ - 1;
+      const m = p[p_i++] - 1; //*p++ - 1;
       if (j) {
         /*        k = abs (j); */
-        if (j < 0) k = -j;
-        else k = j;
+        let k = j < 0 ? -j : j;
         k -= 1;
-        su = gplan.ss[m][k]; /* sin(k*angle) */
+        let su = gplan.ss[m][k]; /* sin(k*angle) */
         if (j < 0) su = -su;
-        cu = gplan.cc[m][k];
+        const cu = gplan.cc[m][k];
         if (k1 == 0) {
           /* set first angle */
           sv = su;
@@ -560,18 +528,18 @@ export const calc2 = function(date, body_ptable, polar) {
           k1 = 1;
         } else {
           /* combine angles */
-          t = su * cv + cu * sv;
+          const t = su * cv + cu * sv;
           cv = cu * cv - su * sv;
           sv = t;
         }
       }
     }
     /* Highest power of T.  */
-    nt = p[p_i++]; //*p++;
+    const nt = p[p_i++]; //*p++;
     /* Longitude. */
-    cu = pl[pl_i++]; //*pl++;
-    su = pl[pl_i++]; //*pl++;
-    for (ip = 0; ip < nt; ip++) {
+    let cu = pl[pl_i++]; //*pl++;
+    let su = pl[pl_i++]; //*pl++;
+    for (let ip = 0; ip < nt; ip++) {
       cu = cu * T + pl[pl_i++]; //*pl++;
       su = su * T + pl[pl_i++]; //*pl++;
     }
@@ -579,13 +547,13 @@ export const calc2 = function(date, body_ptable, polar) {
     /* Radius. */
     cu = pr[pr_i++]; //*pr++;
     su = pr[pr_i++]; //*pr++;
-    for (ip = 0; ip < nt; ip++) {
+    for (let ip = 0; ip < nt; ip++) {
       cu = cu * T + pr[pr_i++]; //*pr++;
       su = su * T + pr[pr_i++]; //*pr++;
     }
     sr += cu * cv + su * sv;
   }
-  t = body_ptable.trunclvl;
+  const t = body_ptable.trunclvl;
   polar[0] = t * sl;
   polar[2] = t * sr;
 };
@@ -593,64 +561,55 @@ export const calc2 = function(date, body_ptable, polar) {
 /* Generic program to accumulate sum of trigonometric series
  in one variable.  */
 export const calc1 = function(date, body_ptable) {
-  var i, j, k, m, k1, ip, np, nt; // int
-  var p; // int array
-  var pl; // double array
-
-  var su, cu, sv, cv; // double
-  var T, t, sl; // double
-
-  T = (date.julian - constant.j2000) / body_ptable.timescale;
+  const T = (date.julian - constant.j2000) / body_ptable.timescale;
   meanElements(date);
   /* Calculate sin( i*MM ), etc. for needed multiple angles.  */
-  for (i = 0; i < gplan.Args.length; i++) {
-    if ((j = body_ptable.max_harmonic[i]) > 0) {
-      sscc(i, gplan.Args[i], j);
-    }
+  for (let i = 0; i < gplan.Args.length; i++) {
+    const j = body_ptable.max_harmonic[i];
+    if (j > 0) sscc(i, gplan.Args[i], j);
   }
 
   /* Point to start of table of arguments. */
-  p = body_ptable.arg_tbl;
+  const p = body_ptable.arg_tbl;
   /* Point to tabulated cosine and sine amplitudes.  */
-  pl = body_ptable.lon_tbl;
+  const pl = body_ptable.lon_tbl;
 
-  sl = 0.0;
+  let sl = 0.0;
 
-  var p_i = 0;
-  var pl_i = 0;
+  let p_i = 0;
+  let pl_i = 0;
 
   for (;;) {
     /* argument of sine and cosine */
     /* Number of periodic arguments. */
-    np = p[p_i++]; //*p++;
+    const np = p[p_i++]; //*p++;
     if (np < 0) break;
     if (np == 0) {
       /* It is a polynomial term.  */
-      nt = p[p_i++]; //*p++;
-      cu = pl[pl_i++]; //*pl++;
-      for (ip = 0; ip < nt; ip++) {
+      const nt = p[p_i++]; //*p++;
+      let cu = pl[pl_i++]; //*pl++;
+      for (let ip = 0; ip < nt; ip++) {
         cu = cu * T + pl[pl_i++]; //*pl++;
       }
       /*    sl +=  mods3600 (cu); */
       sl += cu;
       continue;
     }
-    k1 = 0;
-    cv = 0.0;
-    sv = 0.0;
-    for (ip = 0; ip < np; ip++) {
+    let k1 = 0;
+    let cv = 0.0;
+    let sv = 0.0;
+    for (let ip = 0; ip < np; ip++) {
       /* What harmonic.  */
-      j = p[p_i++]; //*p++;
+      const j = p[p_i++]; //*p++;
       /* Which planet.  */
-      m = p[p_i++] - 1; //*p++ - 1;
+      const m = p[p_i++] - 1; //*p++ - 1;
       if (j) {
         /* k = abs (j); */
-        if (j < 0) k = -j;
-        else k = j;
+        let k = j < 0 ? -j : j;
         k -= 1;
-        su = gplan.ss[m][k]; /* sin(k*angle) */
+        let su = gplan.ss[m][k]; /* sin(k*angle) */
         if (j < 0) su = -su;
-        cu = gplan.cc[m][k];
+        const cu = gplan.cc[m][k];
         if (k1 == 0) {
           /* set first angle */
           sv = su;
@@ -658,18 +617,18 @@ export const calc1 = function(date, body_ptable) {
           k1 = 1;
         } else {
           /* combine angles */
-          t = su * cv + cu * sv;
+          const t = su * cv + cu * sv;
           cv = cu * cv - su * sv;
           sv = t;
         }
       }
     }
     /* Highest power of T.  */
-    nt = p[p_i++]; //*p++;
+    const nt = p[p_i++]; //*p++;
     /* Cosine and sine coefficients.  */
-    cu = pl[pl_i++]; //*pl++;
-    su = pl[pl_i++]; //*pl++;
-    for (ip = 0; ip < nt; ip++) {
+    let cu = pl[pl_i++]; //*pl++;
+    let su = pl[pl_i++]; //*pl++;
+    for (let ip = 0; ip < nt; ip++) {
       cu = cu * T + pl[pl_i++]; //*pl++;
       su = su * T + pl[pl_i++]; //*pl++;
     }
@@ -680,11 +639,8 @@ export const calc1 = function(date, body_ptable) {
 
 /* Compute geocentric moon.  */
 export const moon = function(date, rect, pol) {
-  var x, cosB, sinB, cosL, sinL; // double
-
   calc2(date, moonlr, pol);
-  x = pol[0];
-  x += gplan.LP_equinox;
+  let x = pol[0] + gplan.LP_equinox;
   if (x < -6.48e5) {
     x += 1.296e6;
   }
@@ -692,19 +648,18 @@ export const moon = function(date, rect, pol) {
     x -= 1.296e6;
   }
   pol[0] = constant.STR * x;
-  x = calc1(date, moonlat);
-  pol[1] = constant.STR * x;
-  x = (1.0 + constant.STR * pol[2]) * moonlr.distance;
-  pol[2] = x;
+  pol[1] = constant.STR * calc1(date, moonlat);
+  const dist = (1.0 + constant.STR * pol[2]) * moonlr.distance;
+  pol[2] = dist;
   /* Convert ecliptic polar to equatorial rectangular coordinates.  */
   epsilonCalc(date);
-  cosB = Math.cos(pol[1]);
-  sinB = Math.sin(pol[1]);
-  cosL = Math.cos(pol[0]);
-  sinL = Math.sin(pol[0]);
-  rect[0] = cosB * cosL * x;
-  rect[1] = (epsilon.coseps * cosB * sinL - epsilon.sineps * sinB) * x;
-  rect[2] = (epsilon.sineps * cosB * sinL + epsilon.coseps * sinB) * x;
+  const cosB = Math.cos(pol[1]);
+  const sinB = Math.sin(pol[1]);
+  const cosL = Math.cos(pol[0]);
+  const sinL = Math.sin(pol[0]);
+  rect[0] = cosB * cosL * dist;
+  rect[1] = (epsilon.coseps * cosB * sinL - epsilon.sineps * sinB) * dist;
+  rect[2] = (epsilon.sineps * cosB * sinL + epsilon.coseps * sinB) * dist;
 };
 
 export default gplan;

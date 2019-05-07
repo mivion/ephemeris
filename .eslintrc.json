@@ -29,6 +29,9 @@
                 "arrowParens": "always",
                 "printWidth": 100
             }
-        ]
+        ],
+        "no-var": ["error"],
+        "prefer-const": "error",
+        "no-use-before-define": "error"
     }
 }

@@ -501,11 +501,9 @@ const constellation = {
  position P.  EPOCH is the precessional equinox and ecliptic date
  of P.  */
 export const calc = function(pp, epoch) {
-  var i, k; // int
-  var ra, dec, d; // double
-  var p = []; // double
+  const p = []; // double
 
-  for (i = 0; i < 3; i++) {
+  for (let i = 0; i < 3; i++) {
     p[i] = pp[i];
   }
 
@@ -513,21 +511,21 @@ export const calc = function(pp, epoch) {
   precessCalc(p, epoch, 1);
   /* Precess from J2000 to Besselian epoch 1875.0.  */
   precessCalc(p, { julian: 2405889.25855 }, -1);
-  d = p[0] * p[0] + p[1] * p[1] + p[2] * p[2];
+  let d = p[0] * p[0] + p[1] * p[1] + p[2] * p[2];
   d = Math.sqrt(d);
-  ra = Math.atan2(p[1], p[0]) * ((constant.RTD * 3600.0) / 15.0);
+  let ra = Math.atan2(p[1], p[0]) * ((constant.RTD * 3600.0) / 15.0);
   if (ra < 0.0) {
     ra += 86400.0;
   }
-  dec = Math.asin(p[2] / d) * (constant.RTD * 3600.0);
+  const dec = Math.asin(p[2] / d) * (constant.RTD * 3600.0);
 
   /* FIND CONSTELLATION SUCH THAT THE DECLINATION ENTERED IS HIGHER THAN
    THE LOWER BOUNDARY OF THE CONSTELLATION WHEN THE UPPER AND LOWER
    RIGHT ASCENSIONS FOR THE CONSTELLATION BOUND THE ENTERED RIGHT
    ASCENSION
    */
-  for (i = 0; i < constellation.boundaries.length / 4; i++) {
-    k = i << 2;
+  for (let i = 0; i < constellation.boundaries.length / 4; i++) {
+    let k = i << 2;
     if (
       ra >= constellation.boundaries[k] &&
       ra < constellation.boundaries[k + 1] &&

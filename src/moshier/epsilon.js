@@ -9,16 +9,13 @@ const epsilon = {
 };
 
 export const calc = function(date) {
-  var T; // double
-
   if (date.julian == epsilon.jdeps) return;
 
-  T = (date.julian - 2451545.0) / 36525.0;
+  const T = (date.julian - 2451545.0) / 36525.0 / 10.0;
 
   /* DE403 values. */
-  T /= 10.0;
   epsilon.eps =
-    (((((((((2.45e-10 * T + 5.79e-9) * T + 2.787e-7) * T + 7.12e-7) * T - 3.905e-5) * T -
+    ((((((((((2.45e-10 * T + 5.79e-9) * T + 2.787e-7) * T + 7.12e-7) * T - 3.905e-5) * T -
       2.4967e-3) *
       T -
       5.138e-3) *
@@ -29,8 +26,8 @@ export const calc = function(date) {
       T -
       468.3396) *
       T +
-    84381.406173;
-  epsilon.eps *= constant.STR;
+      84381.406173) *
+    constant.STR;
 
   epsilon.coseps = Math.cos(epsilon.eps);
   epsilon.sineps = Math.sin(epsilon.eps);

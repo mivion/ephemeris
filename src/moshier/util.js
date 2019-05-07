@@ -8,9 +8,7 @@ export const mods3600 = function(value) {
 
 /* Reduce x modulo 2 pi */
 export const modtp = function(x) {
-  var y; // double
-
-  y = Math.floor(x / constant.TPI);
+  let y = Math.floor(x / constant.TPI);
   y = x - y * constant.TPI;
   while (y < 0.0) {
     y += constant.TPI;
@@ -23,11 +21,8 @@ export const modtp = function(x) {
 
 /* Reduce x modulo 360 degrees */
 export const mod360 = function(x) {
-  var k; // int
-  var y; // double
-
-  k = Math.floor(x / 360.0);
-  y = x - k * 360.0;
+  const k = Math.floor(x / 360.0);
+  let y = x - k * 360.0;
   while (y < 0.0) {
     y += 360.0;
   }
@@ -39,11 +34,8 @@ export const mod360 = function(x) {
 
 /* Reduce x modulo 30 degrees */
 export const mod30 = function(x) {
-  var k; // int
-  var y; // double
-
-  k = Math.floor(x / 30.0);
-  y = x - k * 30.0;
+  const k = Math.floor(x / 30.0);
+  let y = x - k * 30.0;
   while (y < 0.0) {
     y += 30.0;
   }
@@ -54,10 +46,7 @@ export const mod30 = function(x) {
 };
 
 export const zatan2 = function(x, y) {
-  var z, w; // double
-  var code; // short
-
-  code = 0;
+  let code = 0;
 
   if (x < 0.0) {
     code = 2;
@@ -83,6 +72,7 @@ export const zatan2 = function(x, y) {
     return 0.0;
   }
 
+  let w;
   switch (code) {
     default:
     case 0:
@@ -97,9 +87,7 @@ export const zatan2 = function(x, y) {
       break;
   }
 
-  z = Math.atan(y / x);
-
-  return w + z;
+  return w + Math.atan(y / x);
 };
 
 export const sinh = function(x) {
@@ -115,23 +103,20 @@ export const tanh = function(x) {
 };
 
 export const hms = function(x) {
-  var h, m; // int
-  var sint, sfrac; // long
-  var s; // double
-  var result = {};
+  const result = {};
 
-  s = x * constant.RTOH;
+  let s = x * constant.RTOH;
   if (s < 0.0) {
     s += 24.0;
   }
-  h = Math.floor(s);
+  let h = Math.floor(s);
   s -= h;
   s *= 60;
-  m = Math.floor(s);
+  let m = Math.floor(s);
   s -= m;
   s *= 60;
   /* Handle shillings and pence roundoff. */
-  sfrac = Math.floor(1000.0 * s + 0.5);
+  let sfrac = Math.floor(1000.0 * s + 0.5);
   if (sfrac >= 60000) {
     sfrac -= 60000;
     m += 1;
@@ -140,7 +125,7 @@ export const hms = function(x) {
       h += 1;
     }
   }
-  sint = Math.floor(sfrac / 1000);
+  const sint = Math.floor(sfrac / 1000);
   sfrac -= Math.floor(sint * 1000);
 
   result.hours = h;
@@ -152,18 +137,16 @@ export const hms = function(x) {
 };
 
 export const dms = function(x) {
-  var s; // double
-  var d, m; // int
-  var result = {};
+  const result = {};
 
-  s = x * constant.RTD;
+  let s = x * constant.RTD;
   if (s < 0.0) {
     s = -s;
   }
-  d = Math.floor(s);
+  const d = Math.floor(s);
   s -= d;
   s *= 60;
-  m = Math.floor(s);
+  const m = Math.floor(s);
   s -= m;
   s *= 60;
 
@@ -174,44 +157,22 @@ export const dms = function(x) {
   return result;
 };
 
-/* Display magnitude of correction vector in arc seconds */
-export const showcor = function(p, dp, result) {
-  var p1 = []; // dr, dd; // double
-  var i; // int
-  var d;
-
-  for (i = 0; i < 3; i++) {
-    p1[i] = p[i] + dp[i];
-  }
-
-  d = deltap(p, p1);
-
-  result = result || {};
-  result.dRA = (constant.RTS * d.dr) / 15.0;
-  result.dDec = constant.RTS * d.dd;
-
-  return result;
-};
-
 /* Display Right Ascension and Declination
  * from input equatorial rectangular unit vector.
  * Output vector pol[] contains R.A., Dec., and radius.
  */
 export const showrd = function(p, pol, result) {
-  var x, y, r; // double
-  var i; // int
-
-  r = 0.0;
-  for (i = 0; i < 3; i++) {
-    x = p[i];
+  let r = 0.0;
+  for (let i = 0; i < 3; i++) {
+    const x = p[i];
     r += x * x;
   }
   r = Math.sqrt(r);
 
-  x = zatan2(p[0], p[1]);
+  const x = zatan2(p[0], p[1]);
   pol[0] = x;
 
-  y = Math.asin(p[2] / r);
+  const y = Math.asin(p[2] / r);
   pol[1] = y;
 
   pol[2] = r;
@@ -250,38 +211,28 @@ export const showrd = function(p, pol, result) {
  *
  */
 export const deltap = function(p0, p1, d) {
-  var dp = [],
-    A,
-    B,
-    P,
-    Q,
-    x,
-    y,
-    z; // double
-  var i; // int
-
   d = d || {};
 
-  P = 0.0;
-  Q = 0.0;
-  z = 0.0;
-  for (i = 0; i < 3; i++) {
-    x = p0[i];
-    y = p1[i];
-    P += x * x;
-    Q += y * y;
+  const dp = [];
+  let P0 = 0.0;
+  let Q0 = 0.0;
+  let z0 = 0.0;
+  for (let i = 0; i < 3; i++) {
+    const x = p0[i];
+    let y = p1[i];
+    P0 += x * x;
+    Q0 += y * y;
     y = y - x;
     dp[i] = y;
-    z += y * y;
+    z0 += y * y;
   }
 
-  A = Math.sqrt(P);
-  B = Math.sqrt(Q);
+  const A = Math.sqrt(P0);
+  const B = Math.sqrt(Q0);
 
-  if (A < 1.0e-7 || B < 1.0e-7 || z / (P + Q) > 5.0e-7) {
-    P = zatan2(p0[0], p0[1]);
-    Q = zatan2(p1[0], p1[1]);
-    Q = Q - P;
+  if (A < 1.0e-7 || B < 1.0e-7 || z0 / (P0 + Q0) > 5.0e-7) {
+    const P1 = zatan2(p0[0], p0[1]);
+    let Q = zatan2(p1[0], p1[1]) - P1;
     while (Q < -Math.PI) {
       Q += 2.0 * Math.PI;
     }
@@ -289,27 +240,42 @@ export const deltap = function(p0, p1, d) {
       Q -= 2.0 * Math.PI;
     }
     d.dr = Q;
-    P = Math.asin(p0[2] / A);
-    Q = Math.asin(p1[2] / B);
-    d.dd = Q - P;
+    const P2 = Math.asin(p0[2] / A);
+    const Q2 = Math.asin(p1[2] / B);
+    d.dd = Q2 - P2;
     return d;
   }
 
-  x = p0[0];
-  y = p0[1];
-  if (x == 0.0) {
+  const xx1 = p0[0];
+  const y = p0[1];
+  if (xx1 == 0.0) {
     d.dr = 1.0e38;
   } else {
-    Q = y / x;
-    Q = (dp[1] - (dp[0] * y) / x) / (x * (1.0 + Q * Q));
-    d.dr = Q;
+    const yxx1 = y / xx1;
+    d.dr = (dp[1] - (dp[0] * y) / xx1) / (xx1 * (1.0 + yxx1 * yxx1));
   }
 
-  x = p0[2] / A;
-  P = Math.sqrt(1.0 - x * x);
-  d.dd = (p1[2] / B - x) / P;
+  const xx2 = p0[2] / A;
+  const P3 = Math.sqrt(1.0 - xx2 * xx2);
+  d.dd = (p1[2] / B - xx2) / P3;
 
   return d;
+};
+
+/* Display magnitude of correction vector in arc seconds */
+export const showcor = function(p, dp, result) {
+  const p1 = [];
+  for (let i = 0; i < 3; i++) {
+    p1[i] = p[i] + dp[i];
+  }
+
+  const d = deltap(p, p1);
+
+  result = result || {};
+  result.dRA = (constant.RTS * d.dr) / 15.0;
+  result.dDec = constant.RTS * d.dd;
+
+  return result;
 };
 
 /* Sun - object - earth angles and distances.
@@ -317,19 +283,16 @@ export const deltap = function(p0, p1, d) {
  * The answers are posted in the following global locations:
  */
 export const angles = function(p, q, e) {
-  var a, b, s; // double
-  var i; // int
-
   variable.EO = 0.0;
   variable.SE = 0.0;
   variable.SO = 0.0;
   variable.pq = 0.0;
   variable.ep = 0.0;
   variable.qe = 0.0;
-  for (i = 0; i < 3; i++) {
-    a = e[i];
-    b = q[i];
-    s = p[i];
+  for (let i = 0; i < 3; i++) {
+    const a = e[i];
+    const b = q[i];
+    const s = p[i];
     variable.EO += s * s;
     variable.SE += a * a;
     variable.SO += b * b;
@@ -352,13 +315,11 @@ export const angles = function(p, q, e) {
  * Src1, Src2 are body objects
  */
 export const separation = function(Src1, Src2) {
-  var ra1, ra2, dc1, dc2, t; // double
-
-  ra1 = parseFloat(Src1.position.altaz.topocentric.ra);
-  dc1 = parseFloat(Src1.position.altaz.topocentric.dec);
-  ra2 = parseFloat(Src2.position.altaz.topocentric.ra);
-  dc2 = parseFloat(Src2.position.altaz.topocentric.dec);
-  t = Math.sin(dc1) * Math.sin(dc2) + Math.cos(dc1) * Math.cos(dc2) * Math.cos(ra1 - ra2);
+  const ra1 = parseFloat(Src1.position.altaz.topocentric.ra);
+  const dc1 = parseFloat(Src1.position.altaz.topocentric.dec);
+  const ra2 = parseFloat(Src2.position.altaz.topocentric.ra);
+  const dc2 = parseFloat(Src2.position.altaz.topocentric.dec);
+  const t = Math.sin(dc1) * Math.sin(dc2) + Math.cos(dc1) * Math.cos(dc2) * Math.cos(ra1 - ra2);
 
   return constant.RTD * Math.acos(t);
 };

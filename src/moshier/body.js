@@ -215,7 +215,7 @@ const body = {
 };
 
 export const init = function() {
-  for (var key in body) {
+  for (const key in body) {
     // fill the 'key'
     body[key].key = key;
     // fill the ptable for the body

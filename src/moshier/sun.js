@@ -12,23 +12,16 @@ import bodies from './body';
 import variable from './variable';
 
 export const calc = function() {
-  var r, x, y, t; // double
-  var ecr = [],
-    rec = [],
-    pol = []; // double
-  var i; // int
-  var d;
-  //double asin(), modtp(), sqrt(), cos(), sin();
-
   bodies.sun.position = bodies.sun.position || {};
 
-  /* Display ecliptic longitude and latitude.
-   */
-  for (i = 0; i < 3; i++) {
+  /* Display ecliptic longitude and latitude. */
+  const ecr = [];
+  for (let i = 0; i < 3; i++) {
     ecr[i] = -bodies.earth.position.rect[i]; //-rearth[i];
   }
-  r = bodies.earth.position.polar[2]; //eapolar [2];
+  const r = bodies.earth.position.polar[2]; //eapolar [2];
 
+  const pol = [];
   bodies.sun.position.equinoxEclipticLonLat = lonlatCalc(ecr, bodies.earth.position.date, pol, 1); // TDT
 
   /* Philosophical note: the light time correction really affects
@@ -41,16 +34,17 @@ export const calc = function() {
    * correction, however.
    */
   pol[2] = r;
-  for (i = 0; i < 2; i++) {
+  let t;
+  for (let i = 0; i < 2; i++) {
     t = pol[2] / 173.1446327;
     /* Find the earth at time TDT - t */
     keplerCalc({ julian: bodies.earth.position.date.julian - t }, bodies.earth, ecr, pol);
   }
-  r = pol[2];
 
-  for (i = 0; i < 3; i++) {
-    x = -ecr[i];
-    y = -bodies.earth.position.rect[i]; //-rearth[i];
+  const rec = [];
+  for (let i = 0; i < 3; i++) {
+    const x = -ecr[i];
+    const y = -bodies.earth.position.rect[i]; //-rearth[i];
     ecr[i] = x; /* position t days ago */
     rec[i] = y; /* position now */
     pol[i] = y - x; /* change in position */
@@ -63,7 +57,7 @@ export const calc = function() {
   });
 
   /* Estimate rate of change of RA and Dec for use by altaz(). */
-  d = deltap(ecr, rec); /* see dms.c */
+  const d = deltap(ecr, rec); /* see dms.c */
   variable.dradt = d.dr;
   variable.ddecdt = d.dd;
   variable.dradt /= t;
@@ -77,7 +71,7 @@ export const calc = function() {
    */
   precessCalc(ecr, bodies.earth.position.date, -1);
 
-  for (i = 0; i < 3; i++) {
+  for (let i = 0; i < 3; i++) {
     rec[i] = ecr[i];
   }
 
@@ -94,10 +88,9 @@ export const calc = function() {
   bodies.sun.position.apparent = showrd(ecr, pol);
 
   /* Show it in ecliptic coordinates */
-  y = epsilon.coseps * rec[1] + epsilon.sineps * rec[2];
-  y = zatan2(rec[0], y) + nutation.nutl;
+  const y = zatan2(rec[0], epsilon.coseps * rec[1] + epsilon.sineps * rec[2]) + nutation.nutl;
   bodies.sun.position.apparentLongitude = constant.RTD * y;
-  var dmsLongitude = dms(y);
+  const dmsLongitude = dms(y);
   bodies.sun.position.apparentLongitudeString =
     dmsLongitude.degree +
     '\u00B0' +

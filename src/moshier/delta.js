@@ -93,9 +93,7 @@ const delta = {
 };
 
 export const calc = function(date) {
-  var p, B; // double
-  var diff = [0, 0, 0, 0, 0, 0]; // int
-  var i, iy, k; // int
+  const diff = [0, 0, 0, 0, 0, 0]; // int
 
   if (input.dtgiven) {
     date.delta = input.dtgiven;
@@ -103,30 +101,28 @@ export const calc = function(date) {
     /* Extrapolate future values beyond the lookup table.  */
     if (date.j2000 > delta.TABEND + 100.0) {
       /* Morrison & Stephenson (2004) long-term curve fit.  */
-      B = (date.j2000 - 1820.0) / 100;
+      const B = (date.j2000 - 1820.0) / 100;
       date.delta = 32.0 * B * B - 20.0;
     } else {
-      var a, b, c, d, m0, m1; // double
-
       /* Cubic interpolation between last tabulated value
        and long-term curve evaluated at 100 years later.  */
 
       /* Last tabulated delta T value. */
-      a = delta.dt[delta.TABSIZ - 1] / 100;
+      const a = delta.dt[delta.TABSIZ - 1] / 100;
       /* Approximate slope in past 10 years. */
-      b = (delta.dt[delta.TABSIZ - 1] - delta.dt[delta.TABSIZ - 11]) / 1000;
+      const b = (delta.dt[delta.TABSIZ - 1] - delta.dt[delta.TABSIZ - 11]) / 1000;
 
       /* Long-term curve 100 years hence. */
-      B = (delta.TABEND + 100.0 - 1820.0) / 100;
-      m0 = 32.0 * B * B - 20.0;
+      const B = (delta.TABEND + 100.0 - 1820.0) / 100;
+      const m0 = 32.0 * B * B - 20.0;
       /* Its slope. */
-      m1 = 0.64 * B;
+      const m1 = 0.64 * B;
 
       /* Solve for remaining coefficients of an interpolation polynomial
-       that agrees in value and slope at both ends of the 100-year
-       interval. */
-      d = 2.0e-6 * (50.0 * (m1 + b) - m0 + a);
-      c = 1.0e-4 * (m0 - a - 100.0 * b - 1.0e6 * d);
+       * that agrees in value and slope at both ends of the 100-year
+       * interval. */
+      const d = 2.0e-6 * (50.0 * (m1 + b) - m0 + a);
+      const c = 1.0e-4 * (m0 - a - 100.0 * b - 1.0e6 * d);
 
       /* Note, the polynomial coefficients do not depend on Y.
        A given tabulation and long-term formula
@@ -139,7 +135,7 @@ export const calc = function(date) {
        */
 
       /* Compute polynomial value at desired time. */
-      p = date.j2000 - delta.TABEND;
+      const p = date.j2000 - delta.TABEND;
       date.delta = a + p * (b + p * (c + p * d));
     }
   } else {
@@ -147,33 +143,32 @@ export const calc = function(date) {
     if (date.j2000 < 1700.0) {
       if (date.j2000 <= -1000.0) {
         /* Morrison and Stephenson long-term fit.  */
-        B = (date.j2000 - 1820.0) / 100;
+        const B = (date.j2000 - 1820.0) / 100;
         date.delta = 32.0 * B * B - 20.0;
       } else {
         /* Morrison and Stephenson recommend linear interpolation
          between tabulations. */
-        iy = Math.floor(date.j2000);
+        let iy = Math.floor(date.j2000);
         iy = Math.floor((iy + 1000) / 100);
         /* Integer index into the table. */
-        B = -1000 + 100 * iy;
+        const B = -1000 + 100 * iy;
         /* Starting year of tabulated interval.  */
-        p = delta.m_s[iy];
+        const p = delta.m_s[iy];
         date.delta = p + ((date.j2000 - B) * (delta.m_s[iy + 1] - p)) / 100;
       }
     } else {
-      /* Besselian interpolation between tabulated values
-       * in the telescopic era.
+      /* Besselian interpolation between tabulated values in the telescopic era.
        * See AA page K11.
        */
 
       /* Index into the table.
        */
-      p = Math.floor(date.j2000);
-      iy = Math.floor(p - delta.TABSTART);
+      let p = Math.floor(date.j2000);
+      const iy = Math.floor(p - delta.TABSTART);
       /* Zeroth order estimate is value at start of year
        */
       date.delta = delta.dt[iy];
-      k = iy + 1;
+      let k = iy + 1;
       if (!(k >= delta.TABSIZ)) {
         /* The fraction of tabulation interval
          */
@@ -185,7 +180,7 @@ export const calc = function(date) {
         if (!(iy - 1 < 0 || iy + 2 >= delta.TABSIZ)) {
           // make table of first differences
           k = iy - 2;
-          for (i = 0; i < 5; i++) {
+          for (let i = 0; i < 5; i++) {
             if (k < 0 || k + 1 >= delta.TABSIZ) {
               diff[i] = 0;
             } else {
@@ -195,26 +190,26 @@ export const calc = function(date) {
           }
 
           // compute second differences
-          for (i = 0; i < 4; i++) {
+          for (let i = 0; i < 4; i++) {
             diff[i] = diff[i + 1] - diff[i];
           }
-          B = 0.25 * p * (p - 1.0);
+          const B = 0.25 * p * (p - 1.0);
           date.delta += B * (diff[1] + diff[2]);
 
           if (!(iy + 2 >= delta.TABSIZ)) {
             // Compute third differences
-            for (i = 0; i < 3; i++) {
+            for (let i = 0; i < 3; i++) {
               diff[i] = diff[i + 1] - diff[i];
             }
-            B = (2.0 * B) / 3.0;
-            date.delta += (p - 0.5) * B * diff[1];
+            const B2 = (2.0 * B) / 3.0;
+            date.delta += (p - 0.5) * B2 * diff[1];
             if (!(iy - 2 < 0 || iy + 3 > delta.TABSIZ)) {
               // Compute fourth differences
-              for (i = 0; i < 2; i++) {
+              for (let i = 0; i < 2; i++) {
                 diff[i] = diff[i + 1] - diff[i];
               }
-              B = 0.125 * B * (p + 1.0) * (p - 2.0);
-              date.delta += B * (diff[0] + diff[1]);
+              const B3 = 0.125 * B2 * (p + 1.0) * (p - 2.0);
+              date.delta += B3 * (diff[0] + diff[1]);
             }
           }
         }

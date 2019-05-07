@@ -5,29 +5,26 @@ import bodies from './body';
 import variable from './variable';
 
 export const calc = function(body, q, e) {
-  var p = [],
-    p0 = [],
-    ptemp = []; // double
-  var P, Q, E, t, x, y; // double
-  var i, k; // int
-
   /* save initial q-e vector for display */
-  for (i = 0; i < 3; i++) {
+  const p0 = [];
+  for (let i = 0; i < 3; i++) {
     p0[i] = q[i] - e[i];
   }
 
-  E = 0.0;
-  for (i = 0; i < 3; i++) {
+  let E = 0.0;
+  for (let i = 0; i < 3; i++) {
     E += e[i] * e[i];
   }
   E = Math.sqrt(E);
 
-  for (k = 0; k < 2; k++) {
-    P = 0.0;
-    Q = 0.0;
-    for (i = 0; i < 3; i++) {
-      y = q[i];
-      x = y - e[i];
+  let t;
+  const p = [];
+  for (let k = 0; k < 2; k++) {
+    let P = 0.0;
+    let Q = 0.0;
+    for (let i = 0; i < 3; i++) {
+      const y = q[i];
+      const x = y - e[i];
       p[i] = x;
       Q += y * y;
       P += x * x;
@@ -36,14 +33,15 @@ export const calc = function(body, q, e) {
     Q = Math.sqrt(Q);
     /* Note the following blows up if object equals sun. */
     t = (P + 1.97e-8 * Math.log((E + P + Q) / (E - P + Q))) / 173.1446327;
+    const ptemp = [];
     keplerCalc({ julian: bodies.earth.position.date.julian - t }, body, q, ptemp);
   }
 
   body.lightTime = 1440.0 * t;
 
   /* Final object-earth vector and the amount by which it changed. */
-  for (i = 0; i < 3; i++) {
-    x = q[i] - e[i];
+  for (let i = 0; i < 3; i++) {
+    const x = q[i] - e[i];
     p[i] = x;
     variable.dp[i] = x - p0[i];
   }
@@ -61,11 +59,11 @@ export const calc = function(body, q, e) {
    */
   vearthCalc(bodies.earth.position.date);
 
-  for (i = 0; i < 3; i++) {
+  for (let i = 0; i < 3; i++) {
     p[i] += vearth.vearth[i] * t;
   }
 
-  var d = deltap(p, p0); /* see dms.c */
+  const d = deltap(p, p0); /* see dms.c */
   variable.dradt = d.dr;
   variable.ddecdt = d.dd;
   variable.dradt /= t;

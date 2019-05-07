@@ -15,15 +15,91 @@ const moon = {
   dec: 0.0 /* Declination */
 };
 
+/* Calculate apparent latitude, longitude, and horizontal parallax
+ * of the Moon at Julian date J.
+ */
+export const calcll = function(date, rect, pol, result) {
+  result = result || {};
+
+  /* Compute obliquity of the ecliptic, coseps, and sineps.  */
+  epsilonCalc(date);
+  /* Get geometric coordinates of the Moon.  */
+  gplanMoon(date, rect, pol);
+  /* Post the geometric ecliptic longitude and latitude, in radians, and the radius in au. */
+  variable.body.position.polar[0] = pol[0];
+  variable.body.position.polar[1] = pol[1];
+  variable.body.position.polar[2] = pol[2];
+
+  /* Light time correction to longitude, about 0.7". */
+  pol[0] -= (0.0118 * constant.DTR * constant.Rearth) / pol[2];
+
+  /* convert to equatorial system of date */
+  const cosB = Math.cos(pol[1]);
+  const sinB = Math.sin(pol[1]);
+  const cosL = Math.cos(pol[0]);
+  const sinL = Math.sin(pol[0]);
+  rect[0] = cosB * cosL;
+  rect[1] = epsilon.coseps * cosB * sinL - epsilon.sineps * sinB;
+  rect[2] = epsilon.sineps * cosB * sinL + epsilon.coseps * sinB;
+
+  /* Rotate to J2000. */
+  precessCalc(rect, { julian: bodies.earth.position.date.julian }, 1); // TDT
+
+  /* Find Euclidean vectors and angles between earth, object, and the sun */
+  const qq = [];
+  const pp = [];
+  for (let i = 0; i < 3; i++) {
+    pp[i] = rect[i] * pol[2];
+    qq[i] = bodies.earth.position.rect[i] + pp[i];
+  }
+  angles(pp, qq, bodies.earth.position.rect);
+
+  /* Make rect a unit vector.  */
+  /* for (i = 0; i < 3; i++) */
+  /*  rect[i] /= EO; */
+
+  /* Correct position for light deflection. (Ignore.)  */
+  /* relativity( rect, qq, rearth ); */
+
+  /* Aberration of light.
+	 The Astronomical Almanac (Section D, Daily Polynomial Coefficients)
+	 seems to omit this, even though the reference ephemeris is inertial.  */
+  /* annuab (rect); */
+
+  /* Precess to date.  */
+  precessCalc(rect, { julian: bodies.earth.position.date.julian }, -1); // TDT
+
+  /* Correct for nutation at date TDT. */
+  result.nutation = nutationCalc({ julian: bodies.earth.position.date.julian }, rect); // TDT
+
+  /* Apparent geocentric right ascension and declination.  */
+  moon.ra = zatan2(rect[0], rect[1]);
+  moon.dec = Math.asin(rect[2]);
+
+  /* For apparent ecliptic coordinates, rotate from the true equator into the ecliptic of date.  */
+  const cosL2 = Math.cos(epsilon.eps + nutation.nuto);
+  const sinL2 = Math.sin(epsilon.eps + nutation.nuto);
+  const y = cosL2 * rect[1] + sinL2 * rect[2];
+  const z = -sinL2 * rect[1] + cosL2 * rect[2];
+  pol[0] = zatan2(rect[0], y);
+  pol[1] = Math.asin(z);
+
+  /* Restore earth-moon distance.  */
+  for (let i = 0; i < 3; i++) {
+    rect[i] *= variable.EO;
+  }
+
+  return result;
+};
+
 /* Calculate geometric position of the Moon and apply
  * approximate corrections to find apparent position,
  * phase of the Moon, etc. for AA.ARC.
  */
 export const calc = function() {
-  var i; // int
-  var ra0, dec0; // double
-  var x, y, z /*, lon0 */; // double
-  var pp = [],
+  let i; // int
+  let x, y, z /*, lon0 */; // double
+  const pp = [],
     qq = [],
     pe = [],
     re = [],
@@ -47,8 +123,8 @@ export const calc = function() {
   /* Calculate for 0.001 day ago
    */
   calcll({ julian: bodies.earth.position.date.julian - 0.001 }, moonpp, moonpol); // TDT - 0.001
-  ra0 = moon.ra;
-  dec0 = moon.dec;
+  const ra0 = moon.ra;
+  const dec0 = moon.dec;
   // UNUSED: lon0 = moonpol[0];
 
   /* Calculate for present instant. */
@@ -62,8 +138,8 @@ export const calc = function() {
 
   /* The rates of change.  These are used by altaz () to correct the time of rising, transit, and setting. */
   variable.dradt = moon.ra - ra0;
-  if (variable.dradt >= Math.PI) variable.dradt = variable.dradt - 2.0 * Math.PI;
-  if (variable.dradt <= -Math.PI) variable.dradt = variable.dradt + 2.0 * Math.PI;
+  if (variable.dradt >= Math.PI) variable.dradt = variable.dradt - constant.TPI;
+  if (variable.dradt <= -Math.PI) variable.dradt = variable.dradt + constant.TPI;
   variable.dradt = 1000.0 * variable.dradt;
   variable.ddecdt = 1000.0 * (moon.dec - dec0);
 
@@ -104,7 +180,7 @@ export const calc = function() {
     distance: moonpol[2] / constant.Rearth
   };
   bodies.moon.position.apparentLongitude = bodies.moon.position.apparentGeocentric.dLongitude;
-  var dmsLongitude = dms(bodies.moon.position.apparentGeocentric.longitude);
+  const dmsLongitude = dms(bodies.moon.position.apparentGeocentric.longitude);
   bodies.moon.position.apparentLongitudeString =
     dmsLongitude.degree +
     '\u00B0' +
@@ -176,94 +252,6 @@ export const calc = function() {
   pp[1] = moon.dec;
   pp[2] = moonpol[2];
   bodies.moon.position.altaz = altazCalc(pp, bodies.earth.position.date);
-};
-
-/* Calculate apparent latitude, longitude, and horizontal parallax
- * of the Moon at Julian date J.
- */
-export const calcll = function(date, rect, pol, result) {
-  var cosB, sinB, cosL, sinL, y, z; // double
-  var qq = [],
-    pp = []; // double
-  var i; // int
-
-  result = result || {};
-
-  /* Compute obliquity of the ecliptic, coseps, and sineps.  */
-  epsilonCalc(date);
-  /* Get geometric coordinates of the Moon.  */
-  gplanMoon(date, rect, pol);
-  /* Post the geometric ecliptic longitude and latitude, in radians,
-   * and the radius in au.
-   */
-  variable.body.position.polar[0] = pol[0];
-  variable.body.position.polar[1] = pol[1];
-  variable.body.position.polar[2] = pol[2];
-
-  /* Light time correction to longitude,
-   * about 0.7".
-   */
-  pol[0] -= (0.0118 * constant.DTR * constant.Rearth) / pol[2];
-
-  /* convert to equatorial system of date */
-  cosB = Math.cos(pol[1]);
-  sinB = Math.sin(pol[1]);
-  cosL = Math.cos(pol[0]);
-  sinL = Math.sin(pol[0]);
-  rect[0] = cosB * cosL;
-  rect[1] = epsilon.coseps * cosB * sinL - epsilon.sineps * sinB;
-  rect[2] = epsilon.sineps * cosB * sinL + epsilon.coseps * sinB;
-
-  /* Rotate to J2000. */
-  precessCalc(rect, { julian: bodies.earth.position.date.julian }, 1); // TDT
-
-  /* Find Euclidean vectors and angles between earth, object, and the sun
-   */
-  for (i = 0; i < 3; i++) {
-    pp[i] = rect[i] * pol[2];
-    qq[i] = bodies.earth.position.rect[i] + pp[i];
-  }
-  angles(pp, qq, bodies.earth.position.rect);
-
-  /* Make rect a unit vector.  */
-  /* for (i = 0; i < 3; i++) */
-  /*  rect[i] /= EO; */
-
-  /* Correct position for light deflection.
-	 (Ignore.)  */
-  /* relativity( rect, qq, rearth ); */
-
-  /* Aberration of light.
-	 The Astronomical Almanac (Section D, Daily Polynomial Coefficients)
-	 seems to omit this, even though the reference ephemeris is inertial.  */
-  /* annuab (rect); */
-
-  /* Precess to date.  */
-  precessCalc(rect, { julian: bodies.earth.position.date.julian }, -1); // TDT
-
-  /* Correct for nutation at date TDT.
-   */
-  result.nutation = nutationCalc({ julian: bodies.earth.position.date.julian }, rect); // TDT
-
-  /* Apparent geocentric right ascension and declination.  */
-  moon.ra = zatan2(rect[0], rect[1]);
-  moon.dec = Math.asin(rect[2]);
-
-  /* For apparent ecliptic coordinates, rotate from the true
-	 equator into the ecliptic of date.  */
-  cosL = Math.cos(epsilon.eps + nutation.nuto);
-  sinL = Math.sin(epsilon.eps + nutation.nuto);
-  y = cosL * rect[1] + sinL * rect[2];
-  z = -sinL * rect[1] + cosL * rect[2];
-  pol[0] = zatan2(rect[0], y);
-  pol[1] = Math.asin(z);
-
-  /* Restore earth-moon distance.  */
-  for (i = 0; i < 3; i++) {
-    rect[i] *= variable.EO;
-  }
-
-  return result;
 };
 
 export default moon;
