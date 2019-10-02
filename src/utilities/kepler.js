@@ -4,6 +4,7 @@ import { gplan } from './gplan'
 import { epsilon } from './epsilon'
 import { precess } from './precess'
 
+// TODO - all date params should be replaced with julian date
 export const kepler = {};
 
 kepler.calc = (date, body, rect, polar) => {

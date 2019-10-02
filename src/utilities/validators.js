@@ -4,8 +4,8 @@ export const validateYear = (n) => {
 }
 
 export const validateMonth = (n) => {
-  if (typeof n === 'number' && n >= 1 && n <= 12) return n
-  else throw new Error(`The month: "${n}" - must be an integer and between 1 - 12. (1 = January, 12 = December)`)
+  if (typeof n === 'number' && n >= 0 && n <= 11) return n
+  else throw new Error(`The month: "${n}" - must be an integer and between 0 - 11. (0 = January, 11 = December)`)
 }
 
 export const validateDate = (n) => {

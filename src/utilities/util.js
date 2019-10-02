@@ -2,21 +2,12 @@ import { RTOH, RTD, RTS, TPI } from '../constants'
 
 export const util = {};
 
-export const copy = target => {
-	if (target) {
-		for (var i = arguments.length - 1; i > 0; i --) {
-			var source = arguments[i];
-			if (source && source.hasOwnProperty) {
-				for (var key in source) {
-					if (source.hasOwnProperty(key)) {
-						target[key] = source[key];
-					}
-				}
-			}
-		}
-	}
-    return target;
-};
+util.hourTimeToDecimal = ({hour=0, minute=0}={}) => {
+  // HH:MM time format => Float
+  // ex: 1:30 => 1.5
+  // ex: 23.25 => 23.25
+  return moment.duration(`${hour}:${minute}`).asHours()
+}
 
 util.mods3600 = function (value) {
 	var result;

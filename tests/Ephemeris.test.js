@@ -3,7 +3,7 @@ import { constellation } from '../src/utilities/constellation'
 
 describe('Ephemeris', () => {
   const defaultOrigin = {
-    year: 2000, month: 1, day: 1, hours: 0, minutes: 0, seconds: 0, longitude: -71.1, latitude: 41.37
+    year: 2000, month: 0, day: 1, hours: 0, minutes: 0, seconds: 0, longitude: -71.1, latitude: 41.37
   } // Jan 1st. 2000 0:00:00, Cambridge MA
 
   describe('constructor', () => {
@@ -16,7 +16,7 @@ describe('Ephemeris', () => {
     it('validates inputs', () => {
       expect(() => new Ephemeris({year: -1, month: 1, day: 1, hours: 1, minutes: 0, seconds: 1, latitude: 0, longitude: 0})).toThrowError("The year: \"-1\" - must be an integer and > 0 (C.E.)")
 
-      expect(() => new Ephemeris({year: 1, month: 13, day: 1, hours: 1, minutes: 0, seconds: 1, latitude: 0, longitude: 0})).toThrowError("The month: \"13\" - must be an integer and between 1 - 12. (1 = January, 12 = December)")
+      expect(() => new Ephemeris({year: 1, month: 12, day: 1, hours: 1, minutes: 0, seconds: 1, latitude: 0, longitude: 0})).toThrowError("The month: \"12\" - must be an integer and between 0 - 11. (0 = January, 11 = December)")
 
       expect(() => new Ephemeris({year: 1, month: 1, day: 0, hours: 1, minutes: 0, seconds: 1, latitude: 0, longitude: 0})).toThrowError("The day: \"0 must be between 1 - 31")
 
@@ -34,7 +34,7 @@ describe('Ephemeris', () => {
     })
 
     it('constructs Constant from input', () => {
-      expect(ephemeris.Constant.date.year).toEqual(2000)
+      // expect(ephemeris.Constant.date.year).toEqual(2000)
       expect(ephemeris.Constant.tlong).toEqual(-71.1)
     })
 
@@ -50,14 +50,18 @@ describe('Ephemeris', () => {
 
     it('calculates dates', () => {
       // Julian
-      expect(ephemeris.Constant.date.julian).toEqual(2451544.5)
-      expect(ephemeris.Constant.date.j2000).toEqual(1999.9986310746065)
+      expect(ephemeris.JulianDate).toEqual(2451544.5)
+      expect(ephemeris.J2000).toEqual(1999.9986310746065)
+      expect(ephemeris.B1950).toEqual(1999.998841889117)
+      expect(ephemeris.J2000).toEqual(1999.9986310746065)
+
       // Universal
-      expect(ephemeris.Constant.date.universalDate).toEqual({"day": 31, "hours": 23, "julian": 2451544.4992612316, "milliseconds": 170, "minutes": 58, "month": 12, "seconds": 56, "year": 1999})
       expect(ephemeris.Constant.date.universalDateString).toEqual("31.12.1999 23:58:56.17")
       // Delta
       expect(ephemeris.Constant.date.terrestrial).toEqual(2451544.5)
       expect(ephemeris.Constant.date.universal).toEqual(2451544.4992612316)
+
+      expect(ephemeris.Date).toEqual(new Date("2000-01-01T00:00:00.000Z"))
     })
 
     it('calculates Earth', () => {

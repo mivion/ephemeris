@@ -5,6 +5,7 @@ import { moonlat } from '../ptables/moonlat'
 import { util } from './util'
 import { epsilon } from './epsilon'
 
+// TODO - all date params should be replaced with julian date
 // TODO - the gplan object is storing dynamic state - might be better as a class instance. investigate further
 export const gplan = {
 	/* From Simon et al (1994)  */

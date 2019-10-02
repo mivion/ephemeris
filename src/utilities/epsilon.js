@@ -2,6 +2,7 @@ import { STR } from '../constants'
 
 export const epsilon = {};
 
+// TODO - all date params should be replaced with julian date
 epsilon.calc = date => {
   /* The results of the program are returned in these
    * global variables:
