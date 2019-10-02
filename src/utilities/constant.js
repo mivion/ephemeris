@@ -1,4 +1,4 @@
-import { J2000, B1950, J1900, RTOH, DTR, RTD, RTS, STR, EMRAT, TPI,
+import { CLIGHT, J2000, B1950, J1900, RTOH, DTR, RTD, RTS, STR, EMRAT, TPI,
 FLAT, AU, AEARTH } from '../constants'
 
 export const constant = {
@@ -38,7 +38,7 @@ export const constant = {
 	aearth: AEARTH,  /* Radius of the earth, in meters.  */
 	au: AU, /* Astronomical unit, in kilometers.  */
 	emrat: EMRAT,
-	Clight: 2.99792458e5,  /* Speed of light, km/sec  */
+	Clight: CLIGHT,  /* Speed of light, km/sec  */
 	Clightaud: 0.0, /* C in au/day  */
 
 	/* approximate motion of right ascension and declination

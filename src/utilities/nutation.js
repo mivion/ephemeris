@@ -162,6 +162,7 @@ nutation.nutationObject = {
  * mean ecliptic and equinox of date.
  */
 nutation.calc = (date, p) => {
+  // NOTE mutates p
   // returns => nutation {} object
 
 	var ce, se, cl, sl, sino, f; // double

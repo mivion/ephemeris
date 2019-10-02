@@ -1,10 +1,11 @@
 # Moshier Ephemeris ES6 Re-implementation
+**THIS IS A WORK IN PROGRESS**
 
 This is a "re-implementation" of the 0.1.0 legacy version of the Moshier Ephemeris javascript implementation by Mivion (found here: https://github.com/mivion/ephemeris).
 
-The goal is to reimplement the codebase with ES6 modules to promote better refactoring, debugging / testing, readability, and extensibility of the code.
+The goal is to reimplement the codebase with ES6 modules and classes, idempotent functions, and immutable data structures to promote better refactoring, debugging / testing, readability, and extensibility of the code.
 
-This incredible work also deserves a lot of love and cleanup. Hope you enjoy and find this helpful in your modern javascript project!
+This incredible work deserves a lot of love and cleanup. Hope you enjoy and find this helpful in your modern javascript project!
 
 ##  Description
 
@@ -13,6 +14,31 @@ ES6 re-implementation of ephemeris calculations for sun, planets, comets, astero
 This implementation based on Steve Moshier (http://www.moshier.net).
 
 Licensed under GPL version 2 (http://www.gnu.org/licenses/gpl-2.0.html).
+
+
+## Installation
+
+```
+npm install
+
+// or yarn install
+```
+
+## Testing
+
+```
+npm test
+
+// or yarn test
+```
+
+## Development process notes
+
+It's essential at this stage to make sure that none of the results are different from what you get when running the legacy version with the same inputs (date, lat/lon, etc).
+
+I'm running the legacy library in a bootstrapped frontend (repo https://github.com/0xStarcat/WesternHoroscopeJS) to ensure refactored values match.
+
+Then tests are written.
 
 
 ### Notes on precision && accuracy upgrading from 0.1.0 > 1.0.0

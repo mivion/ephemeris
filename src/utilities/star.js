@@ -8,7 +8,7 @@ $ns.star.calc = function (body) {
 	this.reduce (body);
 };
 
-$ns.star.reduce = function (body, constant, body) {
+$ns.star.reduce = function (body, earthBody, constant) {
 	var p = [], q = [], e = [], m = [], temp = [], polar = []; // double
 	var T, vpi, epoch; // double
 	var cosdec, sindec, cosra, sinra; // double
@@ -72,7 +72,7 @@ $ns.star.reduce = function (body, constant, body) {
 	/* Find Euclidean vectors between earth, object, and the sun
 	 * angles( p, q, e );
 	 */
-	$util.angles ( p, p, e );
+	constant = $util.angles ( p, p, e, constant );
 
 	/* Find unit vector from earth in direction of object
 	 */
@@ -109,7 +109,7 @@ $ns.star.reduce = function (body, constant, body) {
 
 	/* Correct for annual aberration
 	 */
-	body.position.aberration = $moshier.aberration.calc ( p );
+	body.position.aberration = $moshier.aberration.calc( p,earthBody, constant );
 
 	/* Precession of the equinox and ecliptic
 	 * from J2000.0 to ephemeris date

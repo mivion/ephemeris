@@ -743,7 +743,7 @@ gplan.calc1 = function (date, body_ptable) {
 };
 
 /* Compute geocentric moon.  */
-gplan.moon = function (date, rect, pol) {
+gplan.moon = (date, rect, pol) => {
 	var x, cosB, sinB, cosL, sinL; // double
 
 	pol = gplan.calc2(date, moonlr, pol);
@@ -771,6 +771,6 @@ gplan.moon = function (date, rect, pol) {
 	rect[1] = (epsilonObject.coseps * cosB * sinL - epsilonObject.sineps * sinB) * x;
 	rect[2] = (epsilonObject.sineps * cosB * sinL + epsilonObject.coseps * sinB) * x;
 
-  return rect, pol
+  return rect
 
 };

@@ -1,4 +1,4 @@
-import { J2000, EMRAT, DTR, RTD, FLAT} from '../constants'
+import { AEARTH, AU, CLIGHT, J2000, EMRAT, DTR, RTD, FLAT} from '../constants'
 import { util } from './util'
 import { gplan } from './gplan'
 import { epsilon } from './epsilon'
@@ -266,7 +266,7 @@ kepler.embofs = (date, ea) => {
 	var i; // int
 
 	/* Compute the vector Moon - Earth.  */
-	pm, polm = gplan.moon(date, pm, polm); // TODO - investigate how this mutates the data.
+	pm = gplan.moon(date, pm, polm); // TODO - investigate how this mutates the data.
 
 	/* Precess the lunar position
 	 * to ecliptic and equinox of J2000.0
@@ -299,14 +299,14 @@ kepler.init = function (constant) {
 	fl = fl*fl;
 	si = si*si;
 	u = 1.0/Math.sqrt( co*co + fl*si );
-	a = constant.aearth*u + constant.height;
-	b = constant.aearth*fl*u  +  constant.height;
+	a = AEARTH*u + constant.height;
+	b = AEARTH*fl*u  +  constant.height;
 	constant.trho = Math.sqrt( a*a*co*co + b*b*si );
 	constant.tlat = RTD * Math.acos( a*co/constant.trho );
 	if( constant.glat < 0.0 ) {
 		constant.tlat = -constant.tlat;
 	}
-	constant.trho /= constant.aearth;
+	constant.trho /= AEARTH;
 
 	/* Reduction from geodetic latitude to geocentric latitude
 	 * AA page K5
@@ -324,11 +324,11 @@ kepler.init = function (constant) {
 	 trho += height/6378160.;
 	 */
 
-	constant.Clightaud = 86400.0 * constant.Clight / constant.au;
+	constant.Clightaud = 86400.0 * CLIGHT / AU;
 	/* Radius of the earth in au
 	 Thanks to Min He <Min.He@businessobjects.com> for pointing out
 	 this needs to be initialized early.  */
-	constant.Rearth = 0.001 * constant.aearth / constant.au;
+	constant.Rearth = 0.001 * AEARTH / AU;
 
   return constant
 };

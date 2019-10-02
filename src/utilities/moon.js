@@ -1,4 +1,15 @@
-$ns.moon = {
+import { DTR, RTD, RTS } from '../constants'
+
+import { aberration } from './aberration'
+import { altaz } from './altaz'
+import { epsilon } from './epsilon'
+import { gplan } from './gplan'
+import { lonlat } from './lonlat'
+import { precess } from './precess'
+import { nutation } from './nutation'
+import { util } from './util'
+
+export const moon = {
 	ra: 0.0,	/* Right Ascension */
 	dec: 0.0	/* Declination */
 };
@@ -7,20 +18,20 @@ $ns.moon = {
  * approximate corrections to find apparent position,
  * phase of the Moon, etc. for AA.ARC.
  */
-$ns.moon.calc = function (constant, body) {
+moon.calc = (moonBody, earthBody, constant) => {
 	var i, prtsav; // int
 	var ra0, dec0; // double
 	var x, y, z, lon0; // double
 	var pp = [], qq = [], pe = [], re = [], moonpp = [], moonpol = []; // double
 
-	$moshier.body.moon.position = {
+	moonBody.position = {
 		polar: [],
 		rect: []
 	};
 
 	/* Geometric equatorial coordinates of the earth.  */
 	for (i = 0; i < 3; i++) {
-		re [i] = $moshier.body.earth.position.rect [i];
+		re[i] = earthBody.position.rect [i];
 	}
 
 	/* Run the orbit calculation twice, at two different times,
@@ -29,37 +40,38 @@ $ns.moon.calc = function (constant, body) {
 
 	/* Calculate for 0.001 day ago
 	 */
-	this.calcll({julian: $moshier.body.earth.position.date.julian - 0.001}, moonpp, moonpol); // TDT - 0.001
-	ra0 = this.ra;
-	dec0 = this.dec;
-	lon0 = moonpol[0];
 
+
+	moon.calcll({julian: earthBody.position.date.julian - 0.001}, moonpp, moonpol, moonBody, earthBody, constant); // TDT - 0.001
+	ra0 = moon.ra;
+	dec0 = moon.dec;
+	lon0 = moonpol[0];
 	/* Calculate for present instant.
 	 */
-	$moshier.body.moon.position.nutation = this.calcll ($moshier.body.earth.position.date, moonpp, moonpol).nutation;
+	moonBody.position.nutation = moon.calcll(earthBody.position.date, moonpp, moonpol, moonBody, earthBody, constant).nutation;
 
-	$moshier.body.moon.position.geometric = {
-		longitude: $const.RTD * $moshier.body.moon.position.polar[0],
-		latitude: $const.RTD * $moshier.body.moon.position.polar[1],
-		distance: $const.RTD * $moshier.body.moon.position.polar[2]
+	moonBody.position.geometric = {
+		longitude: RTD * moonBody.position.polar[0],
+		latitude: RTD * moonBody.position.polar[1],
+		distance: RTD * moonBody.position.polar[2]
 	};
 
 	/**
 	 * The rates of change.  These are used by altaz () to
 	 * correct the time of rising, transit, and setting.
 	 */
-	$const.dradt = this.ra - ra0;
-	if ($const.dradt >= Math.PI)
-		$const.dradt = $const.dradt - 2.0 * Math.PI;
-	if ($const.dradt <= -Math.PI)
-		$const.dradt = $const.dradt + 2.0 * Math.PI;
-	$const.dradt = 1000.0 * $const.dradt;
-	$const.ddecdt = 1000.0*(this.dec-dec0);
+	constant.dradt = moon.ra - ra0;
+	if (constant.dradt >= Math.PI)
+		constant.dradt = constant.dradt - 2.0 * Math.PI;
+	if (constant.dradt <= -Math.PI)
+		constant.dradt = constant.dradt + 2.0 * Math.PI;
+	constant.dradt = 1000.0 * constant.dradt;
+	constant.ddecdt = 1000.0*(moon.dec-dec0);
 
 	/* Rate of change in longitude, degrees per day
 	 * used for phase of the moon
 	 */
-	lon0 = 1000.0*$const.RTD*(moonpol[0] - lon0);
+	lon0 = 1000.0*RTD*(moonpol[0] - lon0);
 
 	/* Get apparent coordinates for the earth.  */
 	z = re [0] * re [0] + re [1] * re [1] + re [2] * re [2];
@@ -69,61 +81,63 @@ $ns.moon.calc = function (constant, body) {
 	}
 
 	/* aberration of light. */
-	$moshier.body.moon.position.annualAberration = $moshier.aberration.calc (re);
+	moonBody.position.annualAberration = aberration.calc(re, earthBody, constant);
 
 	/* pe[0] -= STR * (20.496/(RTS*pe[2])); */
-	$moshier.precess.calc (re, $moshier.body.earth.position.date, -1);
-	$moshier.nutation.calc ($moshier.body.earth.position.date, re);
+	re = precess.calc (re, earthBody.position.date, -1);
+	nutation.calc(earthBody.position.date, re); // NOTE mutates re
+
 	for (i = 0; i < 3; i++) {
 		re[i] *= z;
 	}
 
-	$moshier.lonlat.calc ( re, $moshier.body.earth.position.date, pe, 0 );
+	pe = lonlat.calc( re, earthBody.position.date, pe, 0 );
 
 	/* Find sun-moon-earth angles */
 	for( i=0; i<3; i++ ) {
 		qq[i] = re[i] + moonpp[i];
 	}
-	$util.angles ( moonpp, qq, re );
+	constant = util.angles( moonpp, qq, re, constant );
 
 	/* Display answers
 	 */
-	$moshier.body.moon.position.apparentGeocentric = {
+
+	moonBody.position.apparentGeocentric = {
 		longitude: moonpol [0],
-		dLongitude: $const.RTD * moonpol [0],
+		dLongitude: RTD * moonpol [0],
 		latitude: moonpol [1],
-		dLatitude: $const.RTD * moonpol [1],
-		distance: moonpol [2] / $const.Rearth
+		dLatitude: RTD * moonpol [1],
+		distance: moonpol [2] / constant.Rearth
 	};
-	$moshier.body.moon.position.apparentLongitude = $moshier.body.moon.position.apparentGeocentric.dLongitude;
-	var dmsLongitude = $util.dms ($moshier.body.moon.position.apparentGeocentric.longitude);
-	$moshier.body.moon.position.apparentLongitudeString =
+	moonBody.position.apparentLongitude = moonBody.position.apparentGeocentric.dLongitude;
+	var dmsLongitude = util.dms(moonBody.position.apparentGeocentric.longitude);
+	moonBody.position.apparentLongitudeString =
 		dmsLongitude.degree + '\u00B0' +
 		dmsLongitude.minutes + '\'' +
 		Math.floor (dmsLongitude.seconds) + '"'
 	;
 
-	$moshier.body.moon.position.apparentLongitude30String =
-		$util.mod30 (dmsLongitude.degree) + '\u00B0' +
+	moonBody.position.apparentLongitude30String =
+		util.mod30 (dmsLongitude.degree) + '\u00B0' +
 		dmsLongitude.minutes + '\'' +
 		Math.floor (dmsLongitude.seconds) + '"'
 	;
 
-	$moshier.body.moon.position.geocentricDistance = moonpol [2] / $const.Rearth;
+	moonBody.position.geocentricDistance = moonpol [2] / constant.Rearth;
 
-	x = $const.Rearth/moonpol[2];
-	$moshier.body.moon.position.dHorizontalParallax = Math.asin (x);
-	$moshier.body.moon.position.horizontalParallax = $util.dms (Math.asin (x));
+	x = constant.Rearth/moonpol[2];
+	moonBody.position.dHorizontalParallax = Math.asin (x);
+	moonBody.position.horizontalParallax = util.dms (Math.asin (x));
 
-	x = 0.272453 * x + 0.0799 / $const.RTS; /* AA page L6 */
-	$moshier.body.moon.position.dSemidiameter = x;
-	$moshier.body.moon.position.Semidiameter = $util.dms (x);
+	x = 0.272453 * x + 0.0799 / RTS; /* AA page L6 */
+	moonBody.position.dSemidiameter = x;
+	moonBody.position.Semidiameter = util.dms (x);
 
-	x = $const.RTD * Math.acos(-$const.ep);
+	x = RTD * Math.acos(-constant.ep);
 	/*	x = 180.0 - RTD * arcdot (re, pp); */
-	$moshier.body.moon.position.sunElongation = x;
-	x = 0.5 * (1.0 + $const.pq);
-	$moshier.body.moon.position.illuminatedFraction = x;
+	moonBody.position.sunElongation = x;
+	x = 0.5 * (1.0 + constant.pq);
+	moonBody.position.illuminatedFraction = x;
 
 	/* Find phase of the Moon by comparing Moon's longitude
 	 * with Earth's longitude.
@@ -134,7 +148,7 @@ $ns.moon.calc = function (constant, body) {
 	 * do not stay constant.  The error can exceed 0.15 day in 4 days.
 	 */
 	x = moonpol[0] - pe[0];
-	x = $util.modtp ( x ) * $const.RTD;	/* difference in longitude */
+	x = util.modtp ( x ) * RTD;	/* difference in longitude */
 	i = Math.floor (x/90);	/* number of quarters */
 	x = (x - i*90.0);	/* phase angle mod 90 degrees */
 
@@ -143,34 +157,36 @@ $ns.moon.calc = function (constant, body) {
 
 	if( x > 45.0 ) {
 		y = -(x - 90.0)*z;
-		$moshier.body.moon.position.phaseDaysBefore = y;
+		moonBody.position.phaseDaysBefore = y;
 		i = (i+1) & 3;
 	} else {
 		y = x*z;
-		$moshier.body.moon.position.phaseDaysPast = y;
+		moonBody.position.phaseDaysPast = y;
 	}
 
-	$moshier.body.moon.position.phaseQuarter = i;
+	moonBody.position.phaseQuarter = i;
 
-	$moshier.body.moon.position.apparent = {
-		dRA: this.ra,
-		dDec: this.dec,
-		ra: $util.hms (this.ra),
-		dec: $util.dms (this.dec)
+	moonBody.position.apparent = {
+		dRA: moon.ra,
+		dDec: moon.dec,
+		ra: util.hms (moon.ra),
+		dec: util.dms (moon.dec)
 	};
 
 	/* Compute and display topocentric position (altaz.c)
 	 */
-	pp[0] = this.ra;
-	pp[1] = this.dec;
+	pp[0] = moon.ra;
+	pp[1] = moon.dec;
 	pp[2] = moonpol[2];
-	$moshier.body.moon.position.altaz = $moshier.altaz.calc(pp, $moshier.body.earth.position.date, constant, body);
+	moonBody.position.altaz = altaz.calc(pp, earthBody.position.date, constant, moonBody);
+
+  return moonBody
 };
 
 /* Calculate apparent latitude, longitude, and horizontal parallax
  * of the Moon at Julian date J.
  */
-$ns.moon.calcll = function (date, rect, pol, result) {
+moon.calcll = (date, rect, pol, moonBody, earthBody, constant, result) => {
 	var cosB, sinB, cosL, sinL, y, z; // double
 	var qq = [], pp = []; // double
 	var i; // int
@@ -178,20 +194,19 @@ $ns.moon.calcll = function (date, rect, pol, result) {
 	result = result || {};
 
 	/* Compute obliquity of the ecliptic, coseps, and sineps.  */
-	$moshier.epsilon.calc (date);
+	const epsilonObject = epsilon.calc(date);
 	/* Get geometric coordinates of the Moon.  */
-	$moshier.gplan.moon (date, rect, pol);
+	rect = gplan.moon(date, rect, pol);
 	/* Post the geometric ecliptic longitude and latitude, in radians,
 	 * and the radius in au.
 	 */
-	$const.body.position.polar [0] = pol[0];
-	$const.body.position.polar[1] = pol[1];
-	$const.body.position.polar[2] = pol[2];
-
+	moonBody.position.polar[0] = pol[0];
+	moonBody.position.polar[1] = pol[1];
+	moonBody.position.polar[2] = pol[2];
 	/* Light time correction to longitude,
 	 * about 0.7".
 	 */
-	pol[0] -= 0.0118 * $const.DTR * $const.Rearth / pol[2];
+	pol[0] -= 0.0118 * DTR * constant.Rearth / pol[2];
 
 	/* convert to equatorial system of date */
 	cosB = Math.cos(pol[1]);
@@ -199,19 +214,19 @@ $ns.moon.calcll = function (date, rect, pol, result) {
 	cosL = Math.cos(pol[0]);
 	sinL = Math.sin(pol[0]);
 	rect[0] = cosB*cosL;
-	rect[1] = $moshier.epsilon.coseps*cosB*sinL - $moshier.epsilon.sineps*sinB;
-	rect[2] = $moshier.epsilon.sineps*cosB*sinL + $moshier.epsilon.coseps*sinB;
+	rect[1] = epsilonObject.coseps*cosB*sinL - epsilonObject.sineps*sinB;
+	rect[2] = epsilonObject.sineps*cosB*sinL + epsilonObject.coseps*sinB;
 
 	/* Rotate to J2000. */
-	$moshier.precess.calc ( rect, {julian: $moshier.body.earth.position.date.julian}, 1 ); // TDT
+	rect = precess.calc ( rect, {julian: earthBody.position.date.julian}, 1 ); // TDT
 
 	/* Find Euclidean vectors and angles between earth, object, and the sun
 	 */
 	for( i=0; i<3; i++ ) {
 		pp[i] = rect[i] * pol[2];
-		qq[i] = $moshier.body.earth.position.rect [i] + pp[i];
+		qq[i] = earthBody.position.rect [i] + pp[i];
 	}
-	$util.angles (pp, qq, $moshier.body.earth.position.rect);
+	constant = util.angles (pp, qq, earthBody.position.rect, constant);
 
 	/* Make rect a unit vector.  */
 	/* for (i = 0; i < 3; i++) */
@@ -227,28 +242,30 @@ $ns.moon.calcll = function (date, rect, pol, result) {
 	/* annuab (rect); */
 
 	/* Precess to date.  */
-	$moshier.precess.calc (rect, {julian: $moshier.body.earth.position.date.julian}, -1); // TDT
+	rect = precess.calc (rect, {julian: earthBody.position.date.julian}, -1); // TDT
 
 	/* Correct for nutation at date TDT.
 	 */
-	result.nutation = $moshier.nutation.calc ({julian: $moshier.body.earth.position.date.julian}, rect); // TDT
+  const nutationObject = nutation.getObject({julian: earthBody.position.date.julian})
+	result.nutation = nutation.calc ({julian: earthBody.position.date.julian}, rect); // TDT
 
 	/* Apparent geocentric right ascension and declination.  */
-	this.ra = $util.zatan2(rect[0],rect[1]);
-	this.dec = Math.asin(rect[2]);
+	moon.ra = util.zatan2(rect[0],rect[1]);
+	moon.dec = Math.asin(rect[2]);
 
 	/* For apparent ecliptic coordinates, rotate from the true
 	 equator into the ecliptic of date.  */
-	cosL = Math.cos($moshier.epsilon.eps + $moshier.nutation.nuto);
-	sinL  = Math.sin($moshier.epsilon.eps + $moshier.nutation.nuto);
+
+	cosL = Math.cos(epsilonObject.eps + nutationObject.nuto);
+	sinL  = Math.sin(epsilonObject.eps + nutationObject.nuto);
 	y = cosL * rect[1] + sinL * rect[2];
 	z = -sinL * rect[1] + cosL * rect[2];
-	pol[0] = $util.zatan2( rect[0], y );
+	pol[0] = util.zatan2( rect[0], y );
 	pol[1] = Math.asin(z);
 
 	/* Restore earth-moon distance.  */
 	for( i=0; i<3; i++ ) {
-		rect[i] *= $const.EO;
+		rect[i] *= constant.EO;
 	}
 
 	return result;

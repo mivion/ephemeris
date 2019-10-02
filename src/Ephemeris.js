@@ -5,6 +5,7 @@ import { processor } from './utilities/processor'
 import  { julian } from './utilities/julian'
 import { delta } from './utilities/delta'
 import { sun } from './utilities/sun'
+import { moon } from './utilities/moon'
 
 export default class Ephemeris {
   // TODO: refactor library to use 0 - 11 months instead of 1 - 12 months
@@ -30,7 +31,10 @@ export default class Ephemeris {
     switch(bodyKey) {
       case 'sun':
         bodyObject = body.sun
-        return sun.calc(bodyObject, {...this.Earth}, this.Constant) // TODO: Earth object mutation occurs in sun.calc(). refactor...
+        return sun.calc(bodyObject, {...this.Earth}, this.Constant)
+      case 'moon':
+        bodyObject = body.moon
+        return moon.calc(bodyObject, {...this.Earth}, this.Constant)
       default:
         throw new Error(`Celestial body with key: "${bodyKey}" not found.`)
         break

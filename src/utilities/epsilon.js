@@ -2,7 +2,7 @@ import { STR } from '../constants'
 
 export const epsilon = {};
 
-epsilon.calc = function (date) {
+epsilon.calc = date => {
   /* The results of the program are returned in these
    * global variables:
    */
@@ -14,7 +14,6 @@ epsilon.calc = function (date) {
   }
 
 	var T; // double
-
 	T = (date.julian - 2451545.0)/36525.0;
 
 	/* DE403 values. */

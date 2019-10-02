@@ -21,6 +21,7 @@ export const TPI = 2.0 * Math.PI
 export const FLAT = 298.257222
 export const AU = 1.49597870691e8 /* Astronomical unit, in kilometers.  */
 export const AEARTH = 6378137  /* Radius of the earth, in meters.  */
+export const CLIGHT = 2.99792458e5  /* Speed of light, km/sec  */
 
 
 /* Earth radii per au */

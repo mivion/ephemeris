@@ -1,6 +1,6 @@
 $ns.planet = {};
 
-$ns.planet.calc = function (body) {
+$ns.planet.calc = function (body, earthBody, constant) {
 	this.prepare (body);
 
 	/* calculate heliocentric position of the object */
@@ -39,7 +39,7 @@ $ns.planet.reduce = function (body, q, e, constant, body) {
 		p[i] = q[i] - e[i];
 	}
 
-	$util.angles ( p, q, e );
+	constant = $util.angles ( p, q, e, constant );
 
 	a = 0.0;
 	for( i=0; i<3; i++ ) {
@@ -103,7 +103,7 @@ $ns.planet.reduce = function (body, q, e, constant, body) {
 
 	/* Correct for annual aberration
 	 */
-	body.position.aberration = $moshier.aberration.calc (p);
+	body.position.aberration = $moshier.aberration.calc(p, earthBody, constant);
 
 	/* Precession of the equinox and ecliptic
 	 * from J2000.0 to ephemeris date

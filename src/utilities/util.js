@@ -329,35 +329,37 @@ util.deltap = function (p0, p1, d) {
  * q (object), e (earth), and p (q minus e) are input vectors.
  * The answers are posted in the following global locations:
  */
-util.angles = function (p, q, e) {
+util.angles = function (p, q, e, constant) {
 	var a, b, s; // double
 	var i; // int
 
-	$const.EO = 0.0;
-	$const.SE = 0.0;
-	$const.SO = 0.0;
-	$const.pq = 0.0;
-	$const.ep = 0.0;
-	$const.qe = 0.0;
+	constant.EO = 0.0;
+	constant.SE = 0.0;
+	constant.SO = 0.0;
+	constant.pq = 0.0;
+	constant.ep = 0.0;
+	constant.qe = 0.0;
 	for( i=0; i<3; i++ ) {
 		a = e[i];
 		b = q[i];
 		s = p[i];
-		$const.EO += s * s;
-		$const.SE += a * a;
-		$const.SO += b * b;
-		$const.pq += s * b;
-		$const.ep += a * s;
-		$const.qe += b * a;
+		constant.EO += s * s;
+		constant.SE += a * a;
+		constant.SO += b * b;
+		constant.pq += s * b;
+		constant.ep += a * s;
+		constant.qe += b * a;
 	}
-	$const.EO = Math.sqrt($const.EO); /* Distance between Earth and object */
-	$const.SO = Math.sqrt($const.SO); /* Sun - object */
-	$const.SE = Math.sqrt($const.SE); /* Sun - earth */
+	constant.EO = Math.sqrt(constant.EO); /* Distance between Earth and object */
+	constant.SO = Math.sqrt(constant.SO); /* Sun - object */
+	constant.SE = Math.sqrt(constant.SE); /* Sun - earth */
 	/* Avoid fatality: if object equals sun, SO is zero.  */
-	if( $const.SO > 1.0e-12 )
+	if( constant.SO > 1.0e-12 )
 	{
-		$const.pq /= $const.EO*$const.SO;	/* cosine of sun-object-earth */
-		$const.qe /= $const.SO*$const.SE;	/* cosine of earth-sun-object */
+		constant.pq /= constant.EO * constant.SO;	/* cosine of sun-object-earth */
+		constant.qe /= constant.SO * constant.SE;	/* cosine of earth-sun-object */
 	}
-	$const.ep /= $const.SE*$const.EO;	/* -cosine of sun-earth-object */
+	constant.ep /= constant.SE * constant.EO;	/* -cosine of sun-earth-object */
+
+  return constant
 };
