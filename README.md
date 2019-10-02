@@ -59,20 +59,30 @@ Then tests are written.
 I'm also using the telnet interface that the Jet Propulsion laboratory provides here (https://ssd.jpl.nasa.gov/?horizons) to help verify my results.
 
 
-### Notes on precision && accuracy upgrading from 0.1.0 > 1.0.0
+### Notes on precision & accuracy upgrading from 0.1.0 to 1.0.0
 
-I've noticed that there are very tiny differences (in the magnitude of 0.0000005 degrees) between the apparentLongitude decimal calculation of the bodies in the 1.0.0 implementation vs the 0.1.0 implentation. I've tracked this down to a single variation in factors - `epsilon.js`.
+I've noticed that there is very tiny differences (in the magnitude of 0.0000005 degrees) between the `apparentLongitude` decimal calculation of the `Sun` in the 1.0.0 implementation vs the 0.1.0 implentation. I've tracked this down to a specific calculation - `epsilon.js`.
 
-The differences appear to be the result of the refactor, which I believe actually fixed a bug. The potential bug was centered around the way `epsilon.js` handles its state.
+I believe this upgrade actually fixed a bug in the original implementation. The bug was centered around the way `epsilon.js` was implemented. In the 0.1.0 implementation, `$moshier.epsilon` was a global variable that was reassigned frequently. This, I believe, resulted in unintentional mutations.
 
-In the 0.1.0 implementation, `$moshier.epsilon` was a workhorse variable that was reassigned frequently in many calculations from many sources. This, I believe, resulted in the app losing track of the state of `epsilon.js`, because the results are not consistent across method calls and my best guess is that this object was intended to be idempotent.
+I refactored the code to treat this as an immutable locally scoped object, because I do not believe `epsilon` was intended to store global mutations of its data.
 
-I refactored the code to treat this as an immutable object generator, because I do not believe `epsilon` benefits from multiple iterations and mutations of its data. In fact, the original code had a check that seemed be failing and causing undesired mutations -
+Legacy code (mutations noted):
 
+`v0.1.0 Sun.js - line 76 - 87`
 ```
-if (date.julian == this.jdeps) {
-  return;
-}
+$moshier.epsilon.calc ($moshier.body.earth.position.date); // Sets $moshier.epsilon - now locally scoped & immutable in 1.0.0
+$moshier.nutation.calc ($moshier.body.earth.position.date, ecr); // mutates $moshier.epsilon
+
+/* Display the final apparent R.A. and Dec.
+ * for equinox of date.
+ */
+$moshier.body.sun.position.constellation = $moshier.constellation.calc (ecr, // mutates $moshier.epsilon $moshier.body.earth.position.date);
+
+$moshier.body.sun.position.apparent = $util.showrd (ecr, pol);
+
+/* Show it in ecliptic coordinates */
+y  =  $moshier.epsilon.coseps * rec[1]  +  $moshier.epsilon.sineps * rec[2]; // utilizes $moshier.epsilon
 ```
 
-because in some instances, `date.julian` was passed in as a different value than what this.jdeps is. I've yet to track down why, but it seems irrelevant if we treat epsilon immutably.
+So in conclusion, this 0.0000005 variation in th Sun's `apparentLongitude` is a feature, not a bug.

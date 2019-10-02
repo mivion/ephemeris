@@ -245,8 +245,8 @@ export const body = [
     key: 'sirius',
     type: 'star',
 		epoch: 2000,
-		hmsRa: {hours: 6, minutes: 45, seconds: 8.871},
-		hmsDec: {hours: -16, minutes: 42, seconds: 57.99},
+		hmsRa: {hours: 6, minutes: 45, seconds: 8.871},     // right ascension
+		hmsDec: {hours: -16, minutes: 42, seconds: 57.99},  // declination
 		raMotion: -3.847,
 		decMotion: -120.53,
 		velocity: -7.6,

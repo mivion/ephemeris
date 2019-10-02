@@ -171,7 +171,7 @@ nutation.calc = (date, p) => {
 	var result;
 
 	const nutationObject = nutation.getObject(date); /* be sure we calculated nutl and nuto */
-	const epsilonObject = epsilon.calc (date); /* and also the obliquity of date */
+	const epsilonObject = epsilon.calc(date); /* and also the obliquity of date */
 
 	f = epsilonObject.eps + nutationObject.nuto;
 	ce = Math.cos( f );

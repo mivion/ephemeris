@@ -7,6 +7,7 @@ import { delta } from './utilities/delta'
 import { sun } from './utilities/sun'
 import { moon } from './utilities/moon'
 import { planet } from './utilities/planet'
+import { star } from './utilities/star'
 
 export default class Ephemeris {
   // TODO: refactor library to use 0 - 11 months instead of 1 - 12 months
@@ -36,6 +37,8 @@ export default class Ephemeris {
         return moon.calc(bodyObject, {...this.Earth}, this.Constant)
       case 'heliocentric':
         return planet.calc(bodyObject, {...this.Earth}, this.Constant)
+      case 'star':
+        return star.calc(bodyObject, {...this.Earth}, this.Constant)
       default:
         throw new Error(`Celestial body with key: "${bodyKey}" or type "${bodyObject.type}" not found.`)
         break

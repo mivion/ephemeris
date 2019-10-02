@@ -53,13 +53,13 @@ describe('Ephemeris', () => {
 
     it('calculates the Sun', () => {
       const sun = ephemeris.CalculateBody('sun')
-      expect(sun.position.aberration).toEqual({"dDec": 1.543790024784711, "dRA": 1.506044160265716})
-      expect(sun.position.altaz.dLocalApparentSiderialTime).toEqual(0.5037761337802859)
 
 
       expect(sun.position.apparentLongitude).toEqual(279.85845746839465)
       expect(sun.position.apparentLongitudeString).toEqual("279°51'30\"")
 
+      expect(sun.position.aberration).toEqual({"dDec": 1.543790024784711, "dRA": 1.506044160265716})
+      expect(sun.position.altaz.dLocalApparentSiderialTime).toEqual(0.5037761337802859)
 
       expect(sun.position.apparent.dDec).toEqual(-0.40266799895209826)
       expect(sun.position.apparent.dRA).toEqual(4.899579517039573)
@@ -162,7 +162,36 @@ describe('Ephemeris', () => {
 
       expect(mercury.position.constellation).toEqual(77);
       expect(constellation.constel[77]).toEqual("Sgr Sagittarii");
+    })
 
+    it('calculates Sirius', () => {
+      const sirius = ephemeris.CalculateBody('sirius')
+      expect(sirius.position.apparentLongitudeString).toEqual("101°17'23\"")
+      expect(sirius.position.apparentLongitude).toEqual(1.767843531323971)
+
+    	expect(sirius.position.deflection.lightDeflection.dDec).toEqual(0.0014984308353008266);
+    	expect(sirius.position.deflection.sunElongation).toEqual(140.20814378464434);
+
+    	expect(sirius.position.apparent.dRA).toEqual(1.767843531323971);
+    	expect(sirius.position.apparent.dDec).toEqual(-0.29177988334236765);
+
+    	expect(sirius.position.altaz.diurnalAberation.ra).toEqual(1.767843897919368);
+    	expect(sirius.position.altaz.diurnalAberation.dec).toEqual(-0.2917795644637801);
+
+    	expect(sirius.position.altaz.diurnalParallax.ra).toEqual(1.767843897919368);
+    	expect(sirius.position.altaz.diurnalParallax.dec).toEqual(-0.2917795644637801);
+
+    	expect(sirius.position.altaz.atmosphericRefraction.deg).toEqual(0.3127048123159503);
+    	expect(sirius.position.altaz.atmosphericRefraction.dRA).toEqual(-56.01842214360595);
+    	expect(sirius.position.altaz.atmosphericRefraction.dDec).toEqual(786.7057329096253);
+
+    	expect(sirius.position.altaz.topocentric.altitude).toEqual(1.8540808732683018);
+    	expect(sirius.position.altaz.topocentric.ra).toEqual(-4.519415183877626);
+    	expect(sirius.position.altaz.topocentric.dec).toEqual(-0.2879655074405612);
+    	expect(sirius.position.altaz.topocentric.azimuth).toEqual(114.02566694455601);
+
+      expect(sirius.position.astrimetricJ2000.dRA).toEqual(1.767791005321612);
+      expect(sirius.position.astrimetricJ2000.dDec).toEqual(-0.291752264892662);
 
     })
   })
