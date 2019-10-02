@@ -1,5 +1,5 @@
 import { J2000, STR } from '../constants'
-import { epsilon } from './epsilon'
+import Epsilon from './Epsilon'
 
 
 // TODO - all date params should be replaced with julian date
@@ -63,9 +63,9 @@ precess.calc = function (R, date, direction) {
 	 */
   let epsilonObject
 	if (direction == 1) {
-		epsilonObject = epsilon.calc (date); /* To J2000 */
+		epsilonObject = new Epsilon(date.julian).calcEpsilon(); /* To J2000 */
 	} else {
-		epsilonObject = epsilon.calc ({julian: J2000}); /* From J2000 */
+		epsilonObject = new Epsilon(J2000).calcEpsilon(); /* From J2000 */
 	}
 
 	x[0] = R[0];
@@ -140,9 +140,9 @@ precess.calc = function (R, date, direction) {
 	 */
 
 	if( direction == 1 ) {
-		epsilonObject = epsilon.calc({julian: J2000});
+		epsilonObject = new Epsilon(J2000).calcEpsilon();
 	} else {
-		epsilonObject = epsilon.calc( date );
+		epsilonObject = new Epsilon(date.julian).calcEpsilon();
 	}
 
 	z = epsilonObject.coseps * x[1] - epsilonObject.sineps * x[2];

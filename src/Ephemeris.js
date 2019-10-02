@@ -56,7 +56,7 @@ export default class Ephemeris {
 
 
     this.Body = body
-    this.Earth = kepler.calc(this.Constant.date, this.Body.find(b => b.key === 'earth'))
+    this.Earth = kepler.calc(this.Date, this.Body.find(b => b.key === 'earth'))
     this.Results = this.CalculateResults()
 
     this.CalculateDates = this.CalculateDates.bind(this)
@@ -73,7 +73,7 @@ export default class Ephemeris {
     this.Date.j2000 = julian.calcJ2000(julianDate),
     this.Date.b1950 = julian.calcB1950(julianDate),
     this.Date.j1900 = julian.calcJ1900(julianDate),
-    this.Date.universal = new DateDelta().calcUniversal(this.Date.julian, this.Date.j2000, this.Constant)
+    this.Date.universal = new DateDelta().CalcUniversal(this.Date.julian, this.Date.j2000, this.Constant)
 
 
     // TODO - deprecate Constant.date references and use the above above.
@@ -82,7 +82,7 @@ export default class Ephemeris {
     this.Constant.date.j2000 = julian.calcJ2000(julianDate)
     this.Constant.date.b1950 = julian.calcB1950(julianDate)
     this.Constant.date.j1900 = julian.calcJ1900(julianDate)
-    this.Constant.date.universal = new DateDelta().calcUniversal(this.Date.julian, this.Date.j2000, this.Constant)
+    this.Constant.date.universal = new DateDelta().CalcUniversal(this.Date.julian, this.Date.j2000, this.Constant)
 
     this.Constant.date = julian.universalCalc(this.Constant.date) // TODO - refactor Date to be its own class with these methods on init
   }

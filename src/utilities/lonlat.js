@@ -1,4 +1,4 @@
-import { epsilon } from './epsilon'
+import Epsilon from './Epsilon'
 import { precess } from './precess'
 import { util } from './util'
 
@@ -26,12 +26,12 @@ lonlat.calc = (pp, date, polar, ofdate, result) => {
 	/* Precess to equinox of date J
 	 */
 	if( ofdate ) {
-		s = precess.calc ( s, date, -1 );
+		s = precess.calc( s, date, -1 );
 	}
 
 	/* Convert from equatorial to ecliptic coordinates
 	 */
-	let epsilonObject = epsilon.calc(date);
+	let epsilonObject = new Epsilon(date.julian).calcEpsilon();
 	yy = s[1];
 	zz = s[2];
 	x  = s[0];

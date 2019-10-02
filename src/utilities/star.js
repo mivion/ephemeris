@@ -2,7 +2,7 @@ import { B1950, J2000, J1900, STR, RTS } from '../constants'
 
 import { aberration } from './aberration'
 import { altaz } from './altaz'
-import { epsilon } from './epsilon'
+import Epsilon from './Epsilon'
 import { deflection } from './deflection'
 import { fk4fk5 } from './fk4fk5'
 import { nutation } from './nutation'
@@ -131,7 +131,7 @@ star.reduce = (body, earthBody, constant) => {
 	 * at current ecliptic.
 	 */
 
-	// const epsilonObject = epsilon.calc ( earthBody.position.date ); // NOTE - has no effect on result
+	// const epsilonObject = new Epsilon( earthBody.position.date.julian).calcEpsilon(); // NOTE - has no effect on result
 	nutation.calc(earthBody.position.date, p); // NOTE mutates p
 
 	/* Display the final apparent R.A. and Dec.

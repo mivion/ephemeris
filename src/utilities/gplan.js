@@ -3,7 +3,7 @@ import { moonlr } from '../ptables/moonlr'
 import { moonlat } from '../ptables/moonlat'
 
 import { util } from './util'
-import { epsilon } from './epsilon'
+import Epsilon from './Epsilon'
 
 // TODO - all date params should be replaced with julian date
 // TODO - the gplan object is storing dynamic state - might be better as a class instance. investigate further
@@ -763,7 +763,7 @@ gplan.moon = (date, rect, pol) => {
 	x = (1.0 + STR * pol[2]) * moonlr.distance;
 	pol[2] = x;
 	/* Convert ecliptic polar to equatorial rectangular coordinates.  */
-	const epsilonObject = epsilon.calc (date);
+	const epsilonObject = new Epsilon(date.julian).calcEpsilon();
 	cosB = Math.cos(pol[1]);
 	sinB = Math.sin(pol[1]);
 	cosL = Math.cos(pol[0]);

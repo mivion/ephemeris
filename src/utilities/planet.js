@@ -4,7 +4,7 @@ import { aberration } from './aberration'
 import { altaz } from './altaz'
 import { constellation } from './constellation'
 import { deflection } from './deflection'
-import { epsilon } from './epsilon'
+import Epsilon from './Epsilon'
 import { kepler } from './kepler'
 import { light } from './light'
 import { lonlat } from './lonlat'
@@ -127,8 +127,8 @@ planet.reduce = (body, q, e, earthBody, constant) => {
 	/* Ajust for nutation
 	 * at current ecliptic.
 	 */
-   
-	// const epsilonObject = epsilon.calc(earthBody.position.date); // NOTE - has no affect on result
+
+	// const epsilonObject = new Epsilon(earthBody.position.date.julian).calcEpsilon(); // NOTE - has no affect on result
 	body.position.nutation = nutation.calc ( earthBody.position.date, p ); // NOTE mutates p
 
 	/* Display the final apparent R.A. and Dec.

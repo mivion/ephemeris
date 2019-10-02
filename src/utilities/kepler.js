@@ -1,7 +1,7 @@
 import { AEARTH, AU, CLIGHT, J2000, EMRAT, DTR, RTD, FLAT} from '../constants'
 import { util } from './util'
 import { gplan } from './gplan'
-import { epsilon } from './epsilon'
+import Epsilon from './Epsilon'
 import { precess } from './precess'
 
 // TODO - all date params should be replaced with julian date
@@ -30,7 +30,7 @@ kepler.calc = (date, body, rect, polar) => {
 		r = polar[2]; /* radius */
 		body.distance = r;
 		body.epoch = date.julian;
-		body.equinox = {julian: J2000};
+		body.equinox = J2000;
 		// goto kepdon;
 	} else {
 		/* Decant the parameters from the data structure
@@ -209,7 +209,7 @@ kepler.calc = (date, body, rect, polar) => {
 	 * to heliocentric equatorial rectangular coordinates
 	 * by rotating eps radians about the x axis.
 	 */
-	let epsilonObject = epsilon.calc(body.equinox);
+	let epsilonObject = new Epsilon(body.equinox).calcEpsilon();
 	W = epsilonObject.coseps*rect[1] - epsilonObject.sineps*rect[2];
 	M = epsilonObject.sineps*rect[1] + epsilonObject.coseps*rect[2];
 	rect[1] = W;
@@ -219,7 +219,7 @@ kepler.calc = (date, body, rect, polar) => {
 	 * to ecliptic and equinox of J2000.0
 	 * if not already there.
 	 */
-	rect = precess.calc(rect, body.equinox, 1);
+	rect = precess.calc(rect, { julian: body.equinox}, 1);
 	/* If earth, adjust from earth-moon barycenter to earth
 	 * by AA page E2.
 	 */
@@ -228,7 +228,7 @@ kepler.calc = (date, body, rect, polar) => {
 	}
 
 	/* Rotate back into the ecliptic.  */
-  epsilonObject = epsilon.calc({julian: J2000});
+  epsilonObject = new Epsilon(J2000).calcEpsilon();
 	W = epsilonObject.coseps*rect[1] + epsilonObject.sineps*rect[2];
 	M = -epsilonObject.sineps*rect[1] + epsilonObject.coseps*rect[2];
 

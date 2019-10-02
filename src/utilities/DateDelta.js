@@ -84,10 +84,10 @@ export default class DateDelta {
     this.TABEND = 2011,
     this.TABSIZ = this.TABEND - this.TABSTART + 1,
 
-    this.calcUniversal = this.calcUniversal.bind(this)
+    this.CalcUniversal = this.CalcUniversal.bind(this)
   }
 
-  calcUniversal(julianDate, j2000, constant) {
+  CalcUniversal(julianDate, j2000, constant) {
   	var p, B; // double
   	var diff = [0, 0, 0, 0, 0, 0]; // int
   	var i, iy, k; // int

@@ -2,7 +2,7 @@ import { DTR, RTD, RTS } from '../constants'
 
 import { aberration } from './aberration'
 import { altaz } from './altaz'
-import { epsilon } from './epsilon'
+import Epsilon from './Epsilon'
 import { gplan } from './gplan'
 import { lonlat } from './lonlat'
 import { precess } from './precess'
@@ -194,7 +194,7 @@ moon.calcll = (date, rect, pol, moonBody, earthBody, constant, result) => {
 	result = result || {};
 
 	/* Compute obliquity of the ecliptic, coseps, and sineps.  */
-	const epsilonObject = epsilon.calc(date);
+	const epsilonObject = new Epsilon(date.julian).calcEpsilon();
 	/* Get geometric coordinates of the Moon.  */
 	rect = gplan.moon(date, rect, pol);
 	/* Post the geometric ecliptic longitude and latitude, in radians,

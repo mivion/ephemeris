@@ -1,6 +1,6 @@
 import { STR } from '../constants'
 
-import { epsilon } from './epsilon'
+import Epsilon from './Epsilon'
 import { util } from './util'
 
 export const nutation = {}
@@ -171,7 +171,7 @@ nutation.calc = (date, p) => {
 	var result;
 
 	const nutationObject = nutation.getObject(date); /* be sure we calculated nutl and nuto */
-	const epsilonObject = epsilon.calc(date); /* and also the obliquity of date */
+	const epsilonObject = new Epsilon(date.julian).calcEpsilon(); /* and also the obliquity of date */
 
 	f = epsilonObject.eps + nutationObject.nuto;
 	ce = Math.cos( f );

@@ -1,6 +1,6 @@
 import { J2000, RTD} from '../constants'
 
-import { epsilon } from './epsilon'
+import Epsilon from './Epsilon'
 import { nutation } from './nutation'
 
 export const siderial = {};
@@ -34,7 +34,7 @@ siderial.calc = (date, tlong) => {
 	 * We already have routines for these.
 	 */
 	const nutationObject = nutation.getObject(date);
-	const epsilonObject = epsilon.calc(date);
+	const epsilonObject = new Epsilon(date.julian).calcEpsilon();
 	/* nutl is in radians; convert to seconds of time
 	 * at 240 seconds per degree
 	 */

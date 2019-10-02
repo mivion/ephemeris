@@ -2,7 +2,7 @@ import { RTD } from '../constants'
 
 import { altaz } from './altaz'
 import { constellation } from './constellation'
-import { epsilon } from './epsilon'
+import Epsilon from './Epsilon'
 import { lonlat } from './lonlat'
 import { kepler } from './kepler'
 import { nutation } from './nutation'
@@ -83,7 +83,7 @@ sun.calc = (sunBodyObject, earthBodyObject, constant) => {
 
 	/* Nutation.
 	 */
-	let epsilonObject = epsilon.calc(earthBodyObject.position.date);
+	let epsilonObject = new Epsilon(earthBodyObject.position.date.julian).calcEpsilon();
   let nutationObject = nutation.getObject(earthBodyObject.position.date)
   nutation.calc(earthBodyObject.position.date, ecr); // NOTE nutation mutates the nutation object AND returns a result.
 
