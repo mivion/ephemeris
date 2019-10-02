@@ -24,7 +24,7 @@ export const transit = {
 /* Calculate time of transit
  * assuming RA and Dec change uniformly with time
  */
-transit.calc = function (date, lha, dec, constant, body, result) {
+transit.calc = function (date, lha, dec, constant, body, observer, result) {
 	var x, y, z, N, D; // double
 	var lhay, cosdec, sindec, coslat, sinlat; // double
 
@@ -35,7 +35,7 @@ transit.calc = function (date, lha, dec, constant, body, result) {
 	this.r_rise = -10.0;
 	this.r_set = -10.0;
 	/* observer's geodetic latitude, in radians */
-	x = constant.glat * DTR;
+	x = observer * DTR;
 	coslat = Math.cos(x);
 	sinlat = Math.sin(x);
 

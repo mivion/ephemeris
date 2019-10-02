@@ -309,21 +309,5 @@ kepler.init = function (constant) {
 	}
 	constant.trho /= AEARTH;
 
-	/* Reduction from geodetic latitude to geocentric latitude
-	 * AA page K5
-	 */
-	/*
-	 tlat = glat
-	 - 0.19242861 * sin(2.0*u)
-	 + 0.00032314 * sin(4.0*u)
-	 - 0.00000072 * sin(6.0*u);
-
-	 trho =    0.998327073
-	 + 0.001676438 * cos(2.0*u)
-	 - 0.000003519 * cos(4.0*u)
-	 + 0.000000008 * cos(6.0*u);
-	 trho += height/6378160.;
-	 */
-
   return constant
 };

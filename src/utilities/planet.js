@@ -14,13 +14,13 @@ import { util } from './util'
 
 export const planet = {};
 
-planet.calc = (body, earthBody, constant) => {
+planet.calc = (body, earthBody, observer, constant) => {
 	body = planet.prepare(body);
 
 	/* calculate heliocentric position of the object */
 	body = kepler.calc(earthBody.position.date, body); // NOTE mutates body
 	/* apply correction factors and print apparent place */
-	return planet.reduce(body, body.position.rect, earthBody.position.rect, earthBody, constant);
+	return planet.reduce(body, body.position.rect, earthBody.position.rect, earthBody, observer, constant);
 };
 
 /* The following program reduces the heliocentric equatorial
@@ -28,7 +28,7 @@ planet.calc = (body, earthBody, constant) => {
  * were computed by kepler() and produces apparent geocentric
  * right ascension and declination.
  */
-planet.reduce = (body, q, e, earthBody, constant) => {
+planet.reduce = (body, q, e, earthBody, observer, constant) => {
 	var p = [], temp = [], polar = []; // double
 	var a, b, r, s, x; // double
 	var i; // int
@@ -160,7 +160,7 @@ planet.reduce = (body, q, e, earthBody, constant) => {
 	/* Go do topocentric reductions.
 	 */
 	polar[2] = constant.EO;
-	body.position.altaz = altaz.calc(polar, earthBody.position.date, constant, body);
+	body.position.altaz = altaz.calc(polar, earthBody.position.date, constant, body, observer);
 
   return body
 };

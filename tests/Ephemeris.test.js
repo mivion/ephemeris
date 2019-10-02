@@ -33,19 +33,19 @@ describe('Ephemeris', () => {
       expect(() => new Ephemeris({year: 1, month: 1, day: 1, hours: 1, minutes: 0, seconds: 0, latitude: 0, longitude: 0, height: "0"})).toThrowError("Parameter value of: \"0\" - must be a number (int or float type).")
     })
 
-    it('constructs Constant from input', () => {
-      // expect(ephemeris.Constant.date.year).toEqual(2000)
-      expect(ephemeris.Constant.tlong).toEqual(-71.1)
-    })
-
     it('assigns Body', () => {
       expect(ephemeris.Body.find(b => b.key === 'earth').anomaly).toEqual(1.1791)
       expect(ephemeris.Body.find(b => b.key === 'earth').ptable.distance).toEqual(1.000139872959708)
     })
 
-    it('initializes Kepler constants', () => {
-      expect(ephemeris.Constant.tlat).toEqual(41.17920042308457)
-      expect(ephemeris.Constant.trho).toEqual(0.9985423669162051)
+    it('assigns Observer', () => {
+      expect(ephemeris.Observer.glat).toEqual(41.37)
+      expect(ephemeris.Observer.tlong).toEqual(-71.1)
+      expect(ephemeris.Observer.height).toEqual(0)
+      expect(ephemeris.Observer.attemp).toEqual(12)
+      expect(ephemeris.Observer.atpress).toEqual(1010)
+      expect(ephemeris.Observer.tlat).toEqual(41.17920042308457)
+      expect(ephemeris.Observer.trho).toEqual(0.9985423669162051)
     })
 
     it('calculates dates', () => {

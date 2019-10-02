@@ -7,6 +7,7 @@ import { sun } from './utilities/sun'
 import { moon } from './utilities/moon'
 import { planet } from './utilities/planet'
 import { star } from './utilities/star'
+import Observer from './Observer'
 
 import {
   validateYear,
@@ -45,15 +46,10 @@ export default class Ephemeris {
     this._height = validateNumber(height)
 
     this.Constant = constant
-    this.Constant.date = { year: this._year, month: this._month, day: this._day, hours: this._hours, minutes: this._minutes, seconds: this._seconds }
-    this.Constant.tlong = longitude
-    this.Constant.glat = latitude
-    this.Constant.height = height
-    this.Constant = kepler.init(constant)
-
     this.CalculateDates()
 
     this.Body = body
+    this.Observer = new Observer({latitude: latitude, longitude: longitude, height: height})
     this.Earth = kepler.calc(this.Date, this.Body.find(b => b.key === 'earth'))
     this.Results = this.CalculateResults()
 
@@ -82,13 +78,13 @@ export default class Ephemeris {
     const bodyObject = this.Body.find(b => b.key === bodyKey)
     switch(bodyObject.type) {
       case 'sun':
-        return sun.calc(bodyObject, {...this.Earth}, this.Constant)
+        return sun.calc(bodyObject, {...this.Earth}, this.Observer, this.Constant)
       case 'luna':
-        return moon.calc(bodyObject, {...this.Earth}, this.Constant)
+        return moon.calc(bodyObject, {...this.Earth}, this.Observer, this.Constant)
       case 'heliocentric':
-        return planet.calc(bodyObject, {...this.Earth}, this.Constant)
+        return planet.calc(bodyObject, {...this.Earth}, this.Observer, this.Constant)
       case 'star':
-        return star.calc(bodyObject, {...this.Earth}, this.Constant)
+        return star.calc(bodyObject, {...this.Earth}, this.Observer, this.Constant)
       default:
         throw new Error(`Celestial body with key: "${bodyKey}" or type "${bodyObject.type}" not found.`)
         break

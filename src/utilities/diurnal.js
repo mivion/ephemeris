@@ -8,7 +8,7 @@ export const diurnal = {
  * This formula is less rigorous than the method used for
  * annual aberration.  However, the correction is small.
  */
-diurnal.aberration = (last, ra, dec, constant, result) => {
+diurnal.aberration = (last, ra, dec, observer, result) => {
 	var lha, coslha, sinlha, cosdec, sindec; // double
 	var coslat, N, D; // double
 
@@ -21,15 +21,15 @@ diurnal.aberration = (last, ra, dec, constant, result) => {
 	sinlha = Math.sin(lha);
 	cosdec = Math.cos(result.dec);
 	sindec = Math.sin(result.dec);
-	coslat = Math.cos( DTR * constant.tlat );
+	coslat = Math.cos( DTR * observer.tlat );
 
 	if( cosdec != 0.0 )
-		N = 1.5472e-6* constant.trho *coslat*coslha/cosdec;
+		N = 1.5472e-6* observer.trho *coslat*coslha/cosdec;
 	else
 		N = 0.0;
 	result.ra += N;
 
-	D = 1.5472e-6* constant.trho *coslat*sinlha*sindec;
+	D = 1.5472e-6* observer.trho *coslat*sinlha*sindec;
 	result.dec += D;
 
 	result.dRA = RTS * N/15.0;
@@ -40,7 +40,7 @@ diurnal.aberration = (last, ra, dec, constant, result) => {
 
 /* Diurnal parallax, AA page D3
  */
-diurnal.parallax = (last, ra, dec, dist, constant, result) => {
+diurnal.parallax = (last, ra, dec, dist, observer, result) => {
   let DISFAC = 0.0 /* Earth radii per au. */
 
 	var cosdec, sindec, coslat, sinlat; // double
@@ -63,7 +63,7 @@ diurnal.parallax = (last, ra, dec, dist, constant, result) => {
 
 	/* Observer's astronomical latitude
 	 */
-	x = constant.tlat * DTR;
+	x = observer.tlat * DTR;
 	coslat = Math.cos(x);
 	sinlat = Math.sin(x);
 
@@ -75,9 +75,9 @@ diurnal.parallax = (last, ra, dec, dist, constant, result) => {
 	p[1] = D*cosdec*Math.sin(result.ra);
 	p[2] = D*sindec;
 
-	dp[0] = - constant.trho *coslat*Math.cos(last);
-	dp[1] = - constant.trho *coslat*Math.sin(last);
-	dp[2] = - constant.trho *sinlat;
+	dp[0] = - observer.trho *coslat*Math.cos(last);
+	dp[1] = - observer.trho *coslat*Math.sin(last);
+	dp[2] = - observer.trho *sinlat;
 
 	x = p[0] + dp[0];
 	y = p[1] + dp[1];

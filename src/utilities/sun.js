@@ -10,7 +10,7 @@ import { precess } from './precess'
 import { util } from './util'
 export const sun = {};
 
-sun.calc = (sunBodyObject, earthBodyObject, constant) => {
+sun.calc = (sunBodyObject, earthBody, observer, constant) => {
 	var r, x, y, t; // double
 	var ecr = [], rec = [], pol = []; // double
 	var i; // int
@@ -22,11 +22,11 @@ sun.calc = (sunBodyObject, earthBodyObject, constant) => {
 	/* Display ecliptic longitude and latitude.
 	 */
 	for( i=0; i<3; i++ ) {
-		ecr[i] = - earthBodyObject.position.rect[i];//-rearth[i];
+		ecr[i] = - earthBody.position.rect[i];//-rearth[i];
 	}
-	r = earthBodyObject.position.polar[2]; //eapolar [2];
+	r = earthBody.position.polar[2]; //eapolar [2];
 
-	sunBodyObject.position.equinoxEclipticLonLat = lonlat.calc(ecr, earthBodyObject.position.date, pol, 1); // TDT
+	sunBodyObject.position.equinoxEclipticLonLat = lonlat.calc(ecr, earthBody.position.date, pol, 1); // TDT
 
 	/* Philosophical note: the light time correction really affects
 	 * only the Sun's barymetric position; aberration is due to
@@ -41,20 +41,20 @@ sun.calc = (sunBodyObject, earthBodyObject, constant) => {
 	for( i=0; i<2; i++ ) {
 		t = pol [2] / 173.1446327;
 		/* Find the earth at time TDT - t */
-		earthBodyObject = kepler.calc({julian: earthBodyObject.position.date.julian - t}, earthBodyObject, ecr, pol );
+		earthBody = kepler.calc({julian: earthBody.position.date.julian - t}, earthBody, ecr, pol );
 	}
 	r = pol[2];
 
 	for( i=0; i<3; i++ ) {
 		x = -ecr[i];
-		y = - earthBodyObject.position.rect[i]; //-rearth[i];
+		y = - earthBody.position.rect[i]; //-rearth[i];
 		ecr[i] = x;	/* position t days ago */
 		rec[i] = y;	/* position now */
 		pol[i] = y - x; /* change in position */
 	}
 
 	sunBodyObject.position = {...sunBodyObject.position, ...{
-		date: earthBodyObject.position.date,
+		date: earthBody.position.date,
 		lightTime: 1440.0*t,
 		aberration: util.showcor(ecr, pol)
 	}};
@@ -75,7 +75,7 @@ sun.calc = (sunBodyObject, earthBodyObject, constant) => {
 
 	/* precess to equinox of date
 	 */
-	ecr = precess.calc( ecr, earthBodyObject.position.date.julian, -1);
+	ecr = precess.calc( ecr, earthBody.position.date.julian, -1);
 
 	for( i=0; i<3; i++ ) {
 		rec[i] = ecr[i];
@@ -83,14 +83,14 @@ sun.calc = (sunBodyObject, earthBodyObject, constant) => {
 
 	/* Nutation.
 	 */
-	let epsilonObject = new Epsilon(earthBodyObject.position.date.julian);
-  let nutationObject = nutation.getObject(earthBodyObject.position.date)
-  nutation.calc(earthBodyObject.position.date, ecr); // NOTE nutation mutates the nutation object AND returns a result.
+	let epsilonObject = new Epsilon(earthBody.position.date.julian);
+  let nutationObject = nutation.getObject(earthBody.position.date)
+  nutation.calc(earthBody.position.date, ecr); // NOTE nutation mutates the nutation object AND returns a result.
 
 	/* Display the final apparent R.A. and Dec.
 	 * for equinox of date.
 	 */
-	sunBodyObject.position.constellation = constellation.calc(ecr, earthBodyObject.position.date);
+	sunBodyObject.position.constellation = constellation.calc(ecr, earthBody.position.date);
 
 	sunBodyObject.position.apparent = util.showrd(ecr, pol);
 
@@ -115,7 +115,7 @@ sun.calc = (sunBodyObject, earthBodyObject, constant) => {
 
 	/* Report altitude and azimuth
 	 */
-	sunBodyObject.position.altaz = altaz.calc( pol, earthBodyObject.position.date, constant, sunBodyObject );
+	sunBodyObject.position.altaz = altaz.calc( pol, earthBody.position.date, constant, sunBodyObject, observer );
 
   return sunBodyObject
 };

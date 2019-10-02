@@ -12,7 +12,7 @@ export const altaz = {
 	refracted_elevation: 0.0
 };
 
-altaz.calc = (pol, date, constant, body, result) => {
+altaz.calc = (pol, date, constant, body, observer, result) => {
 	var dec, cosdec, sindec, lha, coslha, sinlha; // double
 	var ra, dist, last, alt, az, coslat, sinlat; // double
 	var N, D, x, y, z; // double
@@ -25,23 +25,23 @@ altaz.calc = (pol, date, constant, body, result) => {
 
 	/* local apparent siderial time, seconds converted to radians
 	 */
-	last = siderial.calc( date, constant.tlong ) * DTR/240.0;
+	last = siderial.calc( date, observer.tlong ) * DTR / 240.0;
 	lha = last - ra; /* local hour angle, radians */
 	result.dLocalApparentSiderialTime = last;
 	result.localApparentSiderialTime = util.hms (last);
 
-	result.diurnalAberation = diurnal.aberration( last, ra, dec, constant );
+	result.diurnalAberation = diurnal.aberration( last, ra, dec, observer );
 	ra = result.diurnalAberation.ra;
 	dec = result.diurnalAberation.dec;
 	/* Do rise, set, and transit times
 	 trnsit.c takes diurnal parallax into account,
 	 but not diurnal aberration.  */
 	lha = last - ra;
-	result.transit = transit.calc( date, lha, dec, constant, body );
+	result.transit = transit.calc( date, lha, dec, constant, body, observer );
 
 	/* Diurnal parallax
 	 */
-	result.diurnalParallax = diurnal.parallax(last, ra, dec, dist, constant);
+	result.diurnalParallax = diurnal.parallax(last, ra, dec, dist, observer);
 	ra = result.diurnalParallax.ra;
 	dec = result.diurnalParallax.dec;
 
@@ -58,7 +58,7 @@ altaz.calc = (pol, date, constant, body, result) => {
 	sinlha = Math.sin(lha);
 
 	/* Use the geodetic latitude for altitude and azimuth */
-	x = DTR * constant.glat;
+	x = DTR * observer.glat;
 	coslat = Math.cos(x);
 	sinlat = Math.sin(x);
 
@@ -75,7 +75,7 @@ altaz.calc = (pol, date, constant, body, result) => {
 	/* Correction for atmospheric refraction
 	 * unit = degrees
 	 */
-	D = refraction.calc ( alt, constant );
+	D = refraction.calc( alt, observer );
 	alt += D;
 	altaz.refracted_elevation = alt;
 

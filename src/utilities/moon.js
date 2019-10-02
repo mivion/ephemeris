@@ -18,7 +18,7 @@ export const moon = {
  * approximate corrections to find apparent position,
  * phase of the Moon, etc. for AA.ARC.
  */
-moon.calc = (moonBody, earthBody, constant) => {
+moon.calc = (moonBody, earthBody, observer, constant) => {
 	var i, prtsav; // int
 	var ra0, dec0; // double
 	var x, y, z, lon0; // double
@@ -178,7 +178,7 @@ moon.calc = (moonBody, earthBody, constant) => {
 	pp[0] = moon.ra;
 	pp[1] = moon.dec;
 	pp[2] = moonpol[2];
-	moonBody.position.altaz = altaz.calc(pp, earthBody.position.date, constant, moonBody);
+	moonBody.position.altaz = altaz.calc(pp, earthBody.position.date, constant, moonBody, observer);
 
   return moonBody
 };

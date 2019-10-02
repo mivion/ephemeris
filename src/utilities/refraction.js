@@ -6,7 +6,7 @@ export const refraction = {};
  * Returns correction in degrees to be added to true altitude
  * to obtain apparent altitude.
  */
-refraction.calc = (alt, constant) => {
+refraction.calc = (alt, observer) => {
 	var y, y0, D0, N, D, P, Q; // double
 	var i; // int
 
@@ -19,7 +19,7 @@ refraction.calc = (alt, constant) => {
 	 */
 	if( alt > 15.0 )
 	{
-		D = 0.00452*constant.atpress/((273.0+constant.attemp)*Math.tan( DTR * alt ));
+		D = 0.00452*observer.atpress/((273.0+observer.attemp)*Math.tan( DTR * alt ));
 		return D;
 	}
 
@@ -35,8 +35,8 @@ refraction.calc = (alt, constant) => {
 	D = 0.0;
 	/* Invert Almanac for Computers formula numerically
 	 */
-	P = (constant.atpress - 80.0)/930.0;
-	Q = 4.8e-3 * (constant.attemp - 10.0);
+	P = (observer.atpress - 80.0)/930.0;
+	Q = 4.8e-3 * (observer.attemp - 10.0);
 	y0 = y;
 	D0 = D;
 

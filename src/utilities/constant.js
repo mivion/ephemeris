@@ -2,22 +2,6 @@ import { CLIGHT, J2000, B1950, J1900, RTOH, DTR, RTD, RTS, STR, EMRAT, TPI,
 FLAT, AU, AEARTH } from '../constants'
 
 export const constant = {
-  tlong: 0.00, // input for kinit
-	tlat: 0.00, /* geocentric */ // input for kinit
-  glat: 0.00, /* geodetic */ // input for kinit
-
-	/* Parameters for calculation of azimuth and elevation
-	 */
-	attemp: 12.0,	/* atmospheric temperature, degrees Centigrade */ // input for kinit
-	atpress: 1010.0, /* atmospheric pressure, millibars */ // input for kinit
-
-	/* Distance from observer to center of earth, in earth radii
-	 */
-  trho: 0.9985,
-	height: 0.0,
-
-
-
 	/* approximate motion of right ascension and declination
 	 * of object, in radians per day
 	 */
