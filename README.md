@@ -1,37 +1,23 @@
-**Note: Need any help to support this project. Contributors are welcome!**
+# Moshier Ephemeris ES6 Re-implementation
 
-Pure javascript implementation of ephemeris calculations for sun, planets, comets, asteroids and stars.
+This is a "re-implementation" of the 0.1.0 legacy version of the Moshier Ephemeris javascript implementation by Mivion (found here: https://github.com/mivion/ephemeris).
+
+The goal is to reimplement the codebase with ES6 modules to promote better refactoring, debugging / testing, readability, and extensibility of the code.
+
+This incredible work also deserves a lot of love and cleanup. Hope you enjoy and find this helpful in your modern javascript project!
+
+##  Description
+
+ES6 re-implementation of ephemeris calculations for sun, planets, comets, asteroids and stars.
 
 This implementation based on Steve Moshier (http://www.moshier.net).
 
 Licensed under GPL version 2 (http://www.gnu.org/licenses/gpl-2.0.html).
 
-Please contribute in this project.
-
-### Example
-```
-<script type='text/javascript' src='ephemeris-0.1.0.js' charset='utf-8'></script>
-<script type='text/javascript'>
-
-var date = {year: 1986, month: 1, day: 1, hours: 1, minutes: 52, seconds: 0};
-
-$const.tlong = -71.10; // longitude
-$const.glat = 42.37; // latitude
-
-$processor.init ();
-
-// sun, mercury, venus, moon, mars, jupiter, saturn, uranus, neptune, pluto, chiron, sirius
-var body = $moshier.body.sun;
-
-$processor.calc (date, body);
-
-console.log(body.position);
-</script>
-```
 
 ### Notes on precision && accuracy upgrading from 0.1.0 > 1.0.0
 
-I've noticed that there are very tiny differences (in magnitude of 0.0000005 degrees) between the apparentLongitude decimal calculation of the bodies in the 1.0.0 implementation vs the 0.1.0 implentation. I've tracked this down to a single variation in factors - `epsilon.js`.
+I've noticed that there are very tiny differences (in the magnitude of 0.0000005 degrees) between the apparentLongitude decimal calculation of the bodies in the 1.0.0 implementation vs the 0.1.0 implentation. I've tracked this down to a single variation in factors - `epsilon.js`.
 
 The differences appear to be the result of the refactor, which I believe actually fixed a bug. The potential bug was centered around the way `epsilon.js` handles its state.
 
