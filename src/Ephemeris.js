@@ -25,14 +25,14 @@ import {
 export default class Ephemeris {
   // TODO: refactor library to use 0 - 11 months instead of 1 - 12 months
   constructor({ year=0, month=0, day=0, hours=0, minutes=0, seconds=0, latitude=0.00,  longitude=0.00, height=0.00 }={}) {
-    // * int year
-    // * int month
-    // * int day
-    // * int hours
-    // * int minutes
-    // * int seconds
-    // * float latitude
-    // * float longitude
+    // * int year (> 0 C.E.)
+    // * int month (1 - 12 || 1 = January, 12 = December)
+    // * int day (1 - 31)
+    // * int hours (0 - 23)
+    // * int minutes (0 - 59)
+    // * int seconds (0 - 59)
+    // * float latitude (-90 - +90)
+    // * float longitude (-180 - +180)
     // * float height
 
     this._year = validateYear(year)

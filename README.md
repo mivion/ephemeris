@@ -33,6 +33,100 @@ But almost a decade ago, Mivion translated it into Javascript! And it's been aro
 
 Open the file: `/demo/index.html` in your browser.
 
+## Usage
+
+```
+const ephemeris = new Ephemeris({year: 2000, month: 1, day: 1, hours: 0, minutes: 0, latitude: 41.37, longitude: -71.1}) // January 1st, 2000, 0:00 UTC - Cambridge, MA
+
+
+ephemeris.Results
+// => Array[{sun}, {moon}, {mercury}...]
+
+ephemeris.Earth
+// => Object{earth}
+
+ephemeris.Results.find(body => body.key === 'mercury')
+// => {
+  aberration: {
+    dRA: -1.9269831284660512, dDec: 1.7324642445063785
+  },
+  anomaly: 198.7199,
+  dailyMotion : 4.09236,
+  distance : 0.4662701071857169,
+  eccentricity: 0.205628,
+  epoch: 2458849.491717961,
+  equinox: {
+    julian: 2451545
+  },
+  equinoxEclipticLonLat: {
+    0: 4.580688286536208, 1: -0.06840241722458161, 2: 0.46626601943095985, 3: {…}, 4: {…}
+  },
+  inclination: 7.0048,
+  key: "mercury",
+  lightTime: 11.926136235901744,
+  longitude: 4.575414616860342,
+  magnitude: -0.42,
+  node: 48.177,
+  perihelion: 29.074,
+  position: {
+    aberration: {
+      dRA: -1.520496036316089, dDec: -0.6041546957957655
+    }
+    altaz: {
+      atmosphericRefraction: {
+        deg: 0, dRA: 0, dDec: -6.869998111961196e-11
+      }
+      dLocalApparentSiderialTime: 0.5064527239416776,
+      diurnalAberation: {
+        ra: 4.7965251351249245, dec: -0.4299743725608752, dRA: -0.007210078050044472, dDec: -0.09119535940094521
+      },
+      diurnalParallax: {
+        ra: 4.796502712347188, dec: -0.42998832257864683, dRA: -0.3083384338139288, dDec: -2.877388508875992
+      },
+      localApparentSiderialTime: {hours: 1, minutes: 56, seconds: 4, milliseconds: 225},
+      topocentric: {
+        altitude: -33.71884921853349, azimuth: 265.4081776827269, ra: -1.4866825948323983, dec: -0.42998832257864716, dRA: {…}
+      },
+      transit: {
+        approxLocalMeridian: {…}, UTdate: 0.6813053006006518, dApproxRiseUT: 3.1070972173980613, dApproxSetUT: 5.454150456008398, approxRiseUT: {…}
+      }
+    },
+    apparent: {
+      dRA: 4.796525659456597, dDec: -0.42997393043329624, ra: {…}, dec: {…}
+    },
+    apparentGeocentric: {
+      0: 4.788870432436304, 1: -0.02220591955722075, 2: 1.4339905077136768, 3: {…}, 4: {…}},
+    apparentLongitude: 274.38206441358966,
+    apparentLongitude30String: "4°22'55"",
+    apparentLongitudeString: "274°22'55"",
+    approxVisual: {
+      magnitude: -1.281820354968265, phase: 0.9886399799797707
+    },
+    astrometricB1950: {
+      dRA: 4.777961264165778, dDec: -0.4304857584347518, ra: {…}, dec: {…}
+    },
+    astrometricJ2000: {
+      dRA: 4.7913641878585755, dDec: -0.430134842061789, ra: {…}, dec: {…}
+    },
+    constellation: 77,
+    date: {
+      year: 2020, month: 1, day: 1, hours: 0, minutes: 0
+    },
+    deflection: {
+      sunElongation: 5.768325480048136, lightDeflection: {…}
+    },
+    equatorialDiameter: 4.686223488825094,
+    geocentricDistance: 1.4339905077136652,
+    nutation: {
+      dRA: -1.2125665235304237, dDec: 1.1499169000116969
+    }
+    polar: [4.575812495945637, -0.06835690545143856, 0.4662660194309599],
+    rect: [-0.06351901141088291, -0.4101381667492277, -0.21250842858566044],
+    trueGeocentricDistance: 1.4340239958103242
+  }
+}
+```
+
 ## Installation
 
 ```
@@ -80,7 +174,7 @@ $moshier.nutation.calc ($moshier.body.earth.position.date, ecr); // mutates $mos
 /* Display the final apparent R.A. and Dec.
  * for equinox of date.
  */
-$moshier.body.sun.position.constellation = $moshier.constellation.calc (ecr, // mutates $moshier.epsilon $moshier.body.earth.position.date);
+$moshier.body.sun.position.constellation = $moshier.constellation.calc (ecr, $moshier.body.earth.position.date); // mutates $moshier.epsilon
 
 $moshier.body.sun.position.apparent = $util.showrd (ecr, pol);
 
@@ -88,4 +182,6 @@ $moshier.body.sun.position.apparent = $util.showrd (ecr, pol);
 y  =  $moshier.epsilon.coseps * rec[1]  +  $moshier.epsilon.sineps * rec[2]; // utilizes $moshier.epsilon
 ```
 
-So in conclusion, this 0.0000005 variation in th Sun's `apparentLongitude` is a feature, not a bug.
+So in conclusion, this 0.0000005 difference in the Sun's `apparentLongitude` between versions 0.1.0 and 1.0.0 is a bugfix and a feature, not a bug.
+
+Everything else appears to be exactly the same according to my tests.
