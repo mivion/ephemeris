@@ -6,6 +6,7 @@ import  { julian } from './utilities/julian'
 import { delta } from './utilities/delta'
 import { sun } from './utilities/sun'
 import { moon } from './utilities/moon'
+import { planet } from './utilities/planet'
 
 export default class Ephemeris {
   // TODO: refactor library to use 0 - 11 months instead of 1 - 12 months
@@ -21,22 +22,22 @@ export default class Ephemeris {
     this.Constant.date = julian.universalCalc(this.Constant.date) // TODO - refactor Date to be its own class with these methods on init
 
     this.Body = body
-    this.Earth = kepler.calc(this.Constant.date, this.Body.earth)
+    this.Earth = kepler.calc(this.Constant.date, this.Body.find(b => b.key === 'earth'))
 
     this.CalculateBody = this.CalculateBody.bind(this)
   }
 
   CalculateBody(bodyKey) {
-    let bodyObject = {}
-    switch(bodyKey) {
+    const bodyObject = this.Body.find(b => b.key === bodyKey)
+    switch(bodyObject.type) {
       case 'sun':
-        bodyObject = body.sun
         return sun.calc(bodyObject, {...this.Earth}, this.Constant)
-      case 'moon':
-        bodyObject = body.moon
+      case 'luna':
         return moon.calc(bodyObject, {...this.Earth}, this.Constant)
+      case 'heliocentric':
+        return planet.calc(bodyObject, {...this.Earth}, this.Constant)
       default:
-        throw new Error(`Celestial body with key: "${bodyKey}" not found.`)
+        throw new Error(`Celestial body with key: "${bodyKey}" or type "${bodyObject.type}" not found.`)
         break
     }
 

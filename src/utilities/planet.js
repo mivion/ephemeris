@@ -1,12 +1,26 @@
-$ns.planet = {};
+import { B1950, RTD } from '../constants'
 
-$ns.planet.calc = function (body, earthBody, constant) {
-	this.prepare (body);
+import { aberration } from './aberration'
+import { altaz } from './altaz'
+import { constellation } from './constellation'
+import { deflection } from './deflection'
+import { epsilon } from './epsilon'
+import { kepler } from './kepler'
+import { light } from './light'
+import { lonlat } from './lonlat'
+import { nutation } from './nutation'
+import { precess } from './precess'
+import { util } from './util'
+
+export const planet = {};
+
+planet.calc = (body, earthBody, constant) => {
+	body = planet.prepare(body);
 
 	/* calculate heliocentric position of the object */
-	$moshier.kepler.calc ($moshier.body.earth.position.date, body);
+	body = kepler.calc(earthBody.position.date, body); // NOTE mutates body
 	/* apply correction factors and print apparent place */
-	this.reduce (body, body.position.rect, $moshier.body.earth.position.rect);
+	return planet.reduce(body, body.position.rect, earthBody.position.rect, earthBody, constant);
 };
 
 /* The following program reduces the heliocentric equatorial
@@ -14,7 +28,7 @@ $ns.planet.calc = function (body, earthBody, constant) {
  * were computed by kepler() and produces apparent geocentric
  * right ascension and declination.
  */
-$ns.planet.reduce = function (body, q, e, constant, body) {
+planet.reduce = (body, q, e, earthBody, constant) => {
 	var p = [], temp = [], polar = []; // double
 	var a, b, r, s, x; // double
 	var i; // int
@@ -27,11 +41,11 @@ $ns.planet.reduce = function (body, q, e, constant, body) {
 
 	/* Display ecliptic longitude and latitude, precessed to equinox
 	 of date.  */
-	body.equinoxEclipticLonLat = $moshier.lonlat.calc (q, $moshier.body.earth.position.date, polar, 1 );
+	body.equinoxEclipticLonLat = lonlat.calc(q, earthBody.position.date, polar, 1 );
 
 	/* Adjust for light time (planetary aberration)
 	 */
-	$moshier.light.calc ( body, q, e );
+	light.calc( body, q, e, earthBody, constant); // NOTE mutates constant
 
 	/* Find Euclidean vectors between earth, object, and the sun
 	 */
@@ -39,7 +53,7 @@ $ns.planet.reduce = function (body, q, e, constant, body) {
 		p[i] = q[i] - e[i];
 	}
 
-	constant = $util.angles ( p, q, e, constant );
+	constant = util.angles( p, q, e, constant );
 
 	a = 0.0;
 	for( i=0; i<3; i++ ) {
@@ -48,7 +62,7 @@ $ns.planet.reduce = function (body, q, e, constant, body) {
 	}
 	a = Math.sqrt(a);
 	body.position.trueGeocentricDistance = a; /* was EO */
-	body.position.equatorialDiameter = 2.0*body.semiDiameter / $const.EO;
+	body.position.equatorialDiameter = 2.0*body.semiDiameter / constant.EO;
 
 	/* Calculate radius.
 	 */
@@ -69,13 +83,13 @@ $ns.planet.reduce = function (body, q, e, constant, body) {
 	 * where V(1,0) = elemnt->mag is the magnitude at 1au from
 	 * both earth and sun and 100% illumination.
 	 */
-	a = 0.5 * (1.0 + $const.pq);
+	a = 0.5 * (1.0 + constant.pq);
 	/* Fudge the phase for light leakage in magnitude estimation.
 	 * Note this phase term estimate does not reflect reality well.
 	 * Calculated magnitudes of Mercury and Venus are inaccurate.
 	 */
-	b = 0.5 * (1.01 + 0.99*$const.pq);
-	s = body.magnitude + 2.1715 * Math.log( $const.EO*$const.SO ) - 1.085*Math.log(b);
+	b = 0.5 * (1.01 + 0.99*constant.pq);
+	s = body.magnitude + 2.1715 * Math.log( constant.EO * constant.SO ) - 1.085 * Math.log(b);
 	body.position.approxVisual = {
 		magnitude: s,
 		phase: a
@@ -84,50 +98,50 @@ $ns.planet.reduce = function (body, q, e, constant, body) {
 	/* Find unit vector from earth in direction of object
 	 */
 	for( i=0; i<3; i++ ) {
-		p[i] /= $const.EO;
+		p[i] /= constant.EO;
 		temp[i] = p[i];
 	}
 
 	/* Report astrometric position
 	 */
-	body.position.astrometricJ2000 = $util.showrd (p, polar );
+	body.position.astrometricJ2000 = util.showrd (p, polar );
 
 	/* Also in 1950 coordinates
 	 */
-	$moshier.precess.calc ( temp, {julian: $const.b1950}, -1 );
-	body.position.astrometricB1950 = $util.showrd (temp, polar );
+	temp = precess.calc ( temp, {julian: B1950}, -1 );
+	body.position.astrometricB1950 = util.showrd (temp, polar );
 
 	/* Correct position for light deflection
 	 */
-	body.position.deflection = $moshier.deflectioon.calc ( p, q, e ); // relativity
+	body.position.deflection = deflection.calc ( p, q, e, constant ); // relativity
 
 	/* Correct for annual aberration
 	 */
-	body.position.aberration = $moshier.aberration.calc(p, earthBody, constant);
+	body.position.aberration = aberration.calc(p, earthBody, constant);
 
 	/* Precession of the equinox and ecliptic
 	 * from J2000.0 to ephemeris date
 	 */
-	$moshier.precess.calc ( p, $moshier.body.earth.position.date, -1 );
+	p = precess.calc( p, earthBody.position.date, -1 );
 
 	/* Ajust for nutation
 	 * at current ecliptic.
 	 */
-	$moshier.epsilon.calc ( $moshier.body.earth.position.date );
-	body.position.nutation = $moshier.nutation.calc ( $moshier.body.earth.position.date, p );
+	const epsilonObject = epsilon.calc (earthBody.position.date);
+	body.position.nutation = nutation.calc ( earthBody.position.date, p ); // NOTE mutates p
 
 	/* Display the final apparent R.A. and Dec.
 	 * for equinox of date.
 	 */
-	body.position.constellation = $moshier.constellation.calc (p, $moshier.body.earth.position.date);
-	body.position.apparent = $util.showrd (p, polar);
+	body.position.constellation = constellation.calc (p, earthBody.position.date);
+	body.position.apparent = util.showrd(p, polar);
 
 	/* Geocentric ecliptic longitude and latitude.  */
 	for( i=0; i<3; i++ ) {
-		p[i] *= $const.EO;
+		p[i] *= constant.EO;
 	}
-	body.position.apparentGeocentric = $moshier.lonlat.calc ( p, $moshier.body.earth.position.date, temp, 0 );
-	body.position.apparentLongitude = body.position.apparentGeocentric [0] * $const.RTD;
+	body.position.apparentGeocentric = lonlat.calc ( p, earthBody.position.date, temp, 0 );
+	body.position.apparentLongitude = body.position.apparentGeocentric [0] * RTD;
 	body.position.apparentLongitudeString =
 		body.position.apparentGeocentric [3].degree + '\u00B0' +
 		body.position.apparentGeocentric [3].minutes + '\'' +
@@ -135,21 +149,25 @@ $ns.planet.reduce = function (body, q, e, constant, body) {
 	;
 
 	body.position.apparentLongitude30String =
-		$util.mod30 (body.position.apparentGeocentric [3].degree) + '\u00B0' +
+		util.mod30(body.position.apparentGeocentric [3].degree) + '\u00B0' +
 		body.position.apparentGeocentric [3].minutes + '\'' +
-		Math.floor (body.position.apparentGeocentric [3].seconds) + '"'
+		Math.floor(body.position.apparentGeocentric [3].seconds) + '"'
 	;
 
 	body.position.geocentricDistance = r;
 
 	/* Go do topocentric reductions.
 	 */
-	polar[2] = $const.EO;
-	body.position.altaz = $moshier.altaz.calc(polar, $moshier.body.earth.position.date, constant, body);
+	polar[2] = constant.EO;
+	body.position.altaz = altaz.calc(polar, earthBody.position.date, constant, body);
+
+  return body
 };
 
-$ns.planet.prepare = function (body) {
+planet.prepare = body => {
 	if (!body.semiAxis) {
 		body.semiAxis = body.perihelionDistance / (1 - body.eccentricity);
 	}
+
+  return body
 };

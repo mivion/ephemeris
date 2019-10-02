@@ -330,6 +330,7 @@ util.deltap = function (p0, p1, d) {
  * The answers are posted in the following global locations:
  */
 util.angles = function (p, q, e, constant) {
+  // NOTE mutates constant
 	var a, b, s; // double
 	var i; // int
 

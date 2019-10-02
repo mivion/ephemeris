@@ -22,6 +22,6 @@ vearth.calc = (date, earthBody) => {
 	const keplerEarthBody = kepler.calc({julian: date.julian - t}, {...earthBody}, e, p);
 
 	for( i=0; i<3; i++ ) {
-		vearth.vearth[i] = (keplerEarthBody.position.rect [i] - e[i])/t;
+		vearth.vearth[i] = (keplerEarthBody.position.rect[i] - e[i])/t;
 	}
 };

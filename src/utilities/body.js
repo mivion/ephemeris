@@ -50,20 +50,22 @@ import { uranusPTable } from '../ptables/uranus'
 import { neptunePTable } from '../ptables/neptune'
 import { plutoPTable } from '../ptables/pluto'
 
-export const body = {
+export const body = [
 	/**
 	 * Sun
 	 */
-	sun: {
+	{
     key: 'sun',
+    type: 'sun',
 		weight: 100
 	},
 
 	/**
 	 * Planets
 	 */
-	mercury: {
+	{
     key: 'mercury',
+    type: 'heliocentric',
 		epoch: 2446800.5, // 05.01.1987
 		inclination: 7.0048,
 		node: 48.177,
@@ -77,8 +79,9 @@ export const body = {
 		semiDiameter: 3.36,
     ptable: mercuryPTable
 	},
-	venus: {
+	{
     key: 'venus',
+    type: 'heliocentric',
 		epoch: 2446800.5, // 05.01.1987
 		inclination: 3.3946,
 		node: 76.561,
@@ -95,8 +98,9 @@ export const body = {
 		semiDiameter: 8.34,
     ptable: venusPTable
 	},
-	earth: {
+	{
     key: 'earth',
+    type: 'heliocentric',
     anomaly: 1.1791,
     dailyMotion: 0.985611,
     distance: 0.0, // computed
@@ -113,11 +117,13 @@ export const body = {
 		semiAxis: 0.999999,
 		semiDiameter: 0.0,
 	},
-	moon: {
-    key: 'moon'
+	{
+    key: 'moon',
+    type: 'luna',
 	},
-	mars: {
+	{
     key: 'mars',
+    type: 'heliocentric',
 		epoch: 2446800.5, // 05.01.1987
 		inclination: 1.8498,
 		node: 49.457,
@@ -131,8 +137,9 @@ export const body = {
 		semiDiameter: 4.68,
     ptable: marsPTable
 	},
-	jupiter: {
+	{
     key: 'jupiter',
+    type: 'heliocentric',
 		epoch: 2446800.5, // 05.01.1987
 		inclination: 1.3051,
 		node: 100.358,
@@ -146,8 +153,9 @@ export const body = {
 		semiDiameter: 98.44,
     ptable: jupiterPTable
 	},
-	saturn: {
+	{
     key: 'saturn',
+    type: 'heliocentric',
 		epoch: 2446800.5, // 05.01.1987
 		inclination: 2.4858,
 		node: 113.555,
@@ -161,8 +169,9 @@ export const body = {
 		semiDiameter: 82.73,
     ptable: jupiterPTable
 	},
-	uranus: {
+	{
     key: 'uranus',
+    type: 'heliocentric',
 		epoch: 2446800.5, // 05.01.1987
 		inclination: 0.7738,
 		node: 73.994,
@@ -176,8 +185,9 @@ export const body = {
 		semiDiameter: 35.02,
     ptable: uranusPTable
 	},
-	neptune: {
+	{
     key: 'neptune',
+    type: 'heliocentric',
 		epoch: 2446800.5, // 05.01.1987
 		inclination: 1.7697,
 		node: 131.677,
@@ -191,8 +201,9 @@ export const body = {
 		semiDiameter: 33.50,
     ptable: neptunePTable
 	},
-	pluto: {
+	{
     key: 'pluto',
+    type: 'heliocentric',
 		epoch: 2446640.5,
 		inclination: 17.1346,
 		node: 110.204,
@@ -204,14 +215,15 @@ export const body = {
 		equinox: {julian: 2446640.5},
 		magnitude: -1.0,
 		semiDiameter: 2.07,
-    pluto: plutoPTable
+    ptable: plutoPTable
 	},
 
 	/**
 	 * Comets and asteroids
 	 */
-	chiron: {
+	{
     key: 'chiron',
+    type: 'heliocentric',
 		epoch: 2456000.5,
 		inclination: 6.926651533484328,
 		node: 209.3851130617651,
@@ -229,8 +241,9 @@ export const body = {
 	/**
 	 * Stars (implemented, not tested)
 	 */
-	sirius: {
+	{
     key: 'sirius',
+    type: 'star',
 		epoch: 2000,
 		hmsRa: {hours: 6, minutes: 45, seconds: 8.871},
 		hmsDec: {hours: -16, minutes: 42, seconds: 57.99},
@@ -243,4 +256,4 @@ export const body = {
 		dec: 0.0,
 		equinox: {julian: 0.0}
 	}
-};
+];
