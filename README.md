@@ -35,17 +35,41 @@ Open the file: `/demo/index.html` in your browser.
 
 ## Usage
 
+#####  Create a new ephemeris instance
 ```
-const ephemeris = new Ephemeris({year: 2000, month: 1, day: 1, hours: 0, minutes: 0, latitude: 41.37, longitude: -71.1}) // January 1st, 2000, 0:00 UTC - Cambridge, MA
+# Create a new ephemeris instance
 
+// January 1st, 2000, 0:00 UTC - Cambridge, MA
+
+const ephemeris = new Ephemeris({
+  year: 2000, month: 0, day: 1, hours: 0, minutes: 0, latitude: 41.37, longitude: -71.1
+})
+```
+
+##### Get all celestial bodies for the given datetime / location
+```
+# Get all celestial bodies for the given datetime / location
 
 ephemeris.Results
+
 // => Array[{sun}, {moon}, {mercury}...]
+```
+
+##### Get the Earth
+```
+# Get the Earth
 
 ephemeris.Earth
+
 // => Object{earth}
+```
+
+##### Get a specific celestial body
+```
+# Get a specific celestial body
 
 ephemeris.Results.find(body => body.key === 'mercury')
+
 // => {
   aberration: {
     dRA: -1.9269831284660512, dDec: 1.7324642445063785
