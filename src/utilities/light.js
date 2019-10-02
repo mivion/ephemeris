@@ -1,6 +1,6 @@
 import { kepler } from './kepler'
 import { util } from './util'
-import { vearth } from './vearth'
+import VelocityEarth from './VelocityEarth'
 
 export const light = {};
 
@@ -46,6 +46,7 @@ light.calc = function (body, q, e, earthBody, constant) {
 		p[i] = x;
 		constant.dp [i] = x - p0[i];
 	}
+
 	body.aberration = util.showcor(p0, constant.dp );
 
 	/* Calculate dRA/dt and dDec/dt.
@@ -58,10 +59,10 @@ light.calc = function (body, q, e, earthBody, constant) {
 	 * p(J-t)  =  q(J-t) - e(J-t)  =  q(J-t) - (e(J) - Vearth * t)
 	 *         =  p(?) + Vearth * t.
 	 */
-   vearth.calc(earthBody.position.date, earthBody);
+  const velocityEarth = new VelocityEarth(earthBody.position.date.julian, earthBody);
 
 	for( i=0; i<3; i++ ) {
-		p[i] += vearth.vearth [i]*t; // NOTE mutates vearth
+		p[i] += velocityEarth.vearth[i]*t;
 	}
 
 	var d = util.deltap( p, p0);  /* see dms.c */

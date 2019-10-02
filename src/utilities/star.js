@@ -64,7 +64,7 @@ star.reduce = (body, earthBody, constant) => {
 	}
 
 	/* precess the earth to the star epoch */
-  e = precess.calc ( e, {julian: epoch}, -1 );
+  e = precess.calc ( e, epoch, -1 );
 
 	/* Correct for proper motion and parallax
 	 */
@@ -74,7 +74,7 @@ star.reduce = (body, earthBody, constant) => {
 	}
 
 	/* precess the star to J2000 */
-	p = precess.calc (p, {julian: epoch}, 1 );
+	p = precess.calc (p, epoch, 1 );
 	/* reset the earth to J2000 */
 	for( i=0; i<3; i++ ) {
 		e[i] = earthBody.position.rect [i];
@@ -101,7 +101,7 @@ star.reduce = (body, earthBody, constant) => {
 
 	/* Also in 1950 coordinates
 	 */
-	temp = precess.calc ( temp, {julian: B1950}, -1 );
+	temp = precess.calc ( temp, B1950, -1 );
 
 	body.position.astrimetricB1950 = util.showrd (temp, polar);
 
@@ -110,7 +110,7 @@ star.reduce = (body, earthBody, constant) => {
 		temp[i] = p[i];
 	}
 
-	temp = precess.calc ( temp, earthBody.position.date, -1 );
+	temp = precess.calc ( temp, earthBody.position.date.julian, -1 );
 	body.position.astrimetricDate = util.showrd (temp, polar);
 
 	/* Correct position for light deflection
@@ -125,7 +125,7 @@ star.reduce = (body, earthBody, constant) => {
 	/* Precession of the equinox and ecliptic
 	 * from J2000.0 to ephemeris date
 	 */
-	p = precess.calc ( p, earthBody.position.date, -1 );
+	p = precess.calc ( p, earthBody.position.date.julian, -1 );
 
 	/* Ajust for nutation
 	 * at current ecliptic.

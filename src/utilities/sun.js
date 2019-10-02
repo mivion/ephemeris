@@ -75,7 +75,7 @@ sun.calc = (sunBodyObject, earthBodyObject, constant) => {
 
 	/* precess to equinox of date
 	 */
-	ecr = precess.calc( ecr, earthBodyObject.position.date, -1);
+	ecr = precess.calc( ecr, earthBodyObject.position.date.julian, -1);
 
 	for( i=0; i<3; i++ ) {
 		rec[i] = ecr[i];

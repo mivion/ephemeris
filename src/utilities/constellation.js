@@ -509,9 +509,9 @@ constellation.calc = (pp, epoch) => {
 	}
 
 	/* Precess from given epoch to J2000.  */
-	p = precess.calc(p, epoch, 1);
+	p = precess.calc(p, epoch.julian, 1);
 	/* Precess from J2000 to Besselian epoch 1875.0.  */
-	p = precess.calc(p, {julian: 2405889.25855}, -1);
+	p = precess.calc(p, 2405889.25855, -1);
 	d = p[0] * p[0] + p[1] * p[1] + p[2] * p[2];
 	d = Math.sqrt (d);
 	ra = Math.atan2 (p[1], p[0]) * (RTD * 3600. / 15.);

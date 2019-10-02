@@ -26,7 +26,7 @@ lonlat.calc = (pp, date, polar, ofdate, result) => {
 	/* Precess to equinox of date J
 	 */
 	if( ofdate ) {
-		s = precess.calc( s, date, -1 );
+		s = precess.calc( s, date.julian, -1 );
 	}
 
 	/* Convert from equatorial to ecliptic coordinates

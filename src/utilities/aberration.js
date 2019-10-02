@@ -1,5 +1,5 @@
 import { util } from './util'
-import { vearth } from './vearth'
+import VelocityEarth from './VelocityEarth'
 
 export const aberration = {};
 
@@ -11,11 +11,11 @@ aberration.calc = (p, earthBody, constant, result) => {
 
 	/* Calculate the velocity of the earth (see vearth.c).
 	 */
-	vearth.calc(earthBody.position.date, earthBody);
+	const velocityEarth = new VelocityEarth(earthBody.position.date.julian, earthBody);
 	betai = 0.0;
 	pV = 0.0;
 	for( i=0; i<3; i++ ) {
-		A = vearth.vearth [i] / constant.Clightaud;
+		A = velocityEarth.vearth[i] / constant.Clightaud;
 		V[i] = A;
 		betai += A*A;
 		pV += p[i] * A;

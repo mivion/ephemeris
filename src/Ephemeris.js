@@ -64,13 +64,12 @@ export default class Ephemeris {
 
   CalculateDates() {
     const dateObject = { year: this._year, month: this._month, day: this._day, hours: this._hours, minutes: this._minutes, seconds: this._seconds }
-    const julianDate = julian.calcJulianDate({...dateObject, month: dateObject.month + 1})
     this.Date = {}
     this.Date.utc = new Date(Date.UTC(this._year, this._month, this._day, this._hours, this._minutes, this._seconds))
-    this.Date.julian = julianDate, // month + 1 for formula
-    this.Date.j2000 = julian.calcJ2000(julianDate),
-    this.Date.b1950 = julian.calcB1950(julianDate),
-    this.Date.j1900 = julian.calcJ1900(julianDate),
+    this.Date.julian = julian.calcJulianDate({...dateObject, month: dateObject.month + 1}), // month + 1 for formula
+    this.Date.j2000 = julian.calcJ2000(this.Date.julian),
+    this.Date.b1950 = julian.calcB1950(this.Date.julian),
+    this.Date.j1900 = julian.calcJ1900(this.Date.julian),
     this.Date.universalJulian = new DateDelta().CalcUniversal(this.Date.julian, this.Date.j2000, this.Constant)
     this.Date.universalDate = julian.calcUniversalDate(this.Date.universalJulian)
   }

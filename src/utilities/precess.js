@@ -41,7 +41,7 @@ export const precess = {
  * first go from J1 to J2000, then call the program again
  * to go from J2000 to J2.
  */
-precess.calc = function (R, date, direction) {
+precess.calc = (R, julianDate, direction) => {
   // returns => R [] - mutates R
 	var A, B, T, pA, W, z; // double
 	var x = []; // double
@@ -49,13 +49,13 @@ precess.calc = function (R, date, direction) {
 	var p_i = 0;
 	var i; // int
 
-	if( date.julian == J2000 ) {
+	if( julianDate == J2000 ) {
 		return R;
 	}
 	/* Each precession angle is specified by a polynomial in
 	 * T = Julian centuries from J2000.0.  See AA page B18.
 	 */
-	T = (date.julian - J2000) / 36525.0;
+	T = (julianDate - J2000) / 36525.0;
 
 	/* Implementation by elementary rotations using Laskar's expansions.
 	 * First rotate about the x axis from the initial equator
@@ -63,7 +63,7 @@ precess.calc = function (R, date, direction) {
 	 */
   let epsilonObject
 	if (direction == 1) {
-		epsilonObject = new Epsilon(date.julian); /* To J2000 */
+		epsilonObject = new Epsilon(julianDate); /* To J2000 */
 	} else {
 		epsilonObject = new Epsilon(J2000); /* From J2000 */
 	}
@@ -76,7 +76,7 @@ precess.calc = function (R, date, direction) {
 	/* Precession in longitude
 	 */
 	T /= 10.0; /* thousands of years */
-	p = this.pAcof;
+	p = precess.pAcof;
 	pA = p [p_i ++]; //*p++;
 	for( i=0; i<9; i++ ) {
 		pA = pA * T + p [p_i ++]; //*p++;
@@ -85,7 +85,7 @@ precess.calc = function (R, date, direction) {
 
 	/* Node of the moving ecliptic on the J2000 ecliptic.
 	 */
-	p = this.nodecof;
+	p = precess.nodecof;
 	p_i = 0;
 	W = p [p_i ++]; //*p++;
 	for( i=0; i<10; i++ ) {
@@ -108,7 +108,7 @@ precess.calc = function (R, date, direction) {
 	/* Rotate about new x axis by the inclination of the moving
 	 * ecliptic on the J2000 ecliptic.
 	 */
-	p = this.inclcof;
+	p = precess.inclcof;
 	p_i = 0;
 	z = p [p_i ++]; //*p++;
 	for( i=0; i<10; i++ ) {
@@ -142,7 +142,7 @@ precess.calc = function (R, date, direction) {
 	if( direction == 1 ) {
 		epsilonObject = new Epsilon(J2000);
 	} else {
-		epsilonObject = new Epsilon(date.julian);
+		epsilonObject = new Epsilon(julianDate);
 	}
 
 	z = epsilonObject.coseps * x[1] - epsilonObject.sineps * x[2];

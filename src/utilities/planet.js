@@ -108,7 +108,7 @@ planet.reduce = (body, q, e, earthBody, constant) => {
 
 	/* Also in 1950 coordinates
 	 */
-	temp = precess.calc ( temp, {julian: B1950}, -1 );
+	temp = precess.calc ( temp, B1950, -1 );
 	body.position.astrometricB1950 = util.showrd (temp, polar );
 
 	/* Correct position for light deflection
@@ -122,7 +122,7 @@ planet.reduce = (body, q, e, earthBody, constant) => {
 	/* Precession of the equinox and ecliptic
 	 * from J2000.0 to ephemeris date
 	 */
-	p = precess.calc( p, earthBody.position.date, -1 );
+	p = precess.calc( p, earthBody.position.date.julian, -1 );
 
 	/* Ajust for nutation
 	 * at current ecliptic.

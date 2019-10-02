@@ -84,7 +84,7 @@ moon.calc = (moonBody, earthBody, constant) => {
 	moonBody.position.annualAberration = aberration.calc(re, earthBody, constant);
 
 	/* pe[0] -= STR * (20.496/(RTS*pe[2])); */
-	re = precess.calc (re, earthBody.position.date, -1);
+	re = precess.calc(re, earthBody.position.date.julian, -1);
 	nutation.calc(earthBody.position.date, re); // NOTE mutates re
 
 	for (i = 0; i < 3; i++) {
@@ -218,7 +218,7 @@ moon.calcll = (date, rect, pol, moonBody, earthBody, constant, result) => {
 	rect[2] = epsilonObject.sineps*cosB*sinL + epsilonObject.coseps*sinB;
 
 	/* Rotate to J2000. */
-	rect = precess.calc ( rect, {julian: earthBody.position.date.julian}, 1 ); // TDT
+	rect = precess.calc( rect, earthBody.position.date.julian, 1 ); // TDT
 
 	/* Find Euclidean vectors and angles between earth, object, and the sun
 	 */
@@ -242,7 +242,7 @@ moon.calcll = (date, rect, pol, moonBody, earthBody, constant, result) => {
 	/* annuab (rect); */
 
 	/* Precess to date.  */
-	rect = precess.calc (rect, {julian: earthBody.position.date.julian}, -1); // TDT
+	rect = precess.calc(rect, earthBody.position.date.julian, -1); // TDT
 
 	/* Correct for nutation at date TDT.
 	 */

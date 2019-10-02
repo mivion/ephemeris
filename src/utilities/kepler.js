@@ -219,7 +219,7 @@ kepler.calc = (date, body, rect, polar) => {
 	 * to ecliptic and equinox of J2000.0
 	 * if not already there.
 	 */
-	rect = precess.calc(rect, { julian: body.equinox}, 1);
+	rect = precess.calc(rect, body.equinox, 1);
 	/* If earth, adjust from earth-moon barycenter to earth
 	 * by AA page E2.
 	 */
@@ -272,7 +272,7 @@ kepler.embofs = (date, ea) => {
 	/* Precess the lunar position
 	 * to ecliptic and equinox of J2000.0
 	 */
-	pm = precess.calc(pm, date, 1);
+	pm = precess.calc(pm, date.julian, 1);
 
 	/* Adjust the coordinates of the Earth
 	 */

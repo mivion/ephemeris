@@ -93,9 +93,7 @@ export default class DateDelta {
   	var i, iy, k; // int
     let dateDelta
 
-  	if (constant.dtgiven) {
-  		dateDelta = constant.dtgiven;
-  	} else if (j2000 > this.TABEND) {
+  	if (j2000 > this.TABEND) {
   		/* Extrapolate future values beyond the lookup table.  */
   		if (j2000 > (this.TABEND + 100.0)) {
   			/* Morrison & Stephenson (2004) long-term curve fit.  */
