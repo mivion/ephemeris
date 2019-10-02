@@ -22,7 +22,13 @@ export const FLAT = 298.257222
 export const AU = 1.49597870691e8 /* Astronomical unit, in kilometers.  */
 export const AEARTH = 6378137  /* Radius of the earth, in meters.  */
 export const CLIGHT = 2.99792458e5  /* Speed of light, km/sec  */
+export const CLIGHTAUD = 86400.0 * CLIGHT / AU; /* C in au/day  */
 
+
+/* Radius of the earth in au
+ Thanks to Min He <Min.He@businessobjects.com> for pointing out
+ this needs to be initialized early.  */
+export const REARTH = 0.001 * AEARTH / AU; // calculated in kinit
 
 /* Earth radii per au */
 export const DISFAC = 2.3454780e4

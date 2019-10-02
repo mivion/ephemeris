@@ -16,12 +16,7 @@ export const constant = {
   trho: 0.9985,
 	height: 0.0,
 
-	/* Radius of the earth in au
-	 Thanks to Min He <Min.He@businessobjects.com> for pointing out
-	 this needs to be initialized early.  */
-	Rearth: 0.0, // calculated in kinit
 
-	Clightaud: 0.0, /* C in au/day  */
 
 	/* approximate motion of right ascension and declination
 	 * of object, in radians per day
@@ -40,8 +35,4 @@ export const constant = {
 	/* correction vector, saved for display  */
 	dp: [],
 
-	/*
-	 * Current kepler body
-	 */
-	body: {}
 };

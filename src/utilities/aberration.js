@@ -1,3 +1,4 @@
+import { CLIGHTAUD } from '../constants'
 import { util } from './util'
 import VelocityEarth from './VelocityEarth'
 
@@ -15,7 +16,7 @@ aberration.calc = (p, earthBody, constant, result) => {
 	betai = 0.0;
 	pV = 0.0;
 	for( i=0; i<3; i++ ) {
-		A = velocityEarth.vearth[i] / constant.Clightaud;
+		A = velocityEarth.vearth[i] / CLIGHTAUD;
 		V[i] = A;
 		betai += A*A;
 		pV += p[i] * A;

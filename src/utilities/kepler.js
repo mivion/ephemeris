@@ -325,11 +325,5 @@ kepler.init = function (constant) {
 	 trho += height/6378160.;
 	 */
 
-	constant.Clightaud = 86400.0 * CLIGHT / AU;
-	/* Radius of the earth in au
-	 Thanks to Min He <Min.He@businessobjects.com> for pointing out
-	 this needs to be initialized early.  */
-	constant.Rearth = 0.001 * AEARTH / AU;
-
   return constant
 };

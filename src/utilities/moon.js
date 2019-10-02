@@ -1,4 +1,4 @@
-import { DTR, RTD, RTS } from '../constants'
+import { DTR, RTD, RTS, REARTH } from '../constants'
 
 import { aberration } from './aberration'
 import { altaz } from './altaz'
@@ -107,7 +107,7 @@ moon.calc = (moonBody, earthBody, constant) => {
 		dLongitude: RTD * moonpol [0],
 		latitude: moonpol [1],
 		dLatitude: RTD * moonpol [1],
-		distance: moonpol [2] / constant.Rearth
+		distance: moonpol [2] / REARTH
 	};
 	moonBody.position.apparentLongitude = moonBody.position.apparentGeocentric.dLongitude;
 	var dmsLongitude = util.dms(moonBody.position.apparentGeocentric.longitude);
@@ -123,9 +123,9 @@ moon.calc = (moonBody, earthBody, constant) => {
 		Math.floor (dmsLongitude.seconds) + '"'
 	;
 
-	moonBody.position.geocentricDistance = moonpol [2] / constant.Rearth;
+	moonBody.position.geocentricDistance = moonpol [2] / REARTH;
 
-	x = constant.Rearth/moonpol[2];
+	x = REARTH/moonpol[2];
 	moonBody.position.dHorizontalParallax = Math.asin (x);
 	moonBody.position.horizontalParallax = util.dms (Math.asin (x));
 
@@ -206,7 +206,7 @@ moon.calcll = (date, rect, pol, moonBody, earthBody, constant, result) => {
 	/* Light time correction to longitude,
 	 * about 0.7".
 	 */
-	pol[0] -= 0.0118 * DTR * constant.Rearth / pol[2];
+	pol[0] -= 0.0118 * DTR * REARTH / pol[2];
 
 	/* convert to equatorial system of date */
 	cosB = Math.cos(pol[1]);
