@@ -29,6 +29,9 @@ But both of these popular ephemeris aren't as distributable as Moshier's. They'r
 
 But almost a decade ago, Mivion translated it into Javascript! And it's been around ever since, ready to be integrated into a project. The only issue is a lot has changed with Javascript over the past decade. I recently tried to implement it into a project and ran into an issue where my test runner couldn't parse its namespacing! That's when I decided: it's time to bring this gem into the future.
 
+## Demo
+
+Open the file: `/demo/index.html` in your browser.
 
 ## Installation
 
