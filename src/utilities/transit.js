@@ -50,8 +50,8 @@ transit.calc = function (date, lha, dec, constant, body, result) {
 
 	/* Refer to same start of date as iter_trnsit,
 	 so r_trnsit means the same thing in both programs.  */
-	x = Math.floor(date.universal - 0.5) + 0.5; // UT
-	x = (date.universal - x) * TPI; // UT
+	x = Math.floor(date.universalJulian - 0.5) + 0.5; // UT
+	x = (date.universalJulian - x) * TPI; // UT
 	/* adjust local hour angle */
 	y = lha;
 	/* printf ("%.7f,", lha); */
@@ -158,7 +158,7 @@ transit.iterateTransit = function (callback, result) {
 	//UTsave = UT;
 	retry = 0;
 	/* Start iteration at time given by the user.  */
-	t1 = $moshier.body.earth.position.date.universal; // UT
+	t1 = $moshier.body.earth.position.date.universalJulian; // UT
 
 	/* Find transit time. */
 	do {

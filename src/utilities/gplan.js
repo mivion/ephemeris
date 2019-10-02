@@ -763,7 +763,7 @@ gplan.moon = (date, rect, pol) => {
 	x = (1.0 + STR * pol[2]) * moonlr.distance;
 	pol[2] = x;
 	/* Convert ecliptic polar to equatorial rectangular coordinates.  */
-	const epsilonObject = new Epsilon(date.julian).calcEpsilon();
+	const epsilonObject = new Epsilon(date.julian);
 	cosB = Math.cos(pol[1]);
 	sinB = Math.sin(pol[1]);
 	cosL = Math.cos(pol[0]);

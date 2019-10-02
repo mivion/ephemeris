@@ -57,9 +57,8 @@ describe('Ephemeris', () => {
 
       expect(ephemeris.Date.utc).toEqual(new Date("2000-01-01T00:00:00.000Z"))
       // Universal
-      expect(ephemeris.Constant.date.universalDateString).toEqual("31.12.1999 23:58:56.17")
-      // Delta
-      expect(ephemeris.Constant.date.universal).toEqual(2451544.4992612316)
+      expect(ephemeris.Date.universalDate).toEqual(new Date("2000-01-01T04:58:56.170Z"))
+      expect(ephemeris.Date.universalJulian).toEqual(2451544.4992612316)
 
     })
 

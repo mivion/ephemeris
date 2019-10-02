@@ -7,6 +7,10 @@ export default class Epsilon {
     this.coseps = 0.0, /* Cosine of the obliquity */
     this.sineps = 0.0 /* Sine of the obliquity */
     this.julianDate = julianDate
+
+    this.calcEpsilon = this.calcEpsilon.bind(this)
+    
+    this.calcEpsilon()
   }
 
   calcEpsilon() {

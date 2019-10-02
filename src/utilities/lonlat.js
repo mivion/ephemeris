@@ -31,7 +31,7 @@ lonlat.calc = (pp, date, polar, ofdate, result) => {
 
 	/* Convert from equatorial to ecliptic coordinates
 	 */
-	let epsilonObject = new Epsilon(date.julian).calcEpsilon();
+	let epsilonObject = new Epsilon(date.julian);
 	yy = s[1];
 	zz = s[2];
 	x  = s[0];

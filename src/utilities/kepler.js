@@ -209,7 +209,7 @@ kepler.calc = (date, body, rect, polar) => {
 	 * to heliocentric equatorial rectangular coordinates
 	 * by rotating eps radians about the x axis.
 	 */
-	let epsilonObject = new Epsilon(body.equinox).calcEpsilon();
+	let epsilonObject = new Epsilon(body.equinox);
 	W = epsilonObject.coseps*rect[1] - epsilonObject.sineps*rect[2];
 	M = epsilonObject.sineps*rect[1] + epsilonObject.coseps*rect[2];
 	rect[1] = W;
@@ -228,7 +228,7 @@ kepler.calc = (date, body, rect, polar) => {
 	}
 
 	/* Rotate back into the ecliptic.  */
-  epsilonObject = new Epsilon(J2000).calcEpsilon();
+  epsilonObject = new Epsilon(J2000);
 	W = epsilonObject.coseps*rect[1] + epsilonObject.sineps*rect[2];
 	M = -epsilonObject.sineps*rect[1] + epsilonObject.coseps*rect[2];
 

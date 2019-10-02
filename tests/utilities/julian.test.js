@@ -41,6 +41,6 @@ describe('calcJulianDate', () => {
 
 
 test('calculates Gregorian Date', () => {
-  const jd = { julian: 2451544.5 }
-  expect(julian.toGregorian(jd)).toEqual({"day": 1, "hours": 0, "julian": 2451544.5, "milliseconds": 0, "minutes": 0, "month": 1, "seconds": 0, "year": 2000})
+  const jd = 2451544.5 // jan 1 2000
+  expect(julian.toGregorian(jd)).toEqual({"day": 1, "hours": 0, "milliseconds": 0, "minutes": 0, "month": 1, "seconds": 0, "year": 2000})
 })

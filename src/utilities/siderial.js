@@ -12,7 +12,7 @@ siderial.calc = (date, tlong) => {
 	/*long il;*/
 
 	/* Julian day at given UT */
-	jd = date.universal; // UT
+	jd = date.universalJulian; // UT
 	jd0 = Math.floor(jd);
 	secs = date.julian - jd0; // UT
 	if( secs < 0.5 ) {
@@ -34,7 +34,7 @@ siderial.calc = (date, tlong) => {
 	 * We already have routines for these.
 	 */
 	const nutationObject = nutation.getObject(date);
-	const epsilonObject = new Epsilon(date.julian).calcEpsilon();
+	const epsilonObject = new Epsilon(date.julian);
 	/* nutl is in radians; convert to seconds of time
 	 * at 240 seconds per degree
 	 */

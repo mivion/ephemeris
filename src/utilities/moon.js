@@ -194,7 +194,7 @@ moon.calcll = (date, rect, pol, moonBody, earthBody, constant, result) => {
 	result = result || {};
 
 	/* Compute obliquity of the ecliptic, coseps, and sineps.  */
-	const epsilonObject = new Epsilon(date.julian).calcEpsilon();
+	const epsilonObject = new Epsilon(date.julian);
 	/* Get geometric coordinates of the Moon.  */
 	rect = gplan.moon(date, rect, pol);
 	/* Post the geometric ecliptic longitude and latitude, in radians,

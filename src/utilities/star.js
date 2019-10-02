@@ -131,7 +131,7 @@ star.reduce = (body, earthBody, constant) => {
 	 * at current ecliptic.
 	 */
 
-	// const epsilonObject = new Epsilon( earthBody.position.date.julian).calcEpsilon(); // NOTE - has no effect on result
+	// const epsilonObject = new Epsilon( earthBody.position.date.julian); // NOTE - has no effect on result
 	nutation.calc(earthBody.position.date, p); // NOTE mutates p
 
 	/* Display the final apparent R.A. and Dec.

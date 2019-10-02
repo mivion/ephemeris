@@ -128,7 +128,7 @@ planet.reduce = (body, q, e, earthBody, constant) => {
 	 * at current ecliptic.
 	 */
 
-	// const epsilonObject = new Epsilon(earthBody.position.date.julian).calcEpsilon(); // NOTE - has no affect on result
+	// const epsilonObject = new Epsilon(earthBody.position.date.julian); // NOTE - has no affect on result
 	body.position.nutation = nutation.calc ( earthBody.position.date, p ); // NOTE mutates p
 
 	/* Display the final apparent R.A. and Dec.

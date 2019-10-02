@@ -68,39 +68,29 @@ export const julian = {
     return  1900.0 + (julianDate - J1900) / 365.25;
   },
 
-  universalCalc: date => {
-    // needs date.universal which is assiged in delta.js
-    date.universalDate = julian.toGregorian({
-      julian: date.universal
-    });
+  calcUniversalDate: universalJulian => {
+    const gregorian = julian.toGregorian(universalJulian);
 
-    date.universalDateString =
-      date.universalDate.day + '.' +
-      date.universalDate.month + '.' +
-      date.universalDate.year + ' ' +
-      date.universalDate.hours + ':' +
-      date.universalDate.minutes + ':' +
-      (date.universalDate.seconds + date.universalDate.milliseconds / 1000)
-    ;
+    const date = new Date(gregorian.year, (gregorian.month - 1), gregorian.day, gregorian.hours, gregorian.minutes, gregorian.seconds, gregorian.milliseconds)
 
     return date
   },
 
-  toGregorian: date => {
+  toGregorian: julianDate => {
+    let date = {}
   	var month, day; // int
   	var year, a, c, d, x, y, jd; // int
   	var BC; // int
   	var dd; // double
-  	var J = date.julian;
 
   	/* January 1.0, 1 A.D. */
-  	if( J < 1721423.5 ) {
+  	if( julianDate < 1721423.5 ) {
   		BC = 1;
   	} else {
   		BC = 0;
   	}
 
-  	jd = Math.floor (J + 0.5); /* round Julian date up to integer */
+  	jd = Math.floor (julianDate + 0.5); /* round Julian date up to integer */
 
   	/* Find the number of Gregorian centuries
   	 * since March 1, 4801 B.C.
@@ -141,7 +131,7 @@ export const julian = {
   	}
 
   	/* Fractional part of day. */
-  	dd = day + J - jd + 0.5;
+  	dd = day + julianDate - jd + 0.5;
 
   	if (BC) {
   		year = year - 1;

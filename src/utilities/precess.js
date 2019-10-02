@@ -63,9 +63,9 @@ precess.calc = function (R, date, direction) {
 	 */
   let epsilonObject
 	if (direction == 1) {
-		epsilonObject = new Epsilon(date.julian).calcEpsilon(); /* To J2000 */
+		epsilonObject = new Epsilon(date.julian); /* To J2000 */
 	} else {
-		epsilonObject = new Epsilon(J2000).calcEpsilon(); /* From J2000 */
+		epsilonObject = new Epsilon(J2000); /* From J2000 */
 	}
 
 	x[0] = R[0];
@@ -140,9 +140,9 @@ precess.calc = function (R, date, direction) {
 	 */
 
 	if( direction == 1 ) {
-		epsilonObject = new Epsilon(J2000).calcEpsilon();
+		epsilonObject = new Epsilon(J2000);
 	} else {
-		epsilonObject = new Epsilon(date.julian).calcEpsilon();
+		epsilonObject = new Epsilon(date.julian);
 	}
 
 	z = epsilonObject.coseps * x[1] - epsilonObject.sineps * x[2];

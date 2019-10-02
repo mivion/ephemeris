@@ -83,7 +83,7 @@ sun.calc = (sunBodyObject, earthBodyObject, constant) => {
 
 	/* Nutation.
 	 */
-	let epsilonObject = new Epsilon(earthBodyObject.position.date.julian).calcEpsilon();
+	let epsilonObject = new Epsilon(earthBodyObject.position.date.julian);
   let nutationObject = nutation.getObject(earthBodyObject.position.date)
   nutation.calc(earthBodyObject.position.date, ecr); // NOTE nutation mutates the nutation object AND returns a result.
 
