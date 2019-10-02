@@ -29,13 +29,15 @@ console.log(body.position);
 </script>
 ```
 
-### Notes on accuracy
+### Notes on precision && accuracy upgrading from 0.1.0 > 1.0.0
 
-- I've noticed that there are very tiny differences in the apparentLongitude decimal calculation of the bodies in the ES6 implementation vs the legacy implentation. I've tracked this down to a single variation in factors - `epsilon.js`.
+I've noticed that there are very tiny differences (in magnitude of 0.0000005 degrees) between the apparentLongitude decimal calculation of the bodies in the 1.0.0 implementation vs the 0.1.0 implentation. I've tracked this down to a single variation in factors - `epsilon.js`.
 
-I believe the differences are the result of a bug fix that is centered around the way `epsilon.js` handles its state. In the legacy implementation, `$moshier.epsilon` was a workhorse variable that was reassigned frequently in many calculations from many sources. This, I believe, resulted in the author losing track of what values `epsilon.js` would possess, because the results are not idempotent.
+The differences appear to be the result of the refactor, which I believe actually fixed a bug. The potential bug was centered around the way `epsilon.js` handles its state.
 
-I've refactored the code to treat this as an immutable object generator, because I do not believe `epsilon` benefits from multiple iterations and mutations of its data. In fact, the original code had a check that seemed be failing and causing undesired mutations -
+In the 0.1.0 implementation, `$moshier.epsilon` was a workhorse variable that was reassigned frequently in many calculations from many sources. This, I believe, resulted in the app losing track of the state of `epsilon.js`, because the results are not consistent across method calls and my best guess is that this object was intended to be idempotent.
+
+I refactored the code to treat this as an immutable object generator, because I do not believe `epsilon` benefits from multiple iterations and mutations of its data. In fact, the original code had a check that seemed be failing and causing undesired mutations -
 
 ```
 if (date.julian == this.jdeps) {
@@ -43,4 +45,4 @@ if (date.julian == this.jdeps) {
 }
 ```
 
-because in some instances, `date.julian` was passed in as a different value than what this.jdeps is. I've yet to track down why, but it seems irrelevant if we treat epsilon immutably. 
+because in some instances, `date.julian` was passed in as a different value than what this.jdeps is. I've yet to track down why, but it seems irrelevant if we treat epsilon immutably.
