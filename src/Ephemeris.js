@@ -1,9 +1,8 @@
 import { constant } from './utilities/constant'
 import { body } from './utilities/body'
 import { kepler } from './utilities/kepler'
-import { processor } from './utilities/processor'
 import  { julian } from './utilities/julian'
-import { delta } from './utilities/delta'
+import DateDelta from './utilities/DateDelta'
 import { sun } from './utilities/sun'
 import { moon } from './utilities/moon'
 import { planet } from './utilities/planet'
@@ -67,22 +66,24 @@ export default class Ephemeris {
 
   CalculateDates() {
     const dateObject = { year: this._year, month: this._month, day: this._day, hours: this._hours, minutes: this._minutes, seconds: this._seconds }
+    const julianDate = julian.calcJulianDate({...dateObject, month: dateObject.month + 1})
+    this.Date = {}
+    this.Date.utc = new Date(Date.UTC(this._year, this._month, this._day, this._hours, this._minutes, this._seconds))
+    this.Date.julian = julianDate, // month + 1 for formula
+    this.Date.j2000 = julian.calcJ2000(julianDate),
+    this.Date.b1950 = julian.calcB1950(julianDate),
+    this.Date.j1900 = julian.calcJ1900(julianDate),
+    this.Date.universal = new DateDelta().calcUniversal(this.Date.julian, this.Date.j2000, this.Constant)
 
-    this.Date = new Date(Date.UTC(this._year, this._month, this._day, this._hours, this._minutes, this._seconds))
-
-    this.JulianDate = julian.calcJulianDate({...dateObject, month: dateObject.month + 1}) // month + 1 for formula
-    this.J2000 = julian.calcJ2000(this.JulianDate)
-    this.B1950 = julian.calcB1950(this.JulianDate)
-    this.J1900 = julian.calcJ1900(this.JulianDate)
 
     // TODO - deprecate Constant.date references and use the above above.
     // TODO - refeactor kepler, precess, etc and only pass in julian date as arg
-    this.Constant.date.julian = julian.calcJulianDate({...dateObject, month: dateObject.month + 1}) // month + 1 for formula
-    this.Constant.date.j2000 = julian.calcJ2000(this.JulianDate)
-    this.Constant.date.b1950 = julian.calcB1950(this.JulianDate)
-    this.Constant.date.j1900 = julian.calcJ1900(this.JulianDate)
+    this.Constant.date.julian = julianDate
+    this.Constant.date.j2000 = julian.calcJ2000(julianDate)
+    this.Constant.date.b1950 = julian.calcB1950(julianDate)
+    this.Constant.date.j1900 = julian.calcJ1900(julianDate)
+    this.Constant.date.universal = new DateDelta().calcUniversal(this.Date.julian, this.Date.j2000, this.Constant)
 
-    this.Constant.date = delta.calc(this.Constant.date, this.Constant) // TODO - refactor Date to be its own class with these methods on init
     this.Constant.date = julian.universalCalc(this.Constant.date) // TODO - refactor Date to be its own class with these methods on init
   }
 

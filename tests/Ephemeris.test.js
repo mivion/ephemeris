@@ -50,18 +50,17 @@ describe('Ephemeris', () => {
 
     it('calculates dates', () => {
       // Julian
-      expect(ephemeris.JulianDate).toEqual(2451544.5)
-      expect(ephemeris.J2000).toEqual(1999.9986310746065)
-      expect(ephemeris.B1950).toEqual(1999.998841889117)
-      expect(ephemeris.J2000).toEqual(1999.9986310746065)
+      expect(ephemeris.Date.julian).toEqual(2451544.5)
+      expect(ephemeris.Date.j2000).toEqual(1999.9986310746065)
+      expect(ephemeris.Date.b1950).toEqual(1999.998841889117)
+      expect(ephemeris.Date.j2000).toEqual(1999.9986310746065)
 
+      expect(ephemeris.Date.utc).toEqual(new Date("2000-01-01T00:00:00.000Z"))
       // Universal
       expect(ephemeris.Constant.date.universalDateString).toEqual("31.12.1999 23:58:56.17")
       // Delta
-      expect(ephemeris.Constant.date.terrestrial).toEqual(2451544.5)
       expect(ephemeris.Constant.date.universal).toEqual(2451544.4992612316)
 
-      expect(ephemeris.Date).toEqual(new Date("2000-01-01T00:00:00.000Z"))
     })
 
     it('calculates Earth', () => {
