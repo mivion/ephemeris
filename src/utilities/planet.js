@@ -46,7 +46,7 @@ planet.reduce = (body, q, e, earthBody, observer, constant) => {
 	/* Adjust for light time (planetary aberration)
 	 */
 	light.calc( body, q, e, earthBody, constant); // NOTE mutates constant
-
+  // light.calcMotionRadians(q, e, earthBody.position.date.julian, earthBody, constant)
 	/* Find Euclidean vectors between earth, object, and the sun
 	 */
 	for( i=0; i<3; i++ ) {

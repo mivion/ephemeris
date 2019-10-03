@@ -5,25 +5,20 @@ import VelocityEarth from './VelocityEarth'
 export const light = {};
 
 light.calc = function (body, q, e, earthBody, constant) {
-	var p = [], p0 = [], ptemp = []; // double
+  const p0 = light.getP0(q, e)
+	var p = [], ptemp = []; // double
 	var P, Q, E, t, x, y; // double
-	var i, k; // int
-
-	/* save initial q-e vector for display */
-	for( i=0; i<3; i++ ) {
-		p0[i] = q[i] - e[i];
-	}
 
 	E = 0.0;
-	for( i=0; i<3; i++ ) {
+	for(let i=0; i<3; i++ ) {
 		E += e[i]*e[i];
 	}
 	E = Math.sqrt(E);
 
-	for( k=0; k<2; k++ ) {
+	for(let k=0; k<2; k++ ) {
 		P = 0.0;
 		Q = 0.0;
-		for( i=0; i<3; i++ ) {
+		for(let i=0; i<3; i++ ) {
 			y = q[i];
 			x = y - e[i];
 			p[i] = x;
@@ -41,7 +36,7 @@ light.calc = function (body, q, e, earthBody, constant) {
 
 	/* Final object-earth vector and the amount by which it changed.
 	 */
-	for( i=0; i<3; i++ ) {
+	for(let i=0; i<3; i++ ) {
 		x = q[i] - e[i];
 		p[i] = x;
 		constant.dp [i] = x - p0[i];
@@ -61,7 +56,7 @@ light.calc = function (body, q, e, earthBody, constant) {
 	 */
   const velocityEarth = new VelocityEarth(earthBody.position.date.julian, earthBody);
 
-	for( i=0; i<3; i++ ) {
+	for(let i=0; i<3; i++ ) {
 		p[i] += velocityEarth.vearth[i]*t;
 	}
 
@@ -71,3 +66,13 @@ light.calc = function (body, q, e, earthBody, constant) {
 	constant.dradt /= t;
 	constant.ddecdt /= t;
 };
+
+light.getP0 = (q, e) => {
+  let p0 = []
+  /* save initial q-e vector for display */
+  for(let i=0; i<3; i++ ) {
+		p0[i] = q[i] - e[i];
+	}
+
+  return p0
+}

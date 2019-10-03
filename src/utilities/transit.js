@@ -35,7 +35,7 @@ transit.calc = function (date, lha, dec, constant, body, observer, result) {
 	this.r_rise = -10.0;
 	this.r_set = -10.0;
 	/* observer's geodetic latitude, in radians */
-	x = observer * DTR;
+	x = observer.glat * DTR;
 	coslat = Math.cos(x);
 	sinlat = Math.sin(x);
 
@@ -103,8 +103,7 @@ transit.calc = function (date, lha, dec, constant, body, observer, result) {
 		}
 		y = (N - sinlat*sindec)/(coslat*cosdec);
 
-		if( (y < 1.0) && (y > -1.0) )
-		{
+		if( (y < 1.0) && (y > -1.0) ) {
 			this.f_trnsit = 1;
 			/* Derivative of y with respect to declination
 			 * times rate of change of declination:

@@ -38,7 +38,6 @@ altaz.calc = (pol, date, constant, body, observer, result) => {
 	 but not diurnal aberration.  */
 	lha = last - ra;
 	result.transit = transit.calc( date, lha, dec, constant, body, observer );
-
 	/* Diurnal parallax
 	 */
 	result.diurnalParallax = diurnal.parallax(last, ra, dec, dist, observer);
@@ -102,6 +101,7 @@ altaz.calc = (pol, date, constant, body, observer, result) => {
 	}
 	y = RTS * y/15.0;
 	z = RTS * (dec - z);
+
 	result.atmosphericRefraction = {
 		deg: D,
 		dRA: y,

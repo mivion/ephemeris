@@ -2,9 +2,9 @@ import { AEARTH, DTR, FLAT, RTD } from './constants'
 
 export default class Observer {
   constructor({latitude = 0.00, longitude = 0.00, height = 0.00}={}) {
-    this.glat = latitude
+    this.glat = latitude // geodetic latitude
+    this.tlat // calculated geocentric latitude
     this.tlong = longitude
-    this.tlat // calculated
     this.trho // calculated
     this.height = height
     this.attemp = 12.0,	/* atmospheric temperature, degrees Centigrade */ // input for kinit
@@ -16,13 +16,14 @@ export default class Observer {
   }
 
   initialize() {
+    // assigns tlat and trho
+    /* Reduction from geodetic latitude to geocentric latitude
+    * AA page K5
+    */
     let a, b, fl, co, si, u; // double
 
     u = this.glat * DTR;
 
-    /* Reduction from geodetic latitude to geocentric latitude
-     * AA page K5
-     */
     co = Math.cos(u);
     si = Math.sin(u);
     fl = 1.0 - 1.0 / FLAT;

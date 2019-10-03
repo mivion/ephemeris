@@ -1,6 +1,7 @@
 import { CLIGHT, J2000, B1950, J1900, RTOH, DTR, RTD, RTS, STR, EMRAT, TPI,
 FLAT, AU, AEARTH } from '../constants'
 
+// TODO - demolish
 export const constant = {
 	/* approximate motion of right ascension and declination
 	 * of object, in radians per day
