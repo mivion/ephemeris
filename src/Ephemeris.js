@@ -76,6 +76,18 @@ export default class Ephemeris {
 
   CalculateBody(bodyKey) {
     const bodyObject = this.Body.find(b => b.key === bodyKey)
+    // TODO - refactor
+    // initialize local variables
+    bodyObject.dp = []
+    bodyObject.dradt = null;
+  	bodyObject.ddecdt = null;
+    bodyObject.EO = 0.0;
+  	bodyObject.SE = 0.0;
+  	bodyObject.SO = 0.0;
+  	bodyObject.pq = 0.0;
+  	bodyObject.ep = 0.0;
+  	bodyObject.qe = 0.0;
+
     switch(bodyObject.type) {
       case 'sun':
         return sun.calc(bodyObject, {...this.Earth}, this.Observer, this.Constant)

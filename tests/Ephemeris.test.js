@@ -158,6 +158,10 @@ describe('Ephemeris', () => {
 
     it('calculates Mercury', () => {
       const mercury = ephemeris.CalculateBody('mercury')
+      expect(mercury.aberration.dDec).toEqual(2.642824379820767);
+      expect(mercury.aberration.dRA).toEqual(-1.8347798396792003);
+      expect(mercury.lightTime).toEqual(11.752301624521882);
+
       expect(mercury.position.aberration.dDec).toEqual(-0.12287505599556225);
       expect(mercury.position.aberration.dRA).toEqual(-1.5075211750286641);
 
