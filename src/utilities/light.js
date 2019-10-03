@@ -61,10 +61,10 @@ light.calc = function (body, q, e, earthBody, constant) {
 	}
 
 	var d = util.deltap( p, p0);  /* see dms.c */
-	constant.dradt = d.dr;
-	constant.ddecdt = d.dd;
-	constant.dradt /= t;
-	constant.ddecdt /= t;
+	body.dradt = d.dr;
+	body.ddecdt = d.dd;
+	body.dradt /= t;
+	body.ddecdt /= t;
 };
 
 light.getP0 = (q, e) => {

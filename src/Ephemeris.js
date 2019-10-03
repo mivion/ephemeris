@@ -79,6 +79,10 @@ export default class Ephemeris {
     // TODO - refactor
     // initialize local variables
     bodyObject.dp = []
+
+    /* approximate motion of right ascension and declination
+  	 * of object, in radians per day
+  	 */
     bodyObject.dradt = null;
   	bodyObject.ddecdt = null;
     bodyObject.EO = 0.0;

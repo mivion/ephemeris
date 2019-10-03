@@ -60,13 +60,13 @@ moon.calc = (moonBody, earthBody, observer, constant) => {
 	 * The rates of change.  These are used by altaz () to
 	 * correct the time of rising, transit, and setting.
 	 */
-	constant.dradt = moon.ra - ra0;
-	if (constant.dradt >= Math.PI)
-		constant.dradt = constant.dradt - 2.0 * Math.PI;
-	if (constant.dradt <= -Math.PI)
-		constant.dradt = constant.dradt + 2.0 * Math.PI;
-	constant.dradt = 1000.0 * constant.dradt;
-	constant.ddecdt = 1000.0*(moon.dec-dec0);
+	moonBody.dradt = moon.ra - ra0;
+	if (moonBody.dradt >= Math.PI)
+		moonBody.dradt = moonBody.dradt - 2.0 * Math.PI;
+	if (moonBody.dradt <= -Math.PI)
+		moonBody.dradt = moonBody.dradt + 2.0 * Math.PI;
+	moonBody.dradt = 1000.0 * moonBody.dradt;
+	moonBody.ddecdt = 1000.0*(moon.dec-dec0);
 
 	/* Rate of change in longitude, degrees per day
 	 * used for phase of the moon

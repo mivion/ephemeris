@@ -158,8 +158,8 @@ star.reduce = (body, earthBody, observer, constant) => {
 
 	/* Go do topocentric reductions.
 	 */
-	constant.dradt = 0.0;
-	constant.ddecdt = 0.0;
+	body.dradt = 0.0;
+	body.ddecdt = 0.0;
 	polar [2] = 1.0e38; /* make it ignore diurnal parallax */
 
 	body.position.altaz = altaz.calc ( polar, earthBody.position.date, constant, body, observer);
