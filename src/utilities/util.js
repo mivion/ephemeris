@@ -325,33 +325,33 @@ util.angles = function (p, q, e, body) {
 	var a, b, s; // double
 	var i; // int
 
-	body.EO = 0.0;
-	body.SE = 0.0;
-	body.SO = 0.0;
-	body.pq = 0.0;
-	body.ep = 0.0;
-	body.qe = 0.0;
+	body.locals.EO = 0.0;
+	body.locals.SE = 0.0;
+	body.locals.SO = 0.0;
+	body.locals.pq = 0.0;
+	body.locals.ep = 0.0;
+	body.locals.qe = 0.0;
 	for( i=0; i<3; i++ ) {
 		a = e[i];
 		b = q[i];
 		s = p[i];
-		body.EO += s * s;
-		body.SE += a * a;
-		body.SO += b * b;
-		body.pq += s * b;
-		body.ep += a * s;
-		body.qe += b * a;
+		body.locals.EO += s * s;
+		body.locals.SE += a * a;
+		body.locals.SO += b * b;
+		body.locals.pq += s * b;
+		body.locals.ep += a * s;
+		body.locals.qe += b * a;
 	}
-	body.EO = Math.sqrt(body.EO); /* Distance between Earth and object */
-	body.SO = Math.sqrt(body.SO); /* Sun - object */
-	body.SE = Math.sqrt(body.SE); /* Sun - earth */
+	body.locals.EO = Math.sqrt(body.locals.EO); /* Distance between Earth and object */
+	body.locals.SO = Math.sqrt(body.locals.SO); /* Sun - object */
+	body.locals.SE = Math.sqrt(body.locals.SE); /* Sun - earth */
 	/* Avoid fatality: if object equals sun, SO is zero.  */
-	if( body.SO > 1.0e-12 )
+	if( body.locals.SO > 1.0e-12 )
 	{
-		body.pq /= body.EO * body.SO;	/* cosine of sun-object-earth */
-		body.qe /= body.SO * body.SE;	/* cosine of earth-sun-object */
+		body.locals.pq /= body.locals.EO * body.locals.SO;	/* cosine of sun-object-earth */
+		body.locals.qe /= body.locals.SO * body.locals.SE;	/* cosine of earth-sun-object */
 	}
-	body.ep /= body.SE * body.EO;	/* -cosine of sun-earth-object */
+	body.locals.ep /= body.locals.SE * body.locals.EO;	/* -cosine of sun-earth-object */
 
   return body
 };

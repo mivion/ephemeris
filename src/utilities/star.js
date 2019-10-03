@@ -88,7 +88,7 @@ star.reduce = (body, earthBody, observer) => {
 	/* Find unit vector from earth in direction of object
 	 */
 	for( i=0; i<3; i++ ) {
-		p[i] /= body.EO;
+		p[i] /= body.locals.EO;
 		temp[i] = p[i];
 	}
 
@@ -158,8 +158,8 @@ star.reduce = (body, earthBody, observer) => {
 
 	/* Go do topocentric reductions.
 	 */
-	body.dradt = 0.0;
-	body.ddecdt = 0.0;
+	body.locals.dradt = 0.0;
+	body.locals.ddecdt = 0.0;
 	polar [2] = 1.0e38; /* make it ignore diurnal parallax */
 
 	body.position.altaz = altaz.calc ( polar, earthBody.position.date, body, observer);

@@ -10,14 +10,14 @@ import { precess } from './precess'
 import { util } from './util'
 export const sun = {};
 
-sun.calc = (sunBody, earthBody, observer) => {
+sun.calc = (body, earthBody, observer) => {
 	var r, x, y, t; // double
 	var ecr = [], rec = [], pol = []; // double
 	var i; // int
 	var d;
 	//double asin(), modtp(), sqrt(), cos(), sin();
 
-	sunBody.position = sunBody.position || {};
+	body.position = body.position || {};
 
 	/* Display ecliptic longitude and latitude.
 	 */
@@ -26,7 +26,7 @@ sun.calc = (sunBody, earthBody, observer) => {
 	}
 	r = earthBody.position.polar[2]; //eapolar [2];
 
-	sunBody.position.equinoxEclipticLonLat = lonlat.calc(ecr, earthBody.position.date, pol, 1); // TDT
+	body.position.equinoxEclipticLonLat = lonlat.calc(ecr, earthBody.position.date, pol, 1); // TDT
 
 	/* Philosophical note: the light time correction really affects
 	 * only the Sun's barymetric position; aberration is due to
@@ -53,7 +53,7 @@ sun.calc = (sunBody, earthBody, observer) => {
 		pol[i] = y - x; /* change in position */
 	}
 
-	sunBody.position = {...sunBody.position, ...{
+	body.position = {...body.position, ...{
 		date: earthBody.position.date,
 		lightTime: 1440.0*t,
 		aberration: util.showcor(ecr, pol)
@@ -64,10 +64,10 @@ sun.calc = (sunBody, earthBody, observer) => {
 	 */
 
 	d = util.deltap( ecr, rec);  /* see dms.c */
-	sunBody.dradt = d.dr;
-	sunBody.ddecdt = d.dd;
-	sunBody.dradt /= t;
-	sunBody.ddecdt /= t;
+	body.locals.dradt = d.dr;
+	body.locals.ddecdt = d.dd;
+	body.locals.dradt /= t;
+	body.locals.ddecdt /= t;
 
 	/* There is no light deflection effect.
 	 * AA page B39.
@@ -90,32 +90,32 @@ sun.calc = (sunBody, earthBody, observer) => {
 	/* Display the final apparent R.A. and Dec.
 	 * for equinox of date.
 	 */
-	sunBody.position.constellation = constellation.calc(ecr, earthBody.position.date);
+	body.position.constellation = constellation.calc(ecr, earthBody.position.date);
 
-	sunBody.position.apparent = util.showrd(ecr, pol);
+	body.position.apparent = util.showrd(ecr, pol);
 
 	/* Show it in ecliptic coordinates */
 	y  =  epsilonObject.coseps * rec[1]  +  epsilonObject.sineps * rec[2];
 	y = util.zatan2( rec[0], y ) + nutationObject.nutl;
-	sunBody.position.apparentLongitude = RTD * y;
+	body.position.apparentLongitude = RTD * y;
 	var dmsLongitude = util.dms (y);
-	sunBody.position.apparentLongitudeString =
+	body.position.apparentLongitudeString =
 		dmsLongitude.degree + '\u00B0' +
 		dmsLongitude.minutes + '\'' +
 		Math.floor (dmsLongitude.seconds) + '"'
 	;
 
-	sunBody.position.apparentLongitude30String =
+	body.position.apparentLongitude30String =
 		util.mod30 (dmsLongitude.degree) + '\u00B0' +
 		dmsLongitude.minutes + '\'' +
 		Math.floor (dmsLongitude.seconds) + '"'
 	;
 
-	sunBody.position.geocentricDistance = -1;
+	body.position.geocentricDistance = -1;
 
 	/* Report altitude and azimuth
 	 */
-	sunBody.position.altaz = altaz.calc( pol, earthBody.position.date, sunBody, observer );
+	body.position.altaz = altaz.calc( pol, earthBody.position.date, body, observer );
 
-  return sunBody
+  return body
 };

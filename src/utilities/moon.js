@@ -18,13 +18,13 @@ export const moon = {
  * approximate corrections to find apparent position,
  * phase of the Moon, etc. for AA.ARC.
  */
-moon.calc = (moonBody, earthBody, observer) => {
+moon.calc = (body, earthBody, observer) => {
 	var i, prtsav; // int
 	var ra0, dec0; // double
 	var x, y, z, lon0; // double
 	var pp = [], qq = [], pe = [], re = [], moonpp = [], moonpol = []; // double
 
-	moonBody.position = {
+	body.position = {
 		polar: [],
 		rect: []
 	};
@@ -42,31 +42,31 @@ moon.calc = (moonBody, earthBody, observer) => {
 	 */
 
 
-	moon.calcll({julian: earthBody.position.date.julian - 0.001}, moonpp, moonpol, moonBody, earthBody); // TDT - 0.001
+	moon.calcll({julian: earthBody.position.date.julian - 0.001}, moonpp, moonpol, body, earthBody); // TDT - 0.001
 	ra0 = moon.ra;
 	dec0 = moon.dec;
 	lon0 = moonpol[0];
 	/* Calculate for present instant.
 	 */
-	moonBody.position.nutation = moon.calcll(earthBody.position.date, moonpp, moonpol, moonBody, earthBody).nutation;
+	body.position.nutation = moon.calcll(earthBody.position.date, moonpp, moonpol, body, earthBody).nutation;
 
-	moonBody.position.geometric = {
-		longitude: RTD * moonBody.position.polar[0],
-		latitude: RTD * moonBody.position.polar[1],
-		distance: RTD * moonBody.position.polar[2]
+	body.position.geometric = {
+		longitude: RTD * body.position.polar[0],
+		latitude: RTD * body.position.polar[1],
+		distance: RTD * body.position.polar[2]
 	};
 
 	/**
 	 * The rates of change.  These are used by altaz () to
 	 * correct the time of rising, transit, and setting.
 	 */
-	moonBody.dradt = moon.ra - ra0;
-	if (moonBody.dradt >= Math.PI)
-		moonBody.dradt = moonBody.dradt - 2.0 * Math.PI;
-	if (moonBody.dradt <= -Math.PI)
-		moonBody.dradt = moonBody.dradt + 2.0 * Math.PI;
-	moonBody.dradt = 1000.0 * moonBody.dradt;
-	moonBody.ddecdt = 1000.0*(moon.dec-dec0);
+	body.locals.dradt = moon.ra - ra0;
+	if (body.locals.dradt >= Math.PI)
+		body.locals.dradt = body.locals.dradt - 2.0 * Math.PI;
+	if (body.locals.dradt <= -Math.PI)
+		body.locals.dradt = body.locals.dradt + 2.0 * Math.PI;
+	body.locals.dradt = 1000.0 * body.locals.dradt;
+	body.locals.ddecdt = 1000.0*(moon.dec-dec0);
 
 	/* Rate of change in longitude, degrees per day
 	 * used for phase of the moon
@@ -81,7 +81,7 @@ moon.calc = (moonBody, earthBody, observer) => {
 	}
 
 	/* aberration of light. */
-	moonBody.position.annualAberration = aberration.calc(re, earthBody, moonBody);
+	body.position.annualAberration = aberration.calc(re, earthBody, body);
 
 	/* pe[0] -= STR * (20.496/(RTS*pe[2])); */
 	re = precess.calc(re, earthBody.position.date.julian, -1);
@@ -97,47 +97,47 @@ moon.calc = (moonBody, earthBody, observer) => {
 	for( i=0; i<3; i++ ) {
 		qq[i] = re[i] + moonpp[i];
 	}
-	moonBody = util.angles( moonpp, qq, re, moonBody );
+	body = util.angles( moonpp, qq, re, body );
 
 	/* Display answers
 	 */
 
-	moonBody.position.apparentGeocentric = {
+	body.position.apparentGeocentric = {
 		longitude: moonpol [0],
 		dLongitude: RTD * moonpol [0],
 		latitude: moonpol [1],
 		dLatitude: RTD * moonpol [1],
 		distance: moonpol [2] / REARTH
 	};
-	moonBody.position.apparentLongitude = moonBody.position.apparentGeocentric.dLongitude;
-	var dmsLongitude = util.dms(moonBody.position.apparentGeocentric.longitude);
-	moonBody.position.apparentLongitudeString =
+	body.position.apparentLongitude = body.position.apparentGeocentric.dLongitude;
+	var dmsLongitude = util.dms(body.position.apparentGeocentric.longitude);
+	body.position.apparentLongitudeString =
 		dmsLongitude.degree + '\u00B0' +
 		dmsLongitude.minutes + '\'' +
 		Math.floor (dmsLongitude.seconds) + '"'
 	;
 
-	moonBody.position.apparentLongitude30String =
+	body.position.apparentLongitude30String =
 		util.mod30 (dmsLongitude.degree) + '\u00B0' +
 		dmsLongitude.minutes + '\'' +
 		Math.floor (dmsLongitude.seconds) + '"'
 	;
 
-	moonBody.position.geocentricDistance = moonpol [2] / REARTH;
+	body.position.geocentricDistance = moonpol [2] / REARTH;
 
 	x = REARTH/moonpol[2];
-	moonBody.position.dHorizontalParallax = Math.asin (x);
-	moonBody.position.horizontalParallax = util.dms (Math.asin (x));
+	body.position.dHorizontalParallax = Math.asin (x);
+	body.position.horizontalParallax = util.dms (Math.asin (x));
 
 	x = 0.272453 * x + 0.0799 / RTS; /* AA page L6 */
-	moonBody.position.dSemidiameter = x;
-	moonBody.position.Semidiameter = util.dms (x);
+	body.position.dSemidiameter = x;
+	body.position.Semidiameter = util.dms (x);
 
-	x = RTD * Math.acos(-moonBody.ep);
+	x = RTD * Math.acos(-body.locals.ep);
 	/*	x = 180.0 - RTD * arcdot (re, pp); */
-	moonBody.position.sunElongation = x;
-	x = 0.5 * (1.0 + moonBody.pq);
-	moonBody.position.illuminatedFraction = x;
+	body.position.sunElongation = x;
+	x = 0.5 * (1.0 + body.locals.pq);
+	body.position.illuminatedFraction = x;
 
 	/* Find phase of the Moon by comparing Moon's longitude
 	 * with Earth's longitude.
@@ -157,16 +157,16 @@ moon.calc = (moonBody, earthBody, observer) => {
 
 	if( x > 45.0 ) {
 		y = -(x - 90.0)*z;
-		moonBody.position.phaseDaysBefore = y;
+		body.position.phaseDaysBefore = y;
 		i = (i+1) & 3;
 	} else {
 		y = x*z;
-		moonBody.position.phaseDaysPast = y;
+		body.position.phaseDaysPast = y;
 	}
 
-	moonBody.position.phaseQuarter = i;
+	body.position.phaseQuarter = i;
 
-	moonBody.position.apparent = {
+	body.position.apparent = {
 		dRA: moon.ra,
 		dDec: moon.dec,
 		ra: util.hms (moon.ra),
@@ -178,15 +178,15 @@ moon.calc = (moonBody, earthBody, observer) => {
 	pp[0] = moon.ra;
 	pp[1] = moon.dec;
 	pp[2] = moonpol[2];
-	moonBody.position.altaz = altaz.calc(pp, earthBody.position.date, moonBody, observer);
+	body.position.altaz = altaz.calc(pp, earthBody.position.date, body, observer);
 
-  return moonBody
+  return body
 };
 
 /* Calculate apparent latitude, longitude, and horizontal parallax
  * of the Moon at Julian date J.
  */
-moon.calcll = (date, rect, pol, moonBody, earthBody, result) => {
+moon.calcll = (date, rect, pol, body, earthBody, result) => {
 	var cosB, sinB, cosL, sinL, y, z; // double
 	var qq = [], pp = []; // double
 	var i; // int
@@ -200,9 +200,9 @@ moon.calcll = (date, rect, pol, moonBody, earthBody, result) => {
 	/* Post the geometric ecliptic longitude and latitude, in radians,
 	 * and the radius in au.
 	 */
-	moonBody.position.polar[0] = pol[0];
-	moonBody.position.polar[1] = pol[1];
-	moonBody.position.polar[2] = pol[2];
+	body.position.polar[0] = pol[0];
+	body.position.polar[1] = pol[1];
+	body.position.polar[2] = pol[2];
 	/* Light time correction to longitude,
 	 * about 0.7".
 	 */
@@ -226,7 +226,7 @@ moon.calcll = (date, rect, pol, moonBody, earthBody, result) => {
 		pp[i] = rect[i] * pol[2];
 		qq[i] = earthBody.position.rect [i] + pp[i];
 	}
-	moonBody = util.angles (pp, qq, earthBody.position.rect, moonBody);
+	body = util.angles (pp, qq, earthBody.position.rect, body);
 
 	/* Make rect a unit vector.  */
 	/* for (i = 0; i < 3; i++) */
@@ -265,7 +265,7 @@ moon.calcll = (date, rect, pol, moonBody, earthBody, result) => {
 
 	/* Restore earth-moon distance.  */
 	for( i=0; i<3; i++ ) {
-		rect[i] *= moonBody.EO;
+		rect[i] *= body.locals.EO;
 	}
 
 	return result;

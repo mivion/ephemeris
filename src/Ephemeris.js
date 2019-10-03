@@ -46,9 +46,9 @@ export default class Ephemeris {
 
     this.CalculateDates()
 
-    this.Body = body
+    this._bodyData = body
     this.Observer = new Observer({latitude: latitude, longitude: longitude, height: height})
-    this.Earth = kepler.calc(this.Date, this.Body.find(b => b.key === 'earth'))
+    this.Earth = kepler.calc(this.Date, this._bodyData.find(b => b.key === 'earth'))
     this.Results = this.CalculateResults()
 
     this.CalculateDates = this.CalculateDates.bind(this)
@@ -69,35 +69,36 @@ export default class Ephemeris {
   }
 
   CalculateResults() {
-    return this.Body.filter(b => b.key !== 'earth').map(b => this.CalculateBody(b.key))
+    return this._bodyData.filter(b => b.key !== 'earth').map(b => this.CalculateBody(b.key))
   }
 
   CalculateBody(bodyKey) {
-    const bodyObject = this.Body.find(b => b.key === bodyKey)
+    const body = this._bodyData.find(b => b.key === bodyKey)
     // TODO - refactor
     // initialize local variables
 
-    bodyObject.dp = [] // correction vector, saved for display
-    bodyObject.dradt = null; // approx motion of right ascension of object in radians p day
-  	bodyObject.ddecdt = null; // approx motion of declination of object in radians p day
-    bodyObject.EO = 0.0;  /* earth-sun distance */
-  	bodyObject.SE = 0.0;  /* object-sun distance */
-  	bodyObject.SO = 0.0;  /* object-earth distance */
-  	bodyObject.pq = 0.0;	/* cosine of sun-object-earth angle */
-  	bodyObject.ep = 0.0;	/* -cosine of sun-earth-object angle */
-  	bodyObject.qe = 0.0;	/* cosine of earth-sun-object angle */
+    body.locals = {}
+    body.locals.dp = [] // correction vector, saved for display
+    body.locals.dradt = null; // approx motion of right ascension of object in radians p day
+  	body.locals.ddecdt = null; // approx motion of declination of object in radians p day
+    body.locals.EO = 0.0;  /* earth-sun distance */
+  	body.locals.SE = 0.0;  /* object-sun distance */
+  	body.locals.SO = 0.0;  /* object-earth distance */
+  	body.locals.pq = 0.0;	/* cosine of sun-object-earth angle */
+  	body.locals.ep = 0.0;	/* -cosine of sun-earth-object angle */
+  	body.locals.qe = 0.0;	/* cosine of earth-sun-object angle */
 
-    switch(bodyObject.type) {
+    switch(body.type) {
       case 'sun':
-        return sun.calc(bodyObject, {...this.Earth}, this.Observer)
+        return sun.calc(body, {...this.Earth}, this.Observer)
       case 'luna':
-        return moon.calc(bodyObject, {...this.Earth}, this.Observer)
+        return moon.calc(body, {...this.Earth}, this.Observer)
       case 'heliocentric':
-        return planet.calc(bodyObject, {...this.Earth}, this.Observer)
+        return planet.calc(body, {...this.Earth}, this.Observer)
       case 'star':
-        return star.calc(bodyObject, {...this.Earth}, this.Observer)
+        return star.calc(body, {...this.Earth}, this.Observer)
       default:
-        throw new Error(`Celestial body with key: "${bodyKey}" or type "${bodyObject.type}" not found.`)
+        throw new Error(`Celestial body with key: "${bodyKey}" or type "${body.type}" not found.`)
         break
     }
   }

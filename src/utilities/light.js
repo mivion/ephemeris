@@ -39,10 +39,10 @@ light.calc = function (body, q, e, earthBody) {
 	for(let i=0; i<3; i++ ) {
 		x = q[i] - e[i];
 		p[i] = x;
-		body.dp [i] = x - p0[i];
+		body.locals.dp [i] = x - p0[i];
 	}
 
-	body.aberration = util.showcor(p0, body.dp );
+	body.aberration = util.showcor(p0, body.locals.dp );
 
 	/* Calculate dRA/dt and dDec/dt.
 	 * The desired correction of apparent coordinates is relative
@@ -61,10 +61,10 @@ light.calc = function (body, q, e, earthBody) {
 	}
 
 	var d = util.deltap( p, p0);  /* see dms.c */
-	body.dradt = d.dr;
-	body.ddecdt = d.dd;
-	body.dradt /= t;
-	body.ddecdt /= t;
+	body.locals.dradt = d.dr;
+	body.locals.ddecdt = d.dd;
+	body.locals.dradt /= t;
+	body.locals.ddecdt /= t;
 };
 
 light.getP0 = (q, e) => {

@@ -31,12 +31,12 @@ aberration.calc = (p, earthBody, body, result) => {
 	for( i=0; i<3; i++ ) {
 		C = A * p[i]  +  B * V[i];
 		x[i] = C;
-		body.dp[i] = C - p[i];
+		body.locals.dp[i] = C - p[i];
 	}
 
 	result = result || {};
 
-  util.showcor (p, body.dp, result);
+  util.showcor (p, body.locals.dp, result);
 	for( i=0; i<3; i++ ) {
 		p[i] = x[i];
 	}

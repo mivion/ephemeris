@@ -28,6 +28,7 @@ class Demo {
     }
 
   const ephemeris = new Moshier.Ephemeris(origin)
+  console.log(`EPHEMERIS: `, ephemeris)
   console.log(`EPHEMERIS RESULTS FOR ${this.dateInput.value} -- ${this.timeInput.value} UTC}`, ephemeris.Results)
 
   ephemeris.Results.forEach(result => {

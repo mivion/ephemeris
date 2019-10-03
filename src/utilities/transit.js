@@ -62,7 +62,7 @@ transit.calc = function (date, lha, dec, body, observer, result) {
 		y -= TPI;
 	}
 	lhay = y;
-	y =  y/( -body.dradt / TPI + 1.00273790934);
+	y =  y/( -body.locals.dradt / TPI + 1.00273790934);
 	this.r_trnsit = x - y;
 	/* printf ("rt %.7f ", r_trnsit); */
 	/* Ordinarily never print here.  */
@@ -108,12 +108,12 @@ transit.calc = function (date, lha, dec, body, observer, result) {
 			/* Derivative of y with respect to declination
 			 * times rate of change of declination:
 			 */
-			z = -body.ddecdt * (sinlat + COSZEN * sindec);
+			z = -body.locals.ddecdt * (sinlat + COSZEN * sindec);
 			z /= TPI*coslat*cosdec*cosdec;
 			/* Derivative of acos(y): */
 			z /= Math.sqrt( 1.0 - y*y);
 			y = Math.acos(y);
-			D = -body.dradt / TPI + 1.00273790934;
+			D = -body.locals.dradt / TPI + 1.00273790934;
 			this.r_rise = x - (lhay + y)*(1.0 + z)/D;
 			this.r_set = x - (lhay - y)*(1.0 - z)/D;
 			/* Ordinarily never print here.  */

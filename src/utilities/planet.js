@@ -62,7 +62,7 @@ planet.reduce = (body, q, e, earthBody, observer) => {
 	}
 	a = Math.sqrt(a);
 	body.position.trueGeocentricDistance = a; /* was EO */
-	body.position.equatorialDiameter = 2.0*body.semiDiameter / body.EO;
+	body.position.equatorialDiameter = 2.0*body.semiDiameter / body.locals.EO;
 
 	/* Calculate radius.
 	 */
@@ -83,13 +83,13 @@ planet.reduce = (body, q, e, earthBody, observer) => {
 	 * where V(1,0) = elemnt->mag is the magnitude at 1au from
 	 * both earth and sun and 100% illumination.
 	 */
-	a = 0.5 * (1.0 + body.pq);
+	a = 0.5 * (1.0 + body.locals.pq);
 	/* Fudge the phase for light leakage in magnitude estimation.
 	 * Note this phase term estimate does not reflect reality well.
 	 * Calculated magnitudes of Mercury and Venus are inaccurate.
 	 */
-	b = 0.5 * (1.01 + 0.99*body.pq);
-	s = body.magnitude + 2.1715 * Math.log( body.EO * body.SO ) - 1.085 * Math.log(b);
+	b = 0.5 * (1.01 + 0.99*body.locals.pq);
+	s = body.magnitude + 2.1715 * Math.log( body.locals.EO * body.locals.SO ) - 1.085 * Math.log(b);
 	body.position.approxVisual = {
 		magnitude: s,
 		phase: a
@@ -98,7 +98,7 @@ planet.reduce = (body, q, e, earthBody, observer) => {
 	/* Find unit vector from earth in direction of object
 	 */
 	for( i=0; i<3; i++ ) {
-		p[i] /= body.EO;
+		p[i] /= body.locals.EO;
 		temp[i] = p[i];
 	}
 
@@ -139,7 +139,7 @@ planet.reduce = (body, q, e, earthBody, observer) => {
 
 	/* Geocentric ecliptic longitude and latitude.  */
 	for( i=0; i<3; i++ ) {
-		p[i] *= body.EO;
+		p[i] *= body.locals.EO;
 	}
 	body.position.apparentGeocentric = lonlat.calc ( p, earthBody.position.date, temp, 0 );
 	body.position.apparentLongitude = body.position.apparentGeocentric [0] * RTD;
@@ -159,7 +159,7 @@ planet.reduce = (body, q, e, earthBody, observer) => {
 
 	/* Go do topocentric reductions.
 	 */
-	polar[2] = body.EO;
+	polar[2] = body.locals.EO;
 	body.position.altaz = altaz.calc(polar, earthBody.position.date, body, observer);
 
   return body
