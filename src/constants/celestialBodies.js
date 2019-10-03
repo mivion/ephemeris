@@ -50,7 +50,7 @@ import { uranusPTable } from '../ptables/uranus'
 import { neptunePTable } from '../ptables/neptune'
 import { plutoPTable } from '../ptables/pluto'
 
-export const body = [
+export const celestialBodies = [
 	/**
 	 * Sun
 	 */

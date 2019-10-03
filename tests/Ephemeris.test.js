@@ -1,5 +1,4 @@
 import Ephemeris from '../src/Ephemeris'
-import { constellation } from '../src/utilities/constellation'
 
 describe('Ephemeris', () => {
   const defaultOrigin = {
@@ -33,9 +32,9 @@ describe('Ephemeris', () => {
       expect(() => new Ephemeris({year: 1, month: 1, day: 1, hours: 1, minutes: 0, seconds: 0, latitude: 0, longitude: 0, height: "0"})).toThrowError("Parameter value of: \"0\" - must be a number (int or float type).")
     })
 
-    it('assigns Body', () => {
-      expect(ephemeris.Body.find(b => b.key === 'earth').anomaly).toEqual(1.1791)
-      expect(ephemeris.Body.find(b => b.key === 'earth').ptable.distance).toEqual(1.000139872959708)
+    it('assigns _bodyData', () => {
+      expect(ephemeris._bodyData.find(b => b.key === 'earth').anomaly).toEqual(1.1791)
+      expect(ephemeris._bodyData.find(b => b.key === 'earth').ptable.distance).toEqual(1.000139872959708)
     })
 
     it('assigns Observer', () => {
@@ -104,8 +103,7 @@ describe('Ephemeris', () => {
       expect(sun.position.altaz.topocentric).toEqual({"altitude": -28.292954029774886, "azimuth": 263.16585592925907, "dDec": {"degree": 23, "minutes": 4, "seconds": 20.915465026334914}, "dRA": {"hours": 18, "milliseconds": 586, "minutes": 42, "seconds": 53}, "dec": -0.40269068182927403, "ra": -1.3836398418471454})
       expect(sun.position.lightTime).toEqual(8.178122476657716)
 
-      expect(sun.position.constellation).toEqual(77);
-      expect(constellation.constel[77]).toEqual("Sgr Sagittarii");
+      expect(sun.position.constellation).toEqual("Sgr Sagittarii");
 
     })
 
@@ -204,8 +202,7 @@ describe('Ephemeris', () => {
     	expect(mercury.position.altaz.topocentric.dec).toEqual(-0.425500916759608);
     	expect(mercury.position.altaz.topocentric.azimuth).toEqual(267.8392256448956);
 
-      expect(mercury.position.constellation).toEqual(77);
-      expect(constellation.constel[77]).toEqual("Sgr Sagittarii");
+      expect(mercury.position.constellation).toEqual("Sgr Sagittarii");
     })
 
     it('calculates Sirius', () => {

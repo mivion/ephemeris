@@ -529,8 +529,8 @@ constellation.calc = (pp, epoch) => {
 		k = i << 2;
 		if (ra >= constellation.bndries[k] && ra < constellation.bndries[k+1] && dec > constellation.bndries[k+2]) {
 			k = constellation.bndries [k+3];
-			return k;
+			return constellation.constel[k];
 		}
 	}
-	return -1;
+	return constellation.constel[-1];
 };

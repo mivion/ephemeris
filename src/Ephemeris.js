@@ -1,4 +1,4 @@
-import { body } from './utilities/body'
+import { celestialBodies } from './constants/celestialBodies'
 import { kepler } from './utilities/kepler'
 import  { julian } from './utilities/julian'
 import DateDelta from './utilities/DateDelta'
@@ -46,7 +46,7 @@ export default class Ephemeris {
 
     this.CalculateDates()
 
-    this._bodyData = body
+    this._bodyData = celestialBodies
     this.Observer = new Observer({latitude: latitude, longitude: longitude, height: height})
     this.Earth = kepler.calc(this.Date, this._bodyData.find(b => b.key === 'earth'))
     this.Results = this.CalculateResults()
