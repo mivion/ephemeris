@@ -11,7 +11,7 @@
  *	dailyMotion:	dm = daily motion, if 0.0 will be calculated
  *	eccentricity:	ecc = eccentricity
  *	anomaly:		M = mean anomaly
- *	equinox:		equinox = epoch of equinox and ecliptic
+ *	equinox:		equinox = epoch of equinox and ecliptic in julian
  *	magnitude: 		mag = visual magnitude at 1AU from earth and sun
  *	semiDiameter:	sdiam = equatorial semidiameter at 1au, arc seconds
  *	perihelionDistance: = perihelion distance
@@ -74,7 +74,7 @@ export const celestialBodies = [
 		dailyMotion: 4.09236,
 		eccentricity: 0.205628,
 		anomaly: 198.7199,
-		equinox: {julian: 2446800.5},
+		equinox: 2446800.,
 		magnitude: -0.42,
 		semiDiameter: 3.36,
     ptable: mercuryPTable
@@ -90,7 +90,7 @@ export const celestialBodies = [
 		dailyMotion: 1.60214,
 		eccentricity: 0.006757,
 		anomaly: 9.0369,
-		equinox: {julian: 2446800.5},
+		equinox: 2446800.,
 		/* Note the calculated apparent visual magnitude for Venus
 		 * is not very accurate.
 		 */
@@ -106,7 +106,7 @@ export const celestialBodies = [
     distance: 0.0, // computed
     eccentricity: 0.016713,
     epoch: 2446800.5, // 05.01.1987
-    equinox: {julian: 2446800.5},
+    equinox: 2446800.,
 		inclination: 0.0,
     longitude: 0.0, // computed
     magnitude: -3.86,
@@ -132,7 +132,7 @@ export const celestialBodies = [
 		dailyMotion: 0.524023,
 		eccentricity: 0.093472,
 		anomaly: 53.1893,
-		equinox: {julian: 2446800.5},
+		equinox: 2446800.,
 		magnitude: -1.52,
 		semiDiameter: 4.68,
     ptable: marsPTable
@@ -148,7 +148,7 @@ export const celestialBodies = [
 		dailyMotion: 0.0830948,
 		eccentricity: 0.048100,
 		anomaly: 344.5086,
-		equinox: {julian: 2446800.5},
+		equinox: 2446800.,
 		magnitude: -9.40,
 		semiDiameter: 98.44,
     ptable: jupiterPTable
@@ -164,7 +164,7 @@ export const celestialBodies = [
 		dailyMotion: 0.0334510,
 		eccentricity: 0.052786,
 		anomaly: 159.6327,
-		equinox: {julian: 2446800.5},
+		equinox: 2446800.,
 		magnitude: -8.88,
 		semiDiameter: 82.73,
     ptable: jupiterPTable
@@ -180,7 +180,7 @@ export const celestialBodies = [
 		dailyMotion: 0.0116943,
 		eccentricity: 0.045682,
 		anomaly: 84.8516,
-		equinox: {julian: 2446800.5},
+		equinox: 2446800.,
 		magnitude: -7.19,
 		semiDiameter: 35.02,
     ptable: uranusPTable
@@ -196,7 +196,7 @@ export const celestialBodies = [
 		dailyMotion: 0.00594978,
 		eccentricity: 0.009019,
 		anomaly: 254.2568,
-		equinox: {julian: 2446800.5},
+		equinox: 2446800.,
 		magnitude: -6.87,
 		semiDiameter: 33.50,
     ptable: neptunePTable
@@ -212,7 +212,7 @@ export const celestialBodies = [
 		dailyMotion: 0.00397570,
 		eccentricity: 0.248662,
 		anomaly: 355.0554,
-		equinox: {julian: 2446640.5},
+		equinox: 2446640.,
 		magnitude: -1.0,
 		semiDiameter: 2.07,
     ptable: plutoPTable
@@ -232,7 +232,7 @@ export const celestialBodies = [
 		dailyMotion: 0.0, // will be calculated
 		eccentricity: 0.3792037887546262,
 		anomaly: 114.8798253094007,
-		equinox: {julian: 2450109.234581196786},
+		equinox: 2450109.234581196786,
 		magnitude: 6.5,
 		semiDiameter: 0.0,
 		perihelionDistance: 8.486494269138399
@@ -254,6 +254,6 @@ export const celestialBodies = [
 		magnitude: -1.46,
 		ra: 0.0,
 		dec: 0.0,
-		equinox: {julian: 0.0}
+		equinox: 0.0
 	}
 ];

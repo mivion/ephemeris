@@ -74,9 +74,9 @@ describe('Ephemeris', () => {
   })
 
   describe('CalculateBody', () => {
-    const ephemeris = new Ephemeris(defaultOrigin)
 
     it('calculates the Sun', () => {
+      const ephemeris = new Ephemeris(defaultOrigin)
       const sun = ephemeris.CalculateBody('sun')
 
 
@@ -108,6 +108,7 @@ describe('Ephemeris', () => {
     })
 
     it('calculates the Moon', () => {
+      const ephemeris = new Ephemeris(defaultOrigin)
       const moon = ephemeris.CalculateBody('moon')
       expect(moon.position.apparentLongitudeString).toEqual("217°17'3\"")
       expect(moon.position.apparentLongitude).toEqual(217.28435008107076)
@@ -155,6 +156,7 @@ describe('Ephemeris', () => {
     })
 
     it('calculates Mercury', () => {
+      const ephemeris = new Ephemeris(defaultOrigin)
       const mercury = ephemeris.CalculateBody('mercury')
       expect(mercury.aberration.dDec).toEqual(2.642824379820767);
       expect(mercury.aberration.dRA).toEqual(-1.8347798396792003);
@@ -205,7 +207,64 @@ describe('Ephemeris', () => {
       expect(mercury.position.constellation).toEqual("Sgr Sagittarii");
     })
 
+    it('calculates Chiron', () => {
+      const ephemeris = new Ephemeris({...defaultOrigin, key: 'chiron'})
+      const chiron = ephemeris.CalculateBody('chiron')
+      expect(ephemeris.Earth.position.date.julian).toEqual(2451544.5);
+      expect(ephemeris.Date.julian).toEqual(2451544.5);
+
+      expect(chiron.semiAxis).toEqual(13.670338374188397);
+      expect(chiron.aberration.dDec).toEqual(0.26671942000413534);
+      expect(chiron.aberration.dRA).toEqual(-0.491483989794519);
+      expect(chiron.lightTime).toEqual(89.13459885508988);
+
+      expect(chiron.position.aberration.dDec).toEqual(1.7046862193912549);
+      expect(chiron.position.aberration.dRA).toEqual(-1.2861470394908976);
+
+      expect(chiron.position.apparentLongitudeString).toEqual("251°51'51\"")
+      expect(chiron.position.apparentLongitude).toEqual(251.86429073277426)
+
+      expect(chiron.position.nutation.dRA).toEqual(-0.924912884492014);
+    	expect(chiron.position.nutation.dDec).toEqual(7.2571378948853);
+
+    	expect(chiron.position.deflection.lightDeflection.dDec).toEqual(0.0038973566292776498);
+    	expect(chiron.position.deflection.sunElongation).toEqual(28.267479095836578);
+
+      expect(chiron.position.apparent.dRA).toEqual(4.379524555482005);
+      expect(chiron.position.apparent.dDec).toEqual(-0.316940973259521);
+    	expect(chiron.position.apparentGeocentric["0"]).toEqual(4.395861141487153);
+    	expect(chiron.position.apparentGeocentric["1"]).toEqual(0.0713353506914871);
+    	expect(chiron.position.apparentGeocentric["2"]).toEqual(10.717484191787275);
+      expect(chiron.position.apparentGeocentric["3"]).toEqual({"degree": 251, "minutes": 51, "seconds": 51.44663798735337});
+      expect(chiron.position.apparentGeocentric["4"]).toEqual({"degree": 4, "minutes": 5, "seconds": 13.972288948256661});
+
+    	expect(chiron.position.trueGeocentricDistance).toEqual(10.717603798330382);
+
+
+      expect(chiron.position.altaz.transit.UTdate).toEqual(0.617025091134498);
+    	expect(chiron.position.altaz.transit.dApproxRiseUT).toEqual(2.5876794066755537);
+      expect(chiron.position.altaz.transit.dApproxSetUT).toEqual(5.166021987804478);
+
+    	expect(chiron.position.altaz.diurnalAberation.ra).toEqual(4.379523646966461);
+    	expect(chiron.position.altaz.diurnalAberation.dec).toEqual(-0.31694121605497977);
+
+    	expect(chiron.position.altaz.diurnalParallax.ra).toEqual(4.379521538953043);
+    	expect(chiron.position.altaz.diurnalParallax.dec).toEqual(-0.31694300944754744);
+
+    	expect(chiron.position.altaz.atmosphericRefraction.deg).toEqual(0);
+    	expect(chiron.position.altaz.atmosphericRefraction.dRA).toEqual(0);
+    	expect(chiron.position.altaz.atmosphericRefraction.dDec).toEqual(-5.7249984266343304e-11);
+
+    	expect(chiron.position.altaz.topocentric.altitude).toEqual(-47.33874448070378);
+    	expect(chiron.position.altaz.topocentric.ra).toEqual(-1.9036637682265436);
+    	expect(chiron.position.altaz.topocentric.dec).toEqual(-0.3169430094475477);
+    	expect(chiron.position.altaz.topocentric.azimuth).toEqual(290.0506106380276);
+
+      expect(chiron.position.constellation).toEqual("Oph Ophiuchi");
+    })
+
     it('calculates Sirius', () => {
+      const ephemeris = new Ephemeris(defaultOrigin)
       const sirius = ephemeris.CalculateBody('sirius')
       expect(sirius.position.apparentLongitudeString).toEqual("101°17'23\"")
       expect(sirius.position.apparentLongitude).toEqual(1.767843531323971)
