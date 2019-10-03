@@ -30,7 +30,22 @@ The only problem is that it was written in C...
 
 Thankfully, years ago, Mivion translated it into Javascript! The only issue is a lot has changed with Javascript over the past few years and I had difficulty integrating it into my projects. Well, that difficulty is now a thing of the past!
 
-Moshier's Ephemeris is good from -3000 B.C.E --- 3000 C.E. Its results are always within less than a degree of the other leading Ephemerii, making this a highly precise library.
+Moshier's Ephemeris is good from -3000 B.C.E - 3000 C.E. Its results are always within less than a degree of the other leading Ephemerii, making this a highly precise library.
+
+## Celestial Bodies
+- Sun
+- Moon
+- Earth
+- Mercury
+- Venus
+- Mars
+- Jupiter
+- Saturn
+- Uranus
+- Neptune
+- Pluto
+- Chiron
+- Sirius
 
 ## Demo
 
