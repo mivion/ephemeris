@@ -1,5 +1,4 @@
 # Moshier Ephemeris ES6 Re-implementation - The REBOOT!
-**THIS IS A WORK IN PROGRESS**
 
 This is a "re-implementation" of version 0.1.0 of Mivion's Moshier Ephemeris javascript implementation (found here: https://github.com/mivion/ephemeris).
 
@@ -25,9 +24,13 @@ So what's Moshier's ephemeris? Well, it's a set of formula written by Stephen Mo
 
 The Jet Propulsion lab also has an ephemeris, which is only accessible via their website or a telnet connection. There's also the "Swiss Ephemeris", which is available for free until you hit a certain threshold.
 
-But both of these popular ephemeris aren't as distributable as Moshier's. They're both essentially gigantic tables - dozens of MBs large compressed. Moshier's, with its tiny size, is built for the modern web! The only problem is that it was written in C...
+But both of these popular ephemeris aren't as distributable as Moshier's. They're both essentially gigantic tables - dozens of MBs large compressed. Moshier's, with its tiny size, is built for the modern web!
 
-But almost a decade ago, Mivion translated it into Javascript! And it's been around ever since, ready to be integrated into a project. The only issue is a lot has changed with Javascript over the past decade. I recently tried to implement it into a project and ran into an issue where my test runner couldn't parse its namespacing! That's when I decided: it's time to bring this gem into the future.
+The only problem is that it was written in C...
+
+Thankfully, years ago, Mivion translated it into Javascript! The only issue is a lot has changed with Javascript over the past few years and I had difficulty integrating it into my projects. Well, that difficulty is now a thing of the past!
+
+Moshier's Ephemeris is good from -3000 B.C.E --- 3000 C.E. Its results are always within less than a degree of the other leading Ephemerii, making this a highly precise library.
 
 ## Demo
 
@@ -35,7 +38,7 @@ Open the file: `/demo/index.html` in your browser.
 
 ## Usage
 
-#####  Create a new ephemeris instance
+#####  Create a new ephemeris instance for all celestial bodies
 ```
 # Create a new ephemeris instance
 
@@ -46,29 +49,38 @@ const ephemeris = new Ephemeris({
 })
 ```
 
-##### Get all celestial bodies for the given datetime / location
+##### Generate ephemeris for a single body ( or multiple )
 ```
-# Get all celestial bodies for the given datetime / location
+# a single body = with key: "string"
+
+const ephemeris = new Ephemeris({
+  key: "jupiter",
+  year: 2000, month: 0, day: 1, hours: 0, minutes: 0, latitude: 41.37, longitude: -71.1
+})
+
+# multiple specific bodies with key: [array]
+
+const ephemeris = new Ephemeris({
+  key: ["jupiter", "venus", "moon", "chiron"],
+  year: 2000, month: 0, day: 1, hours: 0, minutes: 0, latitude: 41.37, longitude: -71.1
+})
+```
+
+##### View all results
+```
+# View all results
 
 ephemeris.Results
 
 // => Array[{sun}, {moon}, {mercury}...]
 ```
 
-##### Get the Earth
+##### Get a specific celestial body from results
+
 ```
-# Get the Earth
+# View a specific celestial body result (if generated)
 
-ephemeris.Earth
-
-// => Object{earth}
-```
-
-##### Get a specific celestial body
-```
-# Get a specific celestial body
-
-ephemeris.Results.find(body => body.key === 'mercury')
+ephemeris.mercury
 
 // => {
   aberration: {
@@ -151,6 +163,19 @@ ephemeris.Results.find(body => body.key === 'mercury')
 }
 ```
 
+##### Get the Earth and Observer
+```
+# Get the Earth and Observer
+
+ephemeris.Earth
+
+// => Object{earth}
+
+ephemeris.Observer
+
+// => Object{observer}
+```
+
 ## Installation
 
 ```
@@ -166,6 +191,12 @@ npm test
 
 // or yarn test
 ```
+
+## Future work
+- Retrograde & stationary planet determinations
+- Moon phases classifications
+- Add more comets & asteroids
+- Refactoring as needed (I'm not looking to go overboard with this now as we're getting to the point of diminishing returns)
 
 ## Development process notes
 

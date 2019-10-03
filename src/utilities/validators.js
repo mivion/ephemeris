@@ -42,3 +42,10 @@ export const validateNumber = n => {
   if (typeof n === 'number') return n
   else throw new Error(`Parameter value of: "${n}" - must be a number (int or float type).`)
 }
+
+export const validateKey = key => {
+  if (!key) return
+  if (typeof key === 'string') return [key.toLowerCase()]
+  if (Array.isArray(key)) return key.map(k => k.toLowerCase())
+  throw new Error(`Key: ${key} is not a valid type. Please pass in a string: "mercury", an array: ["mercury", "venus", "mars"], or leave blank (for all).`)
+}

@@ -17,12 +17,13 @@ import {
   validateSecond,
   validateLatitude,
   validateLongitude,
-  validateNumber
+  validateNumber,
+  validateKey
 } from './utilities/validators'
 
 
 export default class Ephemeris {
-  constructor({ year=0, month=0, day=0, hours=0, minutes=0, seconds=0, latitude=0.00,  longitude=0.00, height=0.00 }={}) {
+  constructor({ year=0, month=0, day=0, hours=0, minutes=0, seconds=0, latitude=0.00,  longitude=0.00, height=0.00, key=undefined }={}) {
     // !!!UTC time!!!
     // * int year (> 0 C.E.)
     // * int month (0 - 11 || 0 = January, 11 = December)
@@ -34,6 +35,7 @@ export default class Ephemeris {
     // * float longitude (-180 - +180)
     // * float height
 
+    this._key = validateKey(key)
     this._year = validateYear(year)
     this._month = validateMonth(month) // Reconcile month to use 1 - 12 range with legacy code
     this._day = validateDate(day)
@@ -50,6 +52,10 @@ export default class Ephemeris {
     this.Observer = new Observer({latitude: latitude, longitude: longitude, height: height})
     this.Earth = kepler.calc(this.Date, this._bodyData.find(b => b.key === 'earth'))
     this.Results = this.CalculateResults()
+    // Add each result as a key to the ephemeris
+    this.Results.forEach(result => {
+      this[result.key] = result
+    })
 
     this.CalculateDates = this.CalculateDates.bind(this)
     this.CalculateResults = this.CalculateResults.bind(this)
@@ -69,7 +75,10 @@ export default class Ephemeris {
   }
 
   CalculateResults() {
-    return this._bodyData.filter(b => b.key !== 'earth').map(b => this.CalculateBody(b.key))
+    const earthExcluded = this._bodyData.filter(b => b.key !== 'earth')
+    return !!this._key && this._key.length ?
+      earthExcluded.filter(b => this._key.includes(b.key)).map(b => this.CalculateBody(b.key)) :
+      earthExcluded.map(b => this.CalculateBody(b.key))
   }
 
   CalculateBody(bodyKey) {

@@ -240,4 +240,20 @@ describe('Ephemeris', () => {
 
     })
   })
+
+  describe('Single key ephemeris', () => {
+    const ephemeris = new Ephemeris({...defaultOrigin, key: 'venus'})
+
+    it('returns a single result (venus)', () => {
+      expect(ephemeris.Results.length).toEqual(1)
+    })
+  })
+
+  describe('Multi key ephemeris', () => {
+    const ephemeris = new Ephemeris({...defaultOrigin, key: ['sun', 'moon', 'VENUS', 'jupiter', 'neptune']})
+
+    it('returns a single result (venus, jupiter, neptune)', () => {
+      expect(ephemeris.Results.length).toEqual(5)
+    })
+  })
 })
