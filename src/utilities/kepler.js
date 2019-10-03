@@ -97,7 +97,7 @@ kepler.calc = (date, body, rect, polar) => {
 				 */
 				if( dailymotion == 0.0 )
 				{
-					/* The constant is 180 k / pi, k = Gaussian gravitational constant.
+					/* The constant is 180 k / pi, k = Gaussian gravitational body.
 					 * Assumes object in heliocentric orbit is massless.
 					 */
 					dailymotion = 0.9856076686 / (body.semiAxis * Math.sqrt(body.semiAxis));
@@ -289,7 +289,7 @@ kepler.embofs = (date, ea) => {
 kepler.init = function (constant) {
 	var a, b, fl, co, si, u; // double
 
-	u = constant.glat * DTR;
+	u = body.glat * DTR;
 
 	/* Reduction from geodetic latitude to geocentric latitude
 	 * AA page K5
@@ -300,14 +300,14 @@ kepler.init = function (constant) {
 	fl = fl*fl;
 	si = si*si;
 	u = 1.0/Math.sqrt( co*co + fl*si );
-	a = AEARTH*u + constant.height;
-	b = AEARTH*fl*u  +  constant.height;
-	constant.trho = Math.sqrt( a*a*co*co + b*b*si );
-	constant.tlat = RTD * Math.acos( a*co/constant.trho );
-	if( constant.glat < 0.0 ) {
-		constant.tlat = -constant.tlat;
+	a = AEARTH*u + body.height;
+	b = AEARTH*fl*u  +  body.height;
+	body.trho = Math.sqrt( a*a*co*co + b*b*si );
+	body.tlat = RTD * Math.acos( a*co/body.trho );
+	if( body.glat < 0.0 ) {
+		body.tlat = -body.tlat;
 	}
-	constant.trho /= AEARTH;
+	body.trho /= AEARTH;
 
   return constant
 };

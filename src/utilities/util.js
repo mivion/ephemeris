@@ -320,38 +320,38 @@ util.deltap = function (p0, p1, d) {
  * q (object), e (earth), and p (q minus e) are input vectors.
  * The answers are posted in the following global locations:
  */
-util.angles = function (p, q, e, constant) {
-  // NOTE mutates constant
+util.angles = function (p, q, e, body) {
+  // NOTE mutates body
 	var a, b, s; // double
 	var i; // int
 
-	constant.EO = 0.0;
-	constant.SE = 0.0;
-	constant.SO = 0.0;
-	constant.pq = 0.0;
-	constant.ep = 0.0;
-	constant.qe = 0.0;
+	body.EO = 0.0;
+	body.SE = 0.0;
+	body.SO = 0.0;
+	body.pq = 0.0;
+	body.ep = 0.0;
+	body.qe = 0.0;
 	for( i=0; i<3; i++ ) {
 		a = e[i];
 		b = q[i];
 		s = p[i];
-		constant.EO += s * s;
-		constant.SE += a * a;
-		constant.SO += b * b;
-		constant.pq += s * b;
-		constant.ep += a * s;
-		constant.qe += b * a;
+		body.EO += s * s;
+		body.SE += a * a;
+		body.SO += b * b;
+		body.pq += s * b;
+		body.ep += a * s;
+		body.qe += b * a;
 	}
-	constant.EO = Math.sqrt(constant.EO); /* Distance between Earth and object */
-	constant.SO = Math.sqrt(constant.SO); /* Sun - object */
-	constant.SE = Math.sqrt(constant.SE); /* Sun - earth */
+	body.EO = Math.sqrt(body.EO); /* Distance between Earth and object */
+	body.SO = Math.sqrt(body.SO); /* Sun - object */
+	body.SE = Math.sqrt(body.SE); /* Sun - earth */
 	/* Avoid fatality: if object equals sun, SO is zero.  */
-	if( constant.SO > 1.0e-12 )
+	if( body.SO > 1.0e-12 )
 	{
-		constant.pq /= constant.EO * constant.SO;	/* cosine of sun-object-earth */
-		constant.qe /= constant.SO * constant.SE;	/* cosine of earth-sun-object */
+		body.pq /= body.EO * body.SO;	/* cosine of sun-object-earth */
+		body.qe /= body.SO * body.SE;	/* cosine of earth-sun-object */
 	}
-	constant.ep /= constant.SE * constant.EO;	/* -cosine of sun-earth-object */
+	body.ep /= body.SE * body.EO;	/* -cosine of sun-earth-object */
 
-  return constant
+  return body
 };

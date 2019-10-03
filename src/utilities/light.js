@@ -39,10 +39,10 @@ light.calc = function (body, q, e, earthBody, constant) {
 	for(let i=0; i<3; i++ ) {
 		x = q[i] - e[i];
 		p[i] = x;
-		constant.dp [i] = x - p0[i];
+		body.dp [i] = x - p0[i];
 	}
 
-	body.aberration = util.showcor(p0, constant.dp );
+	body.aberration = util.showcor(p0, body.dp );
 
 	/* Calculate dRA/dt and dDec/dt.
 	 * The desired correction of apparent coordinates is relative

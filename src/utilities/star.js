@@ -83,12 +83,12 @@ star.reduce = (body, earthBody, observer, constant) => {
 	/* Find Euclidean vectors between earth, object, and the sun
 	 * angles( p, q, e );
 	 */
-	constant = util.angles( p, p, e, constant );
+	 body = util.angles( p, p, e,  body );
 
 	/* Find unit vector from earth in direction of object
 	 */
 	for( i=0; i<3; i++ ) {
-		p[i] /= constant.EO;
+		p[i] /= body.EO;
 		temp[i] = p[i];
 	}
 
@@ -116,11 +116,11 @@ star.reduce = (body, earthBody, observer, constant) => {
 	/* Correct position for light deflection
 	 * relativity( p, q, e );
 	 */
-	body.position.deflection = deflection.calc ( p, p, e, constant ); // relativity
+	body.position.deflection = deflection.calc ( p, p, e, body ); // relativity
 
 	/* Correct for annual aberration
 	 */
-	body.position.aberration = aberration.calc(p, earthBody, constant);
+	body.position.aberration = aberration.calc(p, earthBody, body);
 
 	/* Precession of the equinox and ecliptic
 	 * from J2000.0 to ephemeris date

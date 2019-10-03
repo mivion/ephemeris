@@ -81,7 +81,7 @@ moon.calc = (moonBody, earthBody, observer, constant) => {
 	}
 
 	/* aberration of light. */
-	moonBody.position.annualAberration = aberration.calc(re, earthBody, constant);
+	moonBody.position.annualAberration = aberration.calc(re, earthBody, moonBody);
 
 	/* pe[0] -= STR * (20.496/(RTS*pe[2])); */
 	re = precess.calc(re, earthBody.position.date.julian, -1);
@@ -97,7 +97,7 @@ moon.calc = (moonBody, earthBody, observer, constant) => {
 	for( i=0; i<3; i++ ) {
 		qq[i] = re[i] + moonpp[i];
 	}
-	constant = util.angles( moonpp, qq, re, constant );
+	moonBody = util.angles( moonpp, qq, re, moonBody );
 
 	/* Display answers
 	 */
@@ -133,10 +133,10 @@ moon.calc = (moonBody, earthBody, observer, constant) => {
 	moonBody.position.dSemidiameter = x;
 	moonBody.position.Semidiameter = util.dms (x);
 
-	x = RTD * Math.acos(-constant.ep);
+	x = RTD * Math.acos(-moonBody.ep);
 	/*	x = 180.0 - RTD * arcdot (re, pp); */
 	moonBody.position.sunElongation = x;
-	x = 0.5 * (1.0 + constant.pq);
+	x = 0.5 * (1.0 + moonBody.pq);
 	moonBody.position.illuminatedFraction = x;
 
 	/* Find phase of the Moon by comparing Moon's longitude
@@ -145,7 +145,7 @@ moon.calc = (moonBody, earthBody, observer, constant) => {
 	 * The number of days before or past indicated phase is
 	 * estimated by assuming the true longitudes change linearly
 	 * with time.  These rates are estimated for the date, but
-	 * do not stay constant.  The error can exceed 0.15 day in 4 days.
+	 * do not stay body.  The error can exceed 0.15 day in 4 days.
 	 */
 	x = moonpol[0] - pe[0];
 	x = util.modtp ( x ) * RTD;	/* difference in longitude */
@@ -226,7 +226,7 @@ moon.calcll = (date, rect, pol, moonBody, earthBody, constant, result) => {
 		pp[i] = rect[i] * pol[2];
 		qq[i] = earthBody.position.rect [i] + pp[i];
 	}
-	constant = util.angles (pp, qq, earthBody.position.rect, constant);
+	moonBody = util.angles (pp, qq, earthBody.position.rect, moonBody);
 
 	/* Make rect a unit vector.  */
 	/* for (i = 0; i < 3; i++) */
@@ -265,7 +265,7 @@ moon.calcll = (date, rect, pol, moonBody, earthBody, constant, result) => {
 
 	/* Restore earth-moon distance.  */
 	for( i=0; i<3; i++ ) {
-		rect[i] *= constant.EO;
+		rect[i] *= moonBody.EO;
 	}
 
 	return result;

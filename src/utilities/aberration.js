@@ -4,7 +4,7 @@ import VelocityEarth from './VelocityEarth'
 
 export const aberration = {};
 
-aberration.calc = (p, earthBody, constant, result) => {
+aberration.calc = (p, earthBody, body, result) => {
 	var A, B, C; // double
 	var betai, pV; // double
 	var x = [], V = []; // double
@@ -31,12 +31,12 @@ aberration.calc = (p, earthBody, constant, result) => {
 	for( i=0; i<3; i++ ) {
 		C = A * p[i]  +  B * V[i];
 		x[i] = C;
-		constant.dp[i] = C - p[i];
+		body.dp[i] = C - p[i];
 	}
 
 	result = result || {};
 
-  util.showcor (p, constant.dp, result);
+  util.showcor (p, body.dp, result);
 	for( i=0; i<3; i++ ) {
 		p[i] = x[i];
 	}
