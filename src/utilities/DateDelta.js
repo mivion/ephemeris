@@ -87,7 +87,7 @@ export default class DateDelta {
     this.CalcUniversal = this.CalcUniversal.bind(this)
   }
 
-  CalcUniversal(julianDate, j2000, constant) {
+  CalcUniversal(julianDate, j2000) {
   	var p, B; // double
   	var diff = [0, 0, 0, 0, 0, 0]; // int
   	var i, iy, k; // int
