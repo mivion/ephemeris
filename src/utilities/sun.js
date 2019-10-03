@@ -10,7 +10,7 @@ import { precess } from './precess'
 import { util } from './util'
 export const sun = {};
 
-sun.calc = (sunBody, earthBody, observer, constant) => {
+sun.calc = (sunBody, earthBody, observer) => {
 	var r, x, y, t; // double
 	var ecr = [], rec = [], pol = []; // double
 	var i; // int
@@ -115,7 +115,7 @@ sun.calc = (sunBody, earthBody, observer, constant) => {
 
 	/* Report altitude and azimuth
 	 */
-	sunBody.position.altaz = altaz.calc( pol, earthBody.position.date, constant, sunBody, observer );
+	sunBody.position.altaz = altaz.calc( pol, earthBody.position.date, sunBody, observer );
 
   return sunBody
 };

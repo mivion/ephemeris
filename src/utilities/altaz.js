@@ -12,7 +12,7 @@ export const altaz = {
 	refracted_elevation: 0.0
 };
 
-altaz.calc = (pol, date, constant, body, observer, result) => {
+altaz.calc = (pol, date, body, observer, result) => {
 	var dec, cosdec, sindec, lha, coslha, sinlha; // double
 	var ra, dist, last, alt, az, coslat, sinlat; // double
 	var N, D, x, y, z; // double
@@ -37,7 +37,7 @@ altaz.calc = (pol, date, constant, body, observer, result) => {
 	 trnsit.c takes diurnal parallax into account,
 	 but not diurnal aberration.  */
 	lha = last - ra;
-	result.transit = transit.calc( date, lha, dec, constant, body, observer );
+	result.transit = transit.calc( date, lha, dec, body, observer );
 	/* Diurnal parallax
 	 */
 	result.diurnalParallax = diurnal.parallax(last, ra, dec, dist, observer);

@@ -4,7 +4,7 @@ import VelocityEarth from './VelocityEarth'
 
 export const light = {};
 
-light.calc = function (body, q, e, earthBody, constant) {
+light.calc = function (body, q, e, earthBody) {
   const p0 = light.getP0(q, e)
 	var p = [], ptemp = []; // double
 	var P, Q, E, t, x, y; // double

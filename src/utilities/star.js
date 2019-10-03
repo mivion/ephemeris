@@ -11,15 +11,15 @@ import { util } from './util'
 
 export const star = {};
 
-star.calc = (body, earthBody, observer, constant) => {
+star.calc = (body, earthBody, observer) => {
 	if (!body.isPrepared) {
 		body = star.prepare(body);
 		body.isPrepared = true;
 	}
-	return star.reduce(body, earthBody, observer, constant);
+	return star.reduce(body, earthBody, observer);
 };
 
-star.reduce = (body, earthBody, observer, constant) => {
+star.reduce = (body, earthBody, observer) => {
 	var p = [], q = [], e = [], m = [], temp = [], polar = []; // double
 	var T, vpi, epoch; // double
 	var cosdec, sindec, cosra, sinra; // double
@@ -162,7 +162,7 @@ star.reduce = (body, earthBody, observer, constant) => {
 	body.ddecdt = 0.0;
 	polar [2] = 1.0e38; /* make it ignore diurnal parallax */
 
-	body.position.altaz = altaz.calc ( polar, earthBody.position.date, constant, body, observer);
+	body.position.altaz = altaz.calc ( polar, earthBody.position.date, body, observer);
 
   return body
 };

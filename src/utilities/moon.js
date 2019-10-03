@@ -18,7 +18,7 @@ export const moon = {
  * approximate corrections to find apparent position,
  * phase of the Moon, etc. for AA.ARC.
  */
-moon.calc = (moonBody, earthBody, observer, constant) => {
+moon.calc = (moonBody, earthBody, observer) => {
 	var i, prtsav; // int
 	var ra0, dec0; // double
 	var x, y, z, lon0; // double
@@ -42,13 +42,13 @@ moon.calc = (moonBody, earthBody, observer, constant) => {
 	 */
 
 
-	moon.calcll({julian: earthBody.position.date.julian - 0.001}, moonpp, moonpol, moonBody, earthBody, constant); // TDT - 0.001
+	moon.calcll({julian: earthBody.position.date.julian - 0.001}, moonpp, moonpol, moonBody, earthBody); // TDT - 0.001
 	ra0 = moon.ra;
 	dec0 = moon.dec;
 	lon0 = moonpol[0];
 	/* Calculate for present instant.
 	 */
-	moonBody.position.nutation = moon.calcll(earthBody.position.date, moonpp, moonpol, moonBody, earthBody, constant).nutation;
+	moonBody.position.nutation = moon.calcll(earthBody.position.date, moonpp, moonpol, moonBody, earthBody).nutation;
 
 	moonBody.position.geometric = {
 		longitude: RTD * moonBody.position.polar[0],
@@ -178,7 +178,7 @@ moon.calc = (moonBody, earthBody, observer, constant) => {
 	pp[0] = moon.ra;
 	pp[1] = moon.dec;
 	pp[2] = moonpol[2];
-	moonBody.position.altaz = altaz.calc(pp, earthBody.position.date, constant, moonBody, observer);
+	moonBody.position.altaz = altaz.calc(pp, earthBody.position.date, moonBody, observer);
 
   return moonBody
 };
@@ -186,7 +186,7 @@ moon.calc = (moonBody, earthBody, observer, constant) => {
 /* Calculate apparent latitude, longitude, and horizontal parallax
  * of the Moon at Julian date J.
  */
-moon.calcll = (date, rect, pol, moonBody, earthBody, constant, result) => {
+moon.calcll = (date, rect, pol, moonBody, earthBody, result) => {
 	var cosB, sinB, cosL, sinL, y, z; // double
 	var qq = [], pp = []; // double
 	var i; // int

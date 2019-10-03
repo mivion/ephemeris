@@ -24,7 +24,7 @@ export const transit = {
 /* Calculate time of transit
  * assuming RA and Dec change uniformly with time
  */
-transit.calc = function (date, lha, dec, constant, body, observer, result) {
+transit.calc = function (date, lha, dec, body, observer, result) {
 	var x, y, z, N, D; // double
 	var lhay, cosdec, sindec, coslat, sinlat; // double
 

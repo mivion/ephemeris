@@ -1,4 +1,3 @@
-import { constant } from './utilities/constant'
 import { body } from './utilities/body'
 import { kepler } from './utilities/kepler'
 import  { julian } from './utilities/julian'
@@ -45,7 +44,6 @@ export default class Ephemeris {
     this._longitude = validateLongitude(longitude)
     this._height = validateNumber(height)
 
-    this.Constant = constant
     this.CalculateDates()
 
     this.Body = body
@@ -66,7 +64,7 @@ export default class Ephemeris {
     this.Date.j2000 = julian.calcJ2000(this.Date.julian),
     this.Date.b1950 = julian.calcB1950(this.Date.julian),
     this.Date.j1900 = julian.calcJ1900(this.Date.julian),
-    this.Date.universalJulian = new DateDelta().CalcUniversal(this.Date.julian, this.Date.j2000, this.Constant)
+    this.Date.universalJulian = new DateDelta().CalcUniversal(this.Date.julian, this.Date.j2000)
     this.Date.universalDate = julian.calcUniversalDate(this.Date.universalJulian)
   }
 
@@ -78,29 +76,26 @@ export default class Ephemeris {
     const bodyObject = this.Body.find(b => b.key === bodyKey)
     // TODO - refactor
     // initialize local variables
-    bodyObject.dp = []
 
-    /* approximate motion of right ascension and declination
-  	 * of object, in radians per day
-  	 */
-    bodyObject.dradt = null;
-  	bodyObject.ddecdt = null;
-    bodyObject.EO = 0.0;
-  	bodyObject.SE = 0.0;
-  	bodyObject.SO = 0.0;
-  	bodyObject.pq = 0.0;
-  	bodyObject.ep = 0.0;
-  	bodyObject.qe = 0.0;
+    bodyObject.dp = [] // correction vector, saved for display
+    bodyObject.dradt = null; // approx motion of right ascension of object in radians p day
+  	bodyObject.ddecdt = null; // approx motion of declination of object in radians p day
+    bodyObject.EO = 0.0;  /* earth-sun distance */
+  	bodyObject.SE = 0.0;  /* object-sun distance */
+  	bodyObject.SO = 0.0;  /* object-earth distance */
+  	bodyObject.pq = 0.0;	/* cosine of sun-object-earth angle */
+  	bodyObject.ep = 0.0;	/* -cosine of sun-earth-object angle */
+  	bodyObject.qe = 0.0;	/* cosine of earth-sun-object angle */
 
     switch(bodyObject.type) {
       case 'sun':
-        return sun.calc(bodyObject, {...this.Earth}, this.Observer, this.Constant)
+        return sun.calc(bodyObject, {...this.Earth}, this.Observer)
       case 'luna':
-        return moon.calc(bodyObject, {...this.Earth}, this.Observer, this.Constant)
+        return moon.calc(bodyObject, {...this.Earth}, this.Observer)
       case 'heliocentric':
-        return planet.calc(bodyObject, {...this.Earth}, this.Observer, this.Constant)
+        return planet.calc(bodyObject, {...this.Earth}, this.Observer)
       case 'star':
-        return star.calc(bodyObject, {...this.Earth}, this.Observer, this.Constant)
+        return star.calc(bodyObject, {...this.Earth}, this.Observer)
       default:
         throw new Error(`Celestial body with key: "${bodyKey}" or type "${bodyObject.type}" not found.`)
         break

@@ -285,29 +285,3 @@ kepler.embofs = (date, ea) => {
 	/* Sun-Earth distance.  */
 	return Math.sqrt(b);
 };
-
-kepler.init = function (constant) {
-	var a, b, fl, co, si, u; // double
-
-	u = body.glat * DTR;
-
-	/* Reduction from geodetic latitude to geocentric latitude
-	 * AA page K5
-	 */
-	co = Math.cos(u);
-	si = Math.sin(u);
-	fl = 1.0 - 1.0 / FLAT;
-	fl = fl*fl;
-	si = si*si;
-	u = 1.0/Math.sqrt( co*co + fl*si );
-	a = AEARTH*u + body.height;
-	b = AEARTH*fl*u  +  body.height;
-	body.trho = Math.sqrt( a*a*co*co + b*b*si );
-	body.tlat = RTD * Math.acos( a*co/body.trho );
-	if( body.glat < 0.0 ) {
-		body.tlat = -body.tlat;
-	}
-	body.trho /= AEARTH;
-
-  return constant
-};

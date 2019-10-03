@@ -14,13 +14,13 @@ import { util } from './util'
 
 export const planet = {};
 
-planet.calc = (body, earthBody, observer, constant) => {
+planet.calc = (body, earthBody, observer) => {
 	body = planet.prepare(body);
 
 	/* calculate heliocentric position of the object */
 	body = kepler.calc(earthBody.position.date, body); // NOTE mutates body
 	/* apply correction factors and print apparent place */
-	return planet.reduce(body, body.position.rect, earthBody.position.rect, earthBody, observer, constant);
+	return planet.reduce(body, body.position.rect, earthBody.position.rect, earthBody, observer);
 };
 
 /* The following program reduces the heliocentric equatorial
@@ -28,7 +28,7 @@ planet.calc = (body, earthBody, observer, constant) => {
  * were computed by kepler() and produces apparent geocentric
  * right ascension and declination.
  */
-planet.reduce = (body, q, e, earthBody, observer, constant) => {
+planet.reduce = (body, q, e, earthBody, observer) => {
 	var p = [], temp = [], polar = []; // double
 	var a, b, r, s, x; // double
 	var i; // int
@@ -45,8 +45,8 @@ planet.reduce = (body, q, e, earthBody, observer, constant) => {
 
 	/* Adjust for light time (planetary aberration)
 	 */
-	light.calc( body, q, e, earthBody, constant); // NOTE mutates constant
-  // light.calcMotionRadians(q, e, earthBody.position.date.julian, earthBody, constant)
+	light.calc( body, q, e, earthBody); // NOTE mutates body
+
 	/* Find Euclidean vectors between earth, object, and the sun
 	 */
 	for( i=0; i<3; i++ ) {
@@ -160,7 +160,7 @@ planet.reduce = (body, q, e, earthBody, observer, constant) => {
 	/* Go do topocentric reductions.
 	 */
 	polar[2] = body.EO;
-	body.position.altaz = altaz.calc(polar, earthBody.position.date, constant, body, observer);
+	body.position.altaz = altaz.calc(polar, earthBody.position.date, body, observer);
 
   return body
 };
