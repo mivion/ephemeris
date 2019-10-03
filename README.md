@@ -53,6 +53,18 @@ Open the file: `/demo/index.html` in your browser.
 
 ## Usage
 
+##### Load the library
+```
+// in node
+
+import Ephemeris from './build/ephemeris-1.0.0.bundle.js'
+
+
+// or in a browser
+
+new Mosher.default()
+```
+
 #####  Create a new ephemeris instance for all celestial bodies
 ```
 # Create a new ephemeris instance
