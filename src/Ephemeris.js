@@ -34,7 +34,6 @@ export default class Ephemeris {
     // * float latitude (-90 - +90)
     // * float longitude (-180 - +180)
     // * float height
-
     this._key = validateKey(key)
     this._year = validateYear(year)
     this._month = validateMonth(month) // Reconcile month to use 1 - 12 range with legacy code
@@ -62,6 +61,7 @@ export default class Ephemeris {
     this.CalculateBody = this.CalculateBody.bind(this)
   }
 
+  // TODO - move Date to observer
   CalculateDates() {
     const dateObject = { year: this._year, month: this._month, day: this._day, hours: this._hours, minutes: this._minutes, seconds: this._seconds }
     this.Date = {}

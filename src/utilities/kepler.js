@@ -244,6 +244,7 @@ kepler.calc = (date, body, rect, polar) => {
 
 	// fill the body.position only if rect and polar are
 	// not defined
+  // TODO - remove date object from this part and refactor code depending on it
 	if (definePosition) {
 		body.position = {
 			date: date,

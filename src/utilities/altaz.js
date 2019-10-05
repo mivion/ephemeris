@@ -22,7 +22,6 @@ altaz.calc = (pol, date, body, observer, result) => {
 	ra = pol[0];
 	dec = pol[1];
 	dist = pol[2];
-
 	/* local apparent siderial time, seconds converted to radians
 	 */
 	last = siderial.calc( date, observer.tlong ) * DTR / 240.0;
@@ -43,7 +42,6 @@ altaz.calc = (pol, date, body, observer, result) => {
 	result.diurnalParallax = diurnal.parallax(last, ra, dec, dist, observer);
 	ra = result.diurnalParallax.ra;
 	dec = result.diurnalParallax.dec;
-
 	/* Diurnal aberration
 	 */
 	/*diurab( last, &ra, &dec );*/

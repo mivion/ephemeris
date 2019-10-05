@@ -71,7 +71,7 @@ export const julian = {
   calcUniversalDate: universalJulian => {
     const gregorian = julian.toGregorian(universalJulian);
 
-    const date = new Date(gregorian.year, (gregorian.month - 1), gregorian.day, gregorian.hours, gregorian.minutes, gregorian.seconds, gregorian.milliseconds)
+    const date = new Date(Date.UTC(gregorian.year, (gregorian.month - 1), gregorian.day, gregorian.hours, gregorian.minutes, gregorian.seconds, gregorian.milliseconds))
 
     return date
   },
