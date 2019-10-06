@@ -12,7 +12,7 @@ ES6 re-implementation of ephemeris calculations for sun, planets, comets, astero
 
 This implementation based on Steve Moshier (http://www.moshier.net).
 
-Licensed under GPL version 2 (http://www.gnu.org/licenses/gpl-2.0.html).
+Licensed under GPL version 3 (https://www.gnu.org/licenses/gpl-3.0.html).
 
 ## About Moshier's Ephemeris
 
