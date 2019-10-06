@@ -2,7 +2,7 @@ import { celestialBodies } from './constants/celestialBodies'
 import { kepler } from './utilities/kepler'
 import  { julian } from './utilities/julian'
 import DateDelta from './utilities/DateDelta'
-import { sun } from './utilities/sun'
+import Sol from './utilities/Sol'
 import Luna from './utilities/Luna'
 import { planet } from './utilities/planet'
 import { star } from './utilities/star'
@@ -101,13 +101,13 @@ export default class Ephemeris {
 
     switch(body.type) {
       case 'sun':
-        return sun.calc(body, {...this.Earth}, this.Observer)
+        return new Sol(body, this.Earth, this.Observer)
       case 'luna':
-        return new Luna(body, {...this.Earth}, this.Observer)
+        return new Luna(body, this.Earth, this.Observer)
       case 'heliocentric':
-        return planet.calc(body, {...this.Earth}, this.Observer)
+        return planet.calc(body, this.Earth, this.Observer)
       case 'star':
-        return star.calc(body, {...this.Earth}, this.Observer)
+        return star.calc(body, this.Earth, this.Observer)
       default:
         throw new Error(`Celestial body with key: "${bodyKey}" or type "${body.type}" not found.`)
         break
