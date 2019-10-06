@@ -1,21 +1,30 @@
 {
   "name": "ephemeris",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Pure javascript implementation of ephemeris calculations for sun, planets, comets, asteroids and stars.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/mivion/ephemeris"
+    "url": "https://github.com/0xStarcat/Moshier-Ephemeris-JS"
   },
   "main": "index.js",
   "scripts": {
+    "start:dev":  "webpack --watch --mode=development",
     "build": "webpack",
     "test": "jest --watch"
   },
   "keywords": [
     "ephemeris",
+    "astronomy",
     "Moshier"
   ],
   "author": "mivion",
+  "contributors": [
+    "mivion <onopin.m.v@gmail.com>",
+    "Kent Bye <kent@kentbye.com>",
+    "blucobalto <blucobalto2012@gmail.com>",
+    "Albert R. Timashev <albert@timashev.com>",
+    "starcat <xxStarcat@gmail.com>"
+  ],
   "license": "GPL-3",
   "devDependencies": {
     "@babel/core": "^7.6.2",
