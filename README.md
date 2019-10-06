@@ -2,7 +2,7 @@
 
 This is a "re-implementation" of version 0.1.0 of Mivion's Moshier Ephemeris javascript implementation (found here: https://github.com/mivion/ephemeris).
 
-The goal is to reimplement the codebase with ES6 modules and classes, idempotent & pure functions, and immutable data structures to promote better refactoring, debugging / testing, readability, and extensibility of the code.
+The goal is to re-implement the codebase with ES6 modules and classes, introduce object oriented programming practices, implement idempotent & pure utility functions, and implement immutable data structures to promote better refactoring, debugging / testing, readability, and extensibility of the code.
 
 This amazing work done by Moshier and Mivion deserves a lot of love and cleanup. Hope you enjoy and find it helpful in your project!
 
