@@ -1,13 +1,13 @@
 import { DTR, RTD, RTS, REARTH } from '../constants'
 
-import { aberration } from './aberration'
-import { altaz } from './altaz'
-import Epsilon from './Epsilon'
-import { gPlanMoon, get_lp_equinox } from './gplan'
-import { lonlat } from './lonlat'
-import { precess } from './precess'
-import { nutation } from './nutation'
-import { util } from './util'
+import { aberration } from '../utilities/aberration'
+import { altaz } from '../utilities/altaz'
+import Epsilon from '../utilities/Epsilon'
+import { gPlanMoon, get_lp_equinox } from '../utilities/gplan'
+import { lonlat } from '../utilities/lonlat'
+import { precess } from '../utilities/precess'
+import { nutation } from '../utilities/nutation'
+import { util } from '../utilities/util'
 
 export default class Luna {
   constructor(body, earthBody, observer) {
@@ -62,13 +62,13 @@ export default class Luna {
   	 */
 
 
-  	this.calcll(earthBody.position.date.julian - 0.001, moonpp, moonpol, body, earthBody); // TDT - 0.001
+  	this.calcll(earthBody.date.julian - 0.001, moonpp, moonpol, body, earthBody); // TDT - 0.001
   	ra0 = this.ra;
   	dec0 = this.dec;
   	lon0 = moonpol[0];
   	/* Calculate for present instant.
   	 */
-  	body.position.nutation = this.calcll(earthBody.position.date.julian, moonpp, moonpol, body, earthBody).nutation;
+  	body.position.nutation = this.calcll(earthBody.date.julian, moonpp, moonpol, body, earthBody).nutation;
 
   	body.position.geometric = {
   		longitude: RTD * body.position.polar[0],
@@ -104,14 +104,14 @@ export default class Luna {
   	body.position.annualAberration = aberration.calc(re, earthBody, body);
 
   	/* pe[0] -= STR * (20.496/(RTS*pe[2])); */
-  	re = precess.calc(re, earthBody.position.date.julian, -1);
-  	nutation.calc(earthBody.position.date, re); // NOTE mutates re
+  	re = precess.calc(re, earthBody.date.julian, -1);
+  	nutation.calc(earthBody.date, re); // NOTE mutates re
 
   	for (i = 0; i < 3; i++) {
   		re[i] *= z;
   	}
 
-  	pe = lonlat.calc( re, earthBody.position.date, pe, 0 );
+  	pe = lonlat.calc( re, earthBody.date, pe, 0 );
 
   	/* Find sun-moon-earth angles */
   	for( i=0; i<3; i++ ) {
@@ -199,7 +199,7 @@ export default class Luna {
   	pp[0] = this.ra;
   	pp[1] = this.dec;
   	pp[2] = moonpol[2];
-  	body.position.altaz = altaz.calc(pp, earthBody.position.date, body, observer);
+  	body.position.altaz = altaz.calc(pp, earthBody.date, body, observer);
 
     return body
   }
@@ -237,7 +237,7 @@ export default class Luna {
   	rect[2] = epsilonObject.sineps*cosB*sinL + epsilonObject.coseps*sinB;
 
   	/* Rotate to J2000. */
-  	rect = precess.calc( rect, earthBody.position.date.julian, 1 ); // TDT
+  	rect = precess.calc( rect, earthBody.date.julian, 1 ); // TDT
 
   	/* Find Euclidean vectors and angles between earth, object, and the sun
   	 */
@@ -261,12 +261,12 @@ export default class Luna {
   	/* annuab (rect); */
 
   	/* Precess to date.  */
-  	rect = precess.calc(rect, earthBody.position.date.julian, -1); // TDT
+  	rect = precess.calc(rect, earthBody.date.julian, -1); // TDT
 
   	/* Correct for nutation at date TDT.
   	 */
-    const nutationObject = nutation.getObject({julian: earthBody.position.date.julian})
-  	result.nutation = nutation.calc ({julian: earthBody.position.date.julian}, rect); // TDT
+    const nutationObject = nutation.getObject({julian: earthBody.date.julian})
+  	result.nutation = nutation.calc ({julian: earthBody.date.julian}, rect); // TDT
 
   	/* Apparent geocentric right ascension and declination.  */
   	this.ra = util.zatan2(rect[0],rect[1]);

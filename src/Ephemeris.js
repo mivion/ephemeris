@@ -2,11 +2,12 @@ import { celestialBodies } from './constants/celestialBodies'
 import { kepler } from './utilities/kepler'
 import  { julian } from './utilities/julian'
 import DateDelta from './utilities/DateDelta'
-import Sol from './utilities/Sol'
-import Luna from './utilities/Luna'
-import { planet } from './utilities/planet'
-import { star } from './utilities/star'
-import Observer from './Observer'
+import Sol from './classes/Sol'
+import Luna from './classes/Luna'
+import Earth from './classes/Earth'
+import HeliocentricOrbitalBody from './classes/HeliocentricOrbitalBody'
+import Star from './classes/Star'
+import Observer from './classes/Observer'
 
 import {
   validateYear,
@@ -47,11 +48,11 @@ export default class Ephemeris {
     this._longitude = validateLongitude(longitude)
     this._height = validateNumber(height)
 
-    this.CalculateDates()
+    this.Date = this.CalculateDates()
 
     this._bodyData = celestialBodies
     this.Observer = new Observer({latitude: latitude, longitude: longitude, height: height})
-    this.Earth = kepler.calc(this.Date, this._bodyData.find(b => b.key === 'earth'))
+    this.Earth = new Earth({...this._bodyData.find(b => b.key === 'earth')}, this.Date)
     this.Results = this.CalculateResults()
 
     // Add each result as a key to the ephemeris object
@@ -75,6 +76,8 @@ export default class Ephemeris {
     this.Date.j1900 = julian.calcJ1900(this.Date.julian),
     this.Date.universalJulian = new DateDelta().CalcUniversal(this.Date.julian, this.Date.j2000)
     this.Date.universalDate = julian.calcUniversalDate(this.Date.universalJulian)
+
+    return this.Date
   }
 
   CalculateResults() {
@@ -85,6 +88,7 @@ export default class Ephemeris {
   }
 
   CalculateBody(bodyKey) {
+    // TODO - make body object immutable / class instance
     const body = this._bodyData.find(b => b.key === bodyKey)
 
     // initialize local variables
@@ -101,13 +105,13 @@ export default class Ephemeris {
 
     switch(body.type) {
       case 'sun':
-        return new Sol(body, this.Earth, this.Observer)
+        return new Sol({...body}, this.Earth, this.Observer)
       case 'luna':
-        return new Luna(body, this.Earth, this.Observer)
+        return new Luna({...body}, this.Earth, this.Observer)
       case 'heliocentric':
-        return planet.calc(body, this.Earth, this.Observer)
+        return new HeliocentricOrbitalBody({...body}, this.Earth, this.Observer)
       case 'star':
-        return star.calc(body, this.Earth, this.Observer)
+        return new Star({...body}, this.Earth, this.Observer)
       default:
         throw new Error(`Celestial body with key: "${bodyKey}" or type "${body.type}" not found.`)
         break

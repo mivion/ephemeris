@@ -18,7 +18,7 @@ export default class VelocityEarth {
   	t = 0.005;
 
     const coords = []
-  	const keplerEarthBody = kepler.calc({julian: julianDate - t}, {...earthBody}, e, p);
+  	const keplerEarthBody = kepler.calc(julianDate - t, {...earthBody}, e, p);
   	for( i=0; i<3; i++ ) {
   		coords[i] = (keplerEarthBody.position.rect[i] - e[i])/t;
   	}

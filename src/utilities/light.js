@@ -29,7 +29,7 @@ light.calc = function (body, q, e, earthBody) {
 		Q = Math.sqrt(Q);
 		/* Note the following blows up if object equals sun. */
 		t = (P + 1.97e-8 * Math.log( (E+P+Q)/(E-P+Q) ) )/173.1446327;
-		body = kepler.calc({julian: earthBody.position.date.julian - t}, body, q, ptemp );
+		body = kepler.calc(earthBody.date.julian - t, body, q, ptemp );
 	}
 
 	body.lightTime = 1440.0 * t;
@@ -54,7 +54,7 @@ light.calc = function (body, q, e, earthBody) {
 	 * p(J-t)  =  q(J-t) - e(J-t)  =  q(J-t) - (e(J) - Vearth * t)
 	 *         =  p(?) + Vearth * t.
 	 */
-  const velocityEarth = new VelocityEarth(earthBody.position.date.julian, earthBody);
+  const velocityEarth = new VelocityEarth(earthBody.date.julian, earthBody);
 
 	for(let i=0; i<3; i++ ) {
 		p[i] += velocityEarth.vearth[i]*t;

@@ -1,4 +1,4 @@
-import { AEARTH, DTR, FLAT, RTD } from './constants'
+import { AEARTH, DTR, FLAT, RTD } from '../constants'
 
 export default class Observer {
   constructor({latitude = 0.00, longitude = 0.00, height = 0.00}={}) {

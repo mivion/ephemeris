@@ -7,7 +7,7 @@ import { precess } from './precess'
 // TODO - all date params should be replaced with julian date
 export const kepler = {};
 
-kepler.calc = (date, body, rect, polar) => {
+kepler.calc = (julianDate, body, rect, polar) => {
   const definePosition = !(rect && polar)
 	var alat, E, M, W, temp; // double
 	var epoch, inclination, ascnode, argperih; // double
@@ -20,16 +20,16 @@ kepler.calc = (date, body, rect, polar) => {
 	/* Call program to compute position, if one is supplied.  */
 	if ( body.ptable ) {
 		if ( body.key == 'earth' ) {
-			polar = gPlanCalc3(date.julian, body.ptable, polar, 3);
+			polar = gPlanCalc3(julianDate, body.ptable, polar, 3);
 		} else {
-			polar = gPlanCalc(date.julian, body.ptable, polar);
+			polar = gPlanCalc(julianDate, body.ptable, polar);
 		}
 		E = polar[0]; /* longitude */
 		body.longitude = E;
 		W = polar[1]; /* latitude */
 		r = polar[2]; /* radius */
 		body.distance = r;
-		body.epoch = date.julian;
+		body.epoch = julianDate;
 		body.equinox = J2000;
 		// goto kepdon;
 	} else {
@@ -49,7 +49,7 @@ kepler.calc = (date, body, rect, polar) => {
 			 * epoch = perihelion passage date
 			 */
 			temp = meandistance * Math.sqrt (meandistance);
-			W = (date.julian - epoch ) * 0.0364911624 / temp;
+			W = (julianDate - epoch ) * 0.0364911624 / temp;
 			/* The constant above is 3 k / sqrt(2),
 			 * k = Gaussian gravitational constant = 0.01720209895 . */
 			E = 0.0;
@@ -77,7 +77,7 @@ kepler.calc = (date, body, rect, polar) => {
 				 */
 				meandistance = meandistance/(eccent - 1.0);
 				temp = meandistance * Math.sqrt(meandistance);
-				W = (date.julian - epoch ) * 0.01720209895 / temp;
+				W = (julianDate - epoch ) * 0.01720209895 / temp;
 				/* solve M = -E + e sinh E */
 				E = W/(eccent - 1.0);
 				M = 1.0;
@@ -102,7 +102,7 @@ kepler.calc = (date, body, rect, polar) => {
 					 */
 					dailymotion = 0.9856076686 / (body.semiAxis * Math.sqrt(body.semiAxis));
 				}
-				dailymotion *= date.julian - epoch;
+				dailymotion *= julianDate - epoch;
 				/* M is proportional to the area swept out by the radius
 				 * vector of a circular orbit during the time between
 				 * perihelion passage and Julian date J.
@@ -224,7 +224,7 @@ kepler.calc = (date, body, rect, polar) => {
 	 * by AA page E2.
 	 */
 	if( body.key == 'earth' ) {
-		r = kepler.embofs(date, rect); /* see below */
+		r = kepler.embofs(julianDate, rect); /* see below */
 	}
 
 	/* Rotate back into the ecliptic.  */
@@ -244,10 +244,8 @@ kepler.calc = (date, body, rect, polar) => {
 
 	// fill the body.position only if rect and polar are
 	// not defined
-  // TODO - remove date object from this part and refactor code depending on it
 	if (definePosition) {
 		body.position = {
-			date: date,
 			rect: rect,
 			polar: polar
 		};
@@ -262,19 +260,19 @@ kepler.calc = (date, body, rect, polar) => {
  * emb = Equatorial rectangular coordinates of EMB.
  * return = Earth's distance to the Sun (au)
  */
-kepler.embofs = (date, ea) => {
+kepler.embofs = (julianDate, ea) => {
 	var pm = [], polm = []; // double
 	var a, b; // double
 	var i; // int
 
 	/* Compute the vector Moon - Earth.  */
-  const lp_equinox = get_lp_equinox(date.julian)
-	pm = gPlanMoon(date.julian, pm, polm, lp_equinox); // TODO - investigate how this mutates the data.
+  const lp_equinox = get_lp_equinox(julianDate)
+	pm = gPlanMoon(julianDate, pm, polm, lp_equinox); // TODO - investigate how this mutates the data.
 
 	/* Precess the lunar position
 	 * to ecliptic and equinox of J2000.0
 	 */
-	pm = precess.calc(pm, date.julian, 1);
+	pm = precess.calc(pm, julianDate, 1);
 
 	/* Adjust the coordinates of the Earth
 	 */

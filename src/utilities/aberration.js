@@ -11,7 +11,7 @@ export const aberration = {
 
   	/* Calculate the velocity of the earth (see vearth.c).
   	 */
-  	const velocityEarth = new VelocityEarth(earthBody.position.date.julian, earthBody);
+  	const velocityEarth = new VelocityEarth(earthBody.date.julian, earthBody);
   	betai = 0.0;
   	pV = 0.0;
   	for( i=0; i<3; i++ ) {

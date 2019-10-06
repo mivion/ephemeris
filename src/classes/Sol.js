@@ -1,13 +1,14 @@
 import { RTD } from '../constants'
-
-import { altaz } from './altaz'
-import { constellation } from './constellation'
-import Epsilon from './Epsilon'
-import { lonlat } from './lonlat'
-import { kepler } from './kepler'
-import { nutation } from './nutation'
-import { precess } from './precess'
-import { util } from './util'
+import { celestialBodies } from '../constants/celestialBodies'
+import Earth from './Earth'
+import { altaz } from '../utilities/altaz'
+import { constellation } from '../utilities/constellation'
+import Epsilon from '../utilities/Epsilon'
+import { lonlat } from '../utilities/lonlat'
+import { kepler } from '../utilities/kepler'
+import { nutation } from '../utilities/nutation'
+import { precess } from '../utilities/precess'
+import { util } from '../utilities/util'
 
 export default class Sol {
   constructor(body, earthBody, observer) {
@@ -36,7 +37,7 @@ export default class Sol {
   	}
   	r = earthBody.position.polar[2]; //eapolar [2];
 
-  	body.position.equinoxEclipticLonLat = lonlat.calc(ecr, earthBody.position.date, pol, 1); // TDT
+  	body.position.equinoxEclipticLonLat = lonlat.calc(ecr, earthBody.date, pol, 1); // TDT
 
   	/* Philosophical note: the light time correction really affects
   	 * only the Sun's barymetric position; aberration is due to
@@ -48,11 +49,11 @@ export default class Sol {
   	 * correction, however.
   	 */
   	pol[2] = r;
-    let earthTDT = {...earthBody} // clone to prevent mutation
+    let earthTDT = new Earth({...celestialBodies.find(b => b.key === 'earth')}, earthBody.date) // clone to prevent mutation
   	for( i=0; i<2; i++ ) {
   		t = pol [2] / 173.1446327;
   		/* Find the earth at time TDT - t */
-  		earthTDT = kepler.calc({julian: earthTDT.position.date.julian - t}, earthTDT, ecr, pol );
+  		earthTDT = kepler.calc(earthTDT.date.julian - t, earthTDT, ecr, pol );
   	}
   	r = pol[2];
 
@@ -65,7 +66,7 @@ export default class Sol {
   	}
 
   	body.position = {...body.position, ...{
-  		date: earthTDT.position.date,
+  		date: earthTDT.date,
   		lightTime: 1440.0*t,
   		aberration: util.showcor(ecr, pol)
   	}};
@@ -86,7 +87,7 @@ export default class Sol {
 
   	/* precess to equinox of date
   	 */
-  	ecr = precess.calc( ecr, earthTDT.position.date.julian, -1);
+  	ecr = precess.calc( ecr, earthTDT.date.julian, -1);
 
   	for( i=0; i<3; i++ ) {
   		rec[i] = ecr[i];
@@ -94,14 +95,14 @@ export default class Sol {
 
   	/* Nutation.
   	 */
-  	let epsilonObject = new Epsilon(earthTDT.position.date.julian);
-    let nutationObject = nutation.getObject(earthTDT.position.date)
-    nutation.calc(earthTDT.position.date, ecr); // NOTE nutation mutates the nutation object AND returns a result.
+  	let epsilonObject = new Epsilon(earthTDT.date.julian);
+    let nutationObject = nutation.getObject(earthTDT.date)
+    nutation.calc(earthTDT.date, ecr); // NOTE nutation mutates the nutation object AND returns a result.
 
   	/* Display the final apparent R.A. and Dec.
   	 * for equinox of date.
   	 */
-  	body.position.constellation = constellation.calc(ecr, earthTDT.position.date);
+  	body.position.constellation = constellation.calc(ecr, earthTDT.date);
 
   	body.position.apparent = util.showrd(ecr, pol);
 
@@ -126,7 +127,7 @@ export default class Sol {
 
   	/* Report altitude and azimuth
   	 */
-  	body.position.altaz = altaz.calc( pol, earthTDT.position.date, body, observer );
+  	body.position.altaz = altaz.calc( pol, earthTDT.date, body, observer );
 
     return body
   }

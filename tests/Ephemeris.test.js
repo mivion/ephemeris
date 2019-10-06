@@ -734,7 +734,7 @@ describe('Ephemeris', () => {
     })
 
     it('calculates position', () => {
-      expect(ephemeris.Earth.position.date.julian).toEqual(2451544.5);
+      expect(ephemeris.Earth.date.julian).toEqual(2451544.5);
       expect(ephemeris.Date.julian).toEqual(2451544.5);
 
       expect(body.aberration.dDec).toEqual(0.26671942000413534);

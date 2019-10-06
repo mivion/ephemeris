@@ -59,7 +59,13 @@ export const celestialBodies = [
     type: 'sun',
 		weight: 100
 	},
-
+  /**
+	 * Moon
+	 */
+  {
+    key: 'moon',
+    type: 'luna',
+	},
 	/**
 	 * Planets
 	 */
@@ -116,10 +122,6 @@ export const celestialBodies = [
     ptable: earthPTable,
 		semiAxis: 0.999999,
 		semiDiameter: 0.0,
-	},
-	{
-    key: 'moon',
-    type: 'luna',
 	},
 	{
     key: 'mars',
