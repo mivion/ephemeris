@@ -12,6 +12,7 @@
 
 ##### Changed
 - Refactors much of the codebase into ES6 modules, classes, and OOP patterns where easy to do.
+- `body.constellation` property returns the name of the constellation instead of the index
 
 ##### Breaking Changes
 
