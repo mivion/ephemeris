@@ -11,7 +11,7 @@
 - Complete test coverage for all calculated bodies.
 
 ##### Changed
-- Refactors much of the codebase into ES+ modules, classes, and OOP patterns where easy to do.
+- Refactors much of the codebase into ES6 modules, classes, and OOP patterns where easy to do.
 
 ##### Breaking Changes
 
