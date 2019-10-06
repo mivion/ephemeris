@@ -1,7 +1,7 @@
 # Changelog
 <hr>
 
-#### **v1.0.0**
+## **v1.0.0**
 
 ##### Fixed
 - Fixed Moon `phaseQuarter` bug where integer did not align with expected moon phase start.
