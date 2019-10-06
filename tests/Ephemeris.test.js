@@ -207,12 +207,12 @@ describe('Ephemeris', () => {
       expect(body.position.apparent.dRA).toEqual(4.733668496715409);
       expect(body.position.apparent.dDec).toEqual(-0.42548676689441006);
 
-      expect(body.position.apparentLongitudeString).toEqual("271°6'38\"")
-      expect(body.position.apparentLongitude).toEqual(271.1106541946031)
-
       expect(body.position.apparentGeocentric["0"]).toEqual(4.7317735529316);
       expect(body.position.apparentGeocentric["1"]).toEqual(-0.016476200621924616);
       expect(body.position.apparentGeocentric["2"]).toEqual(1.413088769647956);
+
+      expect(body.position.apparentLongitudeString).toEqual("271°6'38\"")
+      expect(body.position.apparentLongitude).toEqual(271.1106541946031)
 
       expect(body.position.approxVisual.magnitude).toEqual(-1.2969473904757898)
       expect(body.position.approxVisual.phase).toEqual(0.9732692166925863)
@@ -273,11 +273,11 @@ describe('Ephemeris', () => {
       expect(body.position.apparentGeocentric["1"]).toEqual(0.03633146982690926);
       expect(body.position.apparentGeocentric["2"]).toEqual(1.1343290137159499);
 
-      expect(body.position.approxVisual.magnitude).toEqual(-4.539990942872536)
-      expect(body.position.approxVisual.phase).toEqual(0.756577504254073)
-
       expect(body.position.apparentLongitude).toEqual(240.96049755055918)
       expect(body.position.apparentLongitudeString).toEqual("240°57'37\"")
+
+      expect(body.position.approxVisual.magnitude).toEqual(-4.539990942872536)
+      expect(body.position.approxVisual.phase).toEqual(0.756577504254073)
 
       expect(body.position.deflection.lightDeflection.dDec).toEqual(0.0008884081254434023);
       expect(body.position.deflection.lightDeflection.dRA).toEqual(-0.0002446192007537678);
@@ -336,11 +336,11 @@ describe('Ephemeris', () => {
       expect(body.position.apparentGeocentric["1"]).toEqual(-0.018730222334798482);
       expect(body.position.apparentGeocentric["2"]).toEqual(1.8469723944910512);
 
-      expect(body.position.approxVisual.magnitude).toEqual(0.6112629405510888)
-      expect(body.position.approxVisual.phase).toEqual(0.9261415258921076)
-
       expect(body.position.apparentLongitude).toEqual(327.5748799062409)
       expect(body.position.apparentLongitudeString).toEqual("327°34'29\"")
+
+      expect(body.position.approxVisual.magnitude).toEqual(0.6112629405510888)
+      expect(body.position.approxVisual.phase).toEqual(0.9261415258921076)
 
       expect(body.position.deflection.lightDeflection.dDec).toEqual(0.001644991655373232);
       expect(body.position.deflection.lightDeflection.dRA).toEqual(0.00032345373087325555);
@@ -352,6 +352,321 @@ describe('Ephemeris', () => {
     	expect(body.position.trueGeocentricDistance).toEqual(1.8468922533582008);
 
       expect(body.position.constellation).toEqual("Aqr Aquarii");
+    })
+  })
+
+  describe('Jupiter', () => {
+    let ephemeris, body
+
+    beforeAll(() => {
+      ephemeris = new Ephemeris({...defaultOrigin, key: 'jupiter'})
+      body = ephemeris.jupiter
+    })
+
+    test('calculates position', () => {
+      expect(body.aberration.dDec).toEqual(-3.421325376823254);
+      expect(body.aberration.dRA).toEqual(-0.5805249930804995);
+      expect(body.lightTime).toEqual(38.368621424659786);
+
+      expect(body.position.aberration.dDec).toEqual(1.5930068325002467);
+      expect(body.position.aberration.dRA).toEqual(0.3571029156469145);
+
+      expect(body.position.altaz.atmosphericRefraction.dDec).toEqual(37.298031389608326);
+      expect(body.position.altaz.atmosphericRefraction.dRA).toEqual(0.30438023065611314);
+      expect(body.position.altaz.atmosphericRefraction.deg).toEqual(0.010436180979367025);
+
+      expect(body.position.altaz.dLocalApparentSiderialTime).toEqual(0.5037761337802859);
+
+      expect(body.position.altaz.diurnalAberation.dec).toEqual(0.14982914445599954);
+      expect(body.position.altaz.diurnalAberation.ra).toEqual(0.4162609083987987);
+
+      expect(body.position.altaz.diurnalParallax.dec).toEqual(0.1498241693497983);
+      expect(body.position.altaz.diurnalParallax.ra).toEqual(0.41626029444917795);
+
+      expect(body.position.altaz.topocentric.altitude).toEqual(56.92545453363884);
+      expect(body.position.altaz.topocentric.azimuth).toEqual(189.10949353673007);
+      expect(body.position.altaz.topocentric.dec).toEqual(0.15000499530875966);
+      expect(body.position.altaz.topocentric.ra).toEqual(0.41628242960419015);
+
+      expect(body.position.altaz.transit.UTdate).toEqual(0.9853694372028002);
+      expect(body.position.altaz.transit.dApproxRiseUT).toEqual(4.478269159767203);
+      expect(body.position.altaz.transit.dApproxSetUT).toEqual(7.904413178909111);
+
+      expect(body.position.apparent.dDec).toEqual(0.14982912928502926);
+      expect(body.position.apparent.dRA).toEqual(0.41625973691559487);
+
+      expect(body.position.apparentGeocentric["0"]).toEqual(0.4403991401909252);
+      expect(body.position.apparentGeocentric["1"]).toEqual(-0.022086158489482532);
+      expect(body.position.apparentGeocentric["2"]).toEqual(4.613417226062847);
+
+      expect(body.position.apparentLongitude).toEqual(25.23301203413028)
+      expect(body.position.apparentLongitudeString).toEqual("25°13'58\"")
+
+      expect(body.position.approxVisual.magnitude).toEqual(-2.5901358180620053)
+      expect(body.position.approxVisual.phase).toEqual(0.9907986122597068)
+
+      expect(body.position.deflection.lightDeflection.dDec).toEqual(0.0009492218909910869);
+      expect(body.position.deflection.lightDeflection.dRA).toEqual(0.00016092991151857682);
+      expect(body.position.deflection.sunElongation).toEqual(105.36343467299977);
+
+    	expect(body.position.nutation.dDec).toEqual(-7.395965718477901);
+      expect(body.position.nutation.dRA).toEqual(-0.8211069441848226);
+
+    	expect(body.position.trueGeocentricDistance).toEqual(4.613380444921528);
+
+      expect(body.position.constellation).toEqual("Psc Piscium");
+    })
+  })
+
+  describe('Saturn', () => {
+    let ephemeris, body
+
+    beforeAll(() => {
+      ephemeris = new Ephemeris({...defaultOrigin, key: 'saturn'})
+      body = ephemeris.saturn
+    })
+
+    test('calculates position', () => {
+      expect(body.aberration.dDec).toEqual(-2.2046023855032524);
+      expect(body.aberration.dRA).toEqual(-0.44266610542533197);
+      expect(body.lightTime).toEqual(71.9033531619632);
+
+      expect(body.position.aberration.dDec).toEqual(2.5554368247256605);
+      expect(body.position.aberration.dRA).toEqual(0.7034135486615155);
+
+      expect(body.position.altaz.atmosphericRefraction.dDec).toEqual(32.20472234277024);
+      expect(body.position.altaz.atmosphericRefraction.dRA).toEqual(-0.5878299396192647);
+      expect(body.position.altaz.atmosphericRefraction.deg).toEqual(0.0092595472814256);
+
+      expect(body.position.altaz.dLocalApparentSiderialTime).toEqual(0.5037761337802859);
+
+      expect(body.position.altaz.diurnalAberation.dec).toEqual(0.22018555238611068);
+      expect(body.position.altaz.diurnalAberation.ra).toEqual(0.6767713825209708);
+
+      expect(body.position.altaz.diurnalParallax.dec).toEqual(0.22018318585435928);
+      expect(body.position.altaz.diurnalParallax.ra).toEqual(0.6767720362772485);
+
+      expect(body.position.altaz.topocentric.altitude).toEqual(59.978662649379665);
+      expect(body.position.altaz.topocentric.azimuth).toEqual(160.38813321294444);
+      expect(body.position.altaz.topocentric.dec).toEqual(0.22033931875424037);
+      expect(body.position.altaz.topocentric.ra).toEqual(-5.606456019101872);
+
+      expect(body.position.altaz.transit.UTdate).toEqual(1.02671744816493);
+      expect(body.position.altaz.transit.dApproxRiseUT).toEqual(4.673022605053817);
+      expect(body.position.altaz.transit.dApproxSetUT).toEqual(8.229071180183011);
+
+      expect(body.position.apparent.dDec).toEqual(0.22018559610259084);
+      expect(body.position.apparent.dRA).toEqual(0.6767702087295415);
+
+      expect(body.position.apparentGeocentric["0"]).toEqual(0.7052143083509064);
+      expect(body.position.apparentGeocentric["1"]).toEqual(-0.04272965281338383);
+      expect(body.position.apparentGeocentric["2"]).toEqual(8.645610834736935);
+
+      expect(body.position.apparentLongitude).toEqual(40.40580352074438)
+      expect(body.position.apparentLongitudeString).toEqual("40°24'20\"")
+
+      expect(body.position.approxVisual.magnitude).toEqual(0.6215427269665463)
+      expect(body.position.approxVisual.phase).toEqual(0.9978680488405215)
+
+      expect(body.position.deflection.lightDeflection.dDec).toEqual(0.0007081670593766152);
+      expect(body.position.deflection.lightDeflection.dRA).toEqual(0.00013642886295296523);
+      expect(body.position.deflection.sunElongation).toEqual(120.50786093978951);
+
+    	expect(body.position.nutation.dDec).toEqual(-7.927464122477248);
+      expect(body.position.nutation.dRA).toEqual(-0.836335641892774);
+
+    	expect(body.position.trueGeocentricDistance).toEqual(8.645573461612779);
+
+      expect(body.position.constellation).toEqual("Ari Arietis");
+    })
+  })
+
+  describe('Uranus', () => {
+    let ephemeris, body
+
+    beforeAll(() => {
+      ephemeris = new Ephemeris({...defaultOrigin, key: 'uranus'})
+      body = ephemeris.uranus
+    })
+
+    test('calculates position', () => {
+      expect(body.aberration.dDec).toEqual(-1.2927914290168074);
+      expect(body.aberration.dRA).toEqual(-0.30107280077581705);
+      expect(body.lightTime).toEqual(172.34122018692491);
+
+      expect(body.position.aberration.dDec).toEqual(-5.140969086232775);
+      expect(body.position.aberration.dRA).toEqual(-1.1367005632491478);
+
+      expect(body.position.altaz.atmosphericRefraction.dDec).toEqual(706.3877863171135);
+      expect(body.position.altaz.atmosphericRefraction.dRA).toEqual(49.8275896755828);
+      expect(body.position.altaz.atmosphericRefraction.deg).toEqual(0.2791964301206104);
+
+      expect(body.position.altaz.dLocalApparentSiderialTime).toEqual(0.5037761337802859);
+
+      expect(body.position.altaz.diurnalAberation.dec).toEqual(-0.2971915863964099);
+      expect(body.position.altaz.diurnalAberation.ra).toEqual(5.540543833536314);
+
+      expect(body.position.altaz.diurnalParallax.dec).toEqual(-0.2971930241129686);
+      expect(body.position.altaz.diurnalParallax.ra).toEqual(5.540542300677519);
+
+      expect(body.position.altaz.topocentric.altitude).toEqual(2.2939858985315684);
+      expect(body.position.altaz.topocentric.azimuth).toEqual(245.07476025420857);
+      expect(body.position.altaz.topocentric.dec).toEqual(-0.29376835948321645);
+      expect(body.position.altaz.topocentric.ra).toEqual(-0.7390194419263522);
+
+      expect(body.position.altaz.transit.UTdate).toEqual(0.8014019154514769);
+      expect(body.position.altaz.transit.dApproxRiseUT).toEqual(3.7268853723682143);
+      expect(body.position.altaz.transit.dApproxSetUT).toEqual(6.343936762109536);
+
+      expect(body.position.apparent.dDec).toEqual(-0.2971912636424374);
+      expect(body.position.apparent.dRA).toEqual(5.540543445934982);
+
+      expect(body.position.apparentGeocentric["0"]).toEqual(5.494018234360817);
+      expect(body.position.apparentGeocentric["1"]).toEqual(-0.011472362217222825);
+      expect(body.position.apparentGeocentric["2"]).toEqual(20.722192440766474);
+
+      expect(body.position.apparentLongitude).toEqual(314.7840573967912)
+      expect(body.position.apparentLongitudeString).toEqual("314°47'2\"")
+
+      expect(body.position.approxVisual.magnitude).toEqual(5.88943778092997)
+      expect(body.position.approxVisual.phase).toEqual(0.9998003172836392)
+
+      expect(body.position.deflection.lightDeflection.dDec).toEqual(0.003477265186288025);
+      expect(body.position.deflection.lightDeflection.dRA).toEqual(0.0008399528222973481);
+      expect(body.position.deflection.sunElongation).toEqual(34.929991128786504);
+
+    	expect(body.position.nutation.dDec).toEqual(-0.18233380809813002);
+      expect(body.position.nutation.dRA).toEqual(-1.014785007173613);
+
+    	expect(body.position.trueGeocentricDistance).toEqual(20.72219134820217);
+
+      expect(body.position.constellation).toEqual("Cap Capricorni");
+    })
+  })
+
+  describe('Neptune', () => {
+    let ephemeris, body
+
+    beforeAll(() => {
+      ephemeris = new Ephemeris({...defaultOrigin, key: 'neptune'})
+      body = ephemeris.neptune
+    })
+
+    test('calculates position', () => {
+      expect(body.aberration.dDec).toEqual(-0.7492494859050659);
+      expect(body.aberration.dRA).toEqual(-0.2581126223572197);
+      expect(body.lightTime).toEqual(257.9949213433013);
+
+      expect(body.position.aberration.dDec).toEqual(-4.380534283782223);
+      expect(body.position.aberration.dRA).toEqual(-1.315669009087547);
+
+      expect(body.position.altaz.atmosphericRefraction.dDec).toEqual(-2.289999370653732e-11);
+      expect(body.position.altaz.atmosphericRefraction.dRA).toEqual(0);
+      expect(body.position.altaz.atmosphericRefraction.deg).toEqual(0);
+
+      expect(body.position.altaz.dLocalApparentSiderialTime).toEqual(0.5037761337802859);
+
+      expect(body.position.altaz.diurnalAberation.dec).toEqual(-0.335404436378095);
+      expect(body.position.altaz.diurnalAberation.ra).toEqual(5.330488036767087);
+
+      expect(body.position.altaz.diurnalParallax.dec).toEqual(-0.33540532841395515);
+      expect(body.position.altaz.diurnalParallax.ra).toEqual(5.330486950019079);
+
+      expect(body.position.altaz.topocentric.altitude).toEqual(-7.85729049512684);
+      expect(body.position.altaz.topocentric.azimuth).toEqual(251.26315316589393);
+      expect(body.position.altaz.topocentric.dec).toEqual(-0.33540532841395526);
+      expect(body.position.altaz.topocentric.ra).toEqual(-0.9526983571605073);
+
+      expect(body.position.altaz.transit.UTdate).toEqual(0.7680657753329643);
+      expect(body.position.altaz.transit.dApproxRiseUT).toEqual(3.555907542727046);
+      expect(body.position.altaz.transit.dApproxSetUT).toEqual(6.095949904986056);
+
+      expect(body.position.apparent.dDec).toEqual(-0.33540405613713814);
+      expect(body.position.apparent.dRA).toEqual(5.330487896293369);
+
+      expect(body.position.apparentGeocentric["0"]).toEqual(5.291405467529599);
+      expect(body.position.apparentGeocentric["1"]).toEqual(0.00412678863751077);
+      expect(body.position.apparentGeocentric["2"]).toEqual(31.021135907402535);
+
+      expect(body.position.apparentLongitude).toEqual(303.1752009818942)
+      expect(body.position.apparentLongitudeString).toEqual("303°10'30\"")
+
+      expect(body.position.approxVisual.magnitude).toEqual(7.982842388914111)
+      expect(body.position.approxVisual.phase).toEqual(0.9999582520958422)
+
+      expect(body.position.deflection.lightDeflection.dDec).toEqual(0.004659974811000858);
+      expect(body.position.deflection.lightDeflection.dRA).toEqual(0.0013318885212761044);
+      expect(body.position.deflection.sunElongation).toEqual(23.317379716584156);
+
+    	expect(body.position.nutation.dDec).toEqual(1.4879772292532671);
+      expect(body.position.nutation.dRA).toEqual(-1.0341342426832798);
+
+    	expect(body.position.trueGeocentricDistance).toEqual(31.021122375248595);
+
+      expect(body.position.constellation).toEqual("Cap Capricorni");
+    })
+  })
+
+  describe('Pluto', () => {
+    let ephemeris, body
+
+    beforeAll(() => {
+      ephemeris = new Ephemeris({...defaultOrigin, key: 'pluto'})
+      body = ephemeris.pluto
+    })
+
+    test('calculates position', () => {
+      expect(body.aberration.dDec).toEqual(1.4531163509068303);
+      expect(body.aberration.dRA).toEqual(-0.2616999534608717);
+      expect(body.lightTime).toEqual(258.38754870735244);
+
+      expect(body.position.aberration.dDec).toEqual(0.511932460603443);
+      expect(body.position.aberration.dRA).toEqual(-1.2521093541569577);
+
+      expect(body.position.altaz.atmosphericRefraction.dDec).toEqual(-6.297498269297764e-11);
+      expect(body.position.altaz.atmosphericRefraction.dRA).toEqual(0);
+      expect(body.position.altaz.atmosphericRefraction.deg).toEqual(0);
+
+      expect(body.position.altaz.dLocalApparentSiderialTime).toEqual(0.5037761337802859);
+
+      expect(body.position.altaz.diurnalAberation.dec).toEqual(-0.19884201451989034);
+      expect(body.position.altaz.diurnalAberation.ra).toEqual(4.387782922405951);
+
+      expect(body.position.altaz.diurnalParallax.dec).toEqual(-0.1988427488557874);
+      expect(body.position.altaz.diurnalParallax.ra).toEqual(4.387782211118012);
+
+      expect(body.position.altaz.topocentric.altitude).toEqual(-42.26999705811246);
+      expect(body.position.altaz.topocentric.azimuth).toEqual(296.41132135214366);
+      expect(body.position.altaz.topocentric.dec).toEqual(-0.1988427488557877);
+      expect(body.position.altaz.topocentric.ra).toEqual(-1.8954030960615746);
+
+      expect(body.position.altaz.transit.UTdate).toEqual(0.6184256203576654);
+      expect(body.position.altaz.transit.dApproxRiseUT).toEqual(2.4833228911915164);
+      expect(body.position.altaz.transit.dApproxSetUT).toEqual(5.288020569168692);
+
+      expect(body.position.apparent.dDec).toEqual(-0.19884185923051803);
+      expect(body.position.apparent.dRA).toEqual(4.387783796429416);
+
+      expect(body.position.apparentGeocentric["0"]).toEqual(4.388403103344769);
+      expect(body.position.apparentGeocentric["1"]).toEqual(0.1894728725541749);
+      expect(body.position.apparentGeocentric["2"]).toEqual(31.06834516805417);
+
+      expect(body.position.apparentLongitude).toEqual(251.4369766237681)
+      expect(body.position.apparentLongitudeString).toEqual("251°26'13\"")
+
+      expect(body.position.approxVisual.magnitude).toEqual(13.863544867043124)
+      expect(body.position.approxVisual.phase).toEqual(0.9999327837629342)
+
+      expect(body.position.deflection.lightDeflection.dDec).toEqual(0.0066411994506396545);
+      expect(body.position.deflection.lightDeflection.dRA).toEqual(-0.0009017297224181038);
+      expect(body.position.deflection.sunElongation).toEqual(30.261949933648058);
+
+    	expect(body.position.nutation.dDec).toEqual(7.229201000515858);
+      expect(body.position.nutation.dRA).toEqual(-0.8974532581731016);
+
+    	expect(body.position.trueGeocentricDistance).toEqual(31.068408221431163);
+
+      expect(body.position.constellation).toEqual("Oph Ophiuchi");
     })
   })
 

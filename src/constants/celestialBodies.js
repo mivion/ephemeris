@@ -167,7 +167,7 @@ export const celestialBodies = [
 		equinox: 2446800.,
 		magnitude: -8.88,
 		semiDiameter: 82.73,
-    ptable: jupiterPTable
+    ptable: saturnPTable
 	},
 	{
     key: 'uranus',
