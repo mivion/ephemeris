@@ -59,10 +59,11 @@ Open the file: `/demo/index.html` in your browser.
 
 import Ephemeris from './build/ephemeris-1.0.0.bundle.js'
 
+new Ephemeris({...date/location})
 
 // or in a browser
 
-new Mosher.default()
+new Ephemeris.default({...date/location})
 ```
 
 #####  Create a new ephemeris instance for all celestial bodies
