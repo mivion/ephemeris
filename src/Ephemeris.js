@@ -3,7 +3,7 @@ import { kepler } from './utilities/kepler'
 import  { julian } from './utilities/julian'
 import DateDelta from './utilities/DateDelta'
 import { sun } from './utilities/sun'
-import { moon } from './utilities/moon'
+import Luna from './utilities/Luna'
 import { planet } from './utilities/planet'
 import { star } from './utilities/star'
 import Observer from './Observer'
@@ -35,7 +35,7 @@ export default class Ephemeris {
     // * float longitude (-180 - +180)
     // * float height
     // * string OR array[string] key - ex: pass in "venus" or ["mercury", "venus"] or leave blank for all
-    
+
     this._key = validateKey(key)
     this._year = validateYear(year)
     this._month = validateMonth(month) // Reconcile month to use 1 - 12 range with legacy code
@@ -103,7 +103,7 @@ export default class Ephemeris {
       case 'sun':
         return sun.calc(body, {...this.Earth}, this.Observer)
       case 'luna':
-        return moon.calc(body, {...this.Earth}, this.Observer)
+        return new Luna(body, {...this.Earth}, this.Observer)
       case 'heliocentric':
         return planet.calc(body, {...this.Earth}, this.Observer)
       case 'star':
