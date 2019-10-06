@@ -1,7 +1,7 @@
-import { celestialBodies } from './constants/celestialBodies'
 import { kepler } from './utilities/kepler'
 import  { julian } from './utilities/julian'
 import DateDelta from './utilities/DateDelta'
+import Body from './classes/Body'
 import Sol from './classes/Sol'
 import Luna from './classes/Luna'
 import Earth from './classes/Earth'
@@ -50,9 +50,8 @@ export default class Ephemeris {
 
     this.Date = this.CalculateDates()
 
-    this._bodyData = celestialBodies
     this.Observer = new Observer({latitude: latitude, longitude: longitude, height: height})
-    this.Earth = new Earth({...this._bodyData.find(b => b.key === 'earth')}, this.Date)
+    this.Earth = new Earth(new Body('earth'), this.Date)
     this.Results = this.CalculateResults()
 
     // Add each result as a key to the ephemeris object
@@ -81,37 +80,22 @@ export default class Ephemeris {
   }
 
   CalculateResults() {
-    const earthExcluded = this._bodyData.filter(b => b.key !== 'earth')
-    return !!this._key && this._key.length ?
-      earthExcluded.filter(b => this._key.includes(b.key)).map(b => this.CalculateBody(b.key)) :
-      earthExcluded.map(b => this.CalculateBody(b.key))
+    return !!this._key && this._key.length ? // if key array
+      Body.KeysExceptEarth.filter(b => this._key.includes(b.key)).map(b => this.CalculateBody(b.key)) :
+      Body.KeysExceptEarth.map(b => this.CalculateBody(b.key))
   }
 
   CalculateBody(bodyKey) {
-    // TODO - make body object immutable / class instance
-    const body = this._bodyData.find(b => b.key === bodyKey)
-
-    // initialize local variables
-    body.locals = {}
-    body.locals.dp = [] // correction vector, saved for display
-    body.locals.dradt = null; // approx motion of right ascension of object in radians p day
-  	body.locals.ddecdt = null; // approx motion of declination of object in radians p day
-    body.locals.EO = 0.0;  /* earth-sun distance */
-  	body.locals.SE = 0.0;  /* object-sun distance */
-  	body.locals.SO = 0.0;  /* object-earth distance */
-  	body.locals.pq = 0.0;	/* cosine of sun-object-earth angle */
-  	body.locals.ep = 0.0;	/* -cosine of sun-earth-object angle */
-  	body.locals.qe = 0.0;	/* cosine of earth-sun-object angle */
-
+    const body = new Body(bodyKey)
     switch(body.type) {
       case 'sun':
-        return new Sol({...body}, this.Earth, this.Observer)
+        return new Sol(body, this.Earth, this.Observer)
       case 'luna':
-        return new Luna({...body}, this.Earth, this.Observer)
+        return new Luna(body, this.Earth, this.Observer)
       case 'heliocentric':
-        return new HeliocentricOrbitalBody({...body}, this.Earth, this.Observer)
+        return new HeliocentricOrbitalBody(body, this.Earth, this.Observer)
       case 'star':
-        return new Star({...body}, this.Earth, this.Observer)
+        return new Star(body, this.Earth, this.Observer)
       default:
         throw new Error(`Celestial body with key: "${bodyKey}" or type "${body.type}" not found.`)
         break

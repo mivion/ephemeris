@@ -31,12 +31,6 @@ describe('Ephemeris', () => {
       expect(() => new Ephemeris({year: 1, month: 1, day: 1, hours: 1, minutes: 0, seconds: 0, latitude: 0, longitude: 0, height: "0"})).toThrowError("Parameter value of: \"0\" - must be a number (int or float type).")
     })
 
-    it('assigns _bodyData', () => {
-      const ephemeris = new Ephemeris(defaultOrigin)
-      expect(ephemeris._bodyData.find(b => b.key === 'earth').anomaly).toEqual(1.1791)
-      expect(ephemeris._bodyData.find(b => b.key === 'earth').ptable.distance).toEqual(1.000139872959708)
-    })
-
     it('assigns Observer', () => {
       const ephemeris = new Ephemeris(defaultOrigin)
       expect(ephemeris.Observer.glat).toEqual(41.37)
