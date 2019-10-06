@@ -24,7 +24,7 @@ import {
 
 export default class Ephemeris {
   constructor({ year=0, month=0, day=0, hours=0, minutes=0, seconds=0, latitude=0.00,  longitude=0.00, height=0.00, key=undefined }={}) {
-    // !!!UTC time!!!
+    // Assumes UTC time
     // * int year (> 0 C.E.)
     // * int month (0 - 11 || 0 = January, 11 = December)
     // * int day (1 - 31)
@@ -34,6 +34,8 @@ export default class Ephemeris {
     // * float latitude (-90 - +90)
     // * float longitude (-180 - +180)
     // * float height
+    // * string OR array[string] key - ex: pass in "venus" or ["mercury", "venus"] or leave blank for all
+    
     this._key = validateKey(key)
     this._year = validateYear(year)
     this._month = validateMonth(month) // Reconcile month to use 1 - 12 range with legacy code
@@ -51,7 +53,8 @@ export default class Ephemeris {
     this.Observer = new Observer({latitude: latitude, longitude: longitude, height: height})
     this.Earth = kepler.calc(this.Date, this._bodyData.find(b => b.key === 'earth'))
     this.Results = this.CalculateResults()
-    // Add each result as a key to the ephemeris
+
+    // Add each result as a key to the ephemeris object
     this.Results.forEach(result => {
       this[result.key] = result
     })
@@ -83,9 +86,8 @@ export default class Ephemeris {
 
   CalculateBody(bodyKey) {
     const body = this._bodyData.find(b => b.key === bodyKey)
-    // TODO - refactor
-    // initialize local variables
 
+    // initialize local variables
     body.locals = {}
     body.locals.dp = [] // correction vector, saved for display
     body.locals.dradt = null; // approx motion of right ascension of object in radians p day
