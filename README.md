@@ -240,7 +240,7 @@ I'm also using the telnet interface that the Jet Propulsion laboratory provides 
 
 ### Notes on precision & accuracy upgrading from 0.1.0 to 1.0.0
 
-I've noticed that there is very tiny differences (in the magnitude of 0.0000005 degrees) between the `apparentLongitude` decimal calculation of the `Sun` in the 1.0.0 implementation vs the 0.1.0 implentation. I've tracked this down to a specific calculation - `epsilon.js`.
+1) There is very tiny differences (in the magnitude of 0.0000005 degrees) between the `apparentLongitude` decimal calculation of the `Sun` in the 1.0.0 implementation vs the 0.1.0 implentation. I've tracked this down to a specific calculation - `epsilon.js`.
 
 I believe this upgrade actually fixed a bug in the original implementation. The bug was centered around the way `epsilon.js` was implemented. In the 0.1.0 implementation, `$moshier.epsilon` was a global variable that was reassigned frequently. This, I believe, resulted in unintentional mutations.
 
@@ -267,3 +267,5 @@ y  =  $moshier.epsilon.coseps * rec[1]  +  $moshier.epsilon.sineps * rec[2]; // 
 So in conclusion, this 0.0000005 difference in the Sun's `apparentLongitude` between versions 0.1.0 and 1.0.0 is a bugfix and a feature, not a bug.
 
 Everything else appears to be exactly the same according to my tests.
+
+2) Tiny correction (0.1*e-15 or 0.000000000000001) on moon `illuminatedFraction` and `phaseDaysPast / phaseDaysBefore` from gplan refactoring. Most likely due to the conversion differences between radians-to-seconds and seconds-to-radians constants (RTS and STR) in app. Possibly solution is using equations involving Math.PI instead.

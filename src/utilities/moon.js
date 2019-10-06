@@ -3,7 +3,7 @@ import { DTR, RTD, RTS, REARTH } from '../constants'
 import { aberration } from './aberration'
 import { altaz } from './altaz'
 import Epsilon from './Epsilon'
-import { gplan } from './gplan'
+import { gPlanMoon, get_lp_equinox } from './gplan'
 import { lonlat } from './lonlat'
 import { precess } from './precess'
 import { nutation } from './nutation'
@@ -197,7 +197,8 @@ moon.calcll = (date, rect, pol, body, earthBody, result) => {
 	/* Compute obliquity of the ecliptic, coseps, and sineps.  */
 	const epsilonObject = new Epsilon(date.julian);
 	/* Get geometric coordinates of the Moon.  */
-	rect = gplan.moon(date, rect, pol);
+  const lp_equinox = get_lp_equinox(date.julian)
+	rect = gPlanMoon(date.julian, rect, pol, lp_equinox);
 	/* Post the geometric ecliptic longitude and latitude, in radians,
 	 * and the radius in au.
 	 */

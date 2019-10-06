@@ -1,6 +1,6 @@
 import { AEARTH, AU, CLIGHT, J2000, EMRAT, DTR, RTD, FLAT} from '../constants'
 import { util } from './util'
-import { gplan } from './gplan'
+import { gPlanCalc, gPlanMoon, gPlanCalc3, get_lp_equinox } from './gplan'
 import Epsilon from './Epsilon'
 import { precess } from './precess'
 
@@ -20,9 +20,9 @@ kepler.calc = (date, body, rect, polar) => {
 	/* Call program to compute position, if one is supplied.  */
 	if ( body.ptable ) {
 		if ( body.key == 'earth' ) {
-			polar = gplan.calc3(date, body.ptable, polar, 3);
+			polar = gPlanCalc3(date.julian, body.ptable, polar, 3);
 		} else {
-			polar = gplan.calc(date, body.ptable, polar);
+			polar = gPlanCalc(date.julian, body.ptable, polar);
 		}
 		E = polar[0]; /* longitude */
 		body.longitude = E;
@@ -268,7 +268,8 @@ kepler.embofs = (date, ea) => {
 	var i; // int
 
 	/* Compute the vector Moon - Earth.  */
-	pm = gplan.moon(date, pm, polm); // TODO - investigate how this mutates the data.
+  const lp_equinox = get_lp_equinox(date.julian)
+	pm = gPlanMoon(date.julian, pm, polm, lp_equinox); // TODO - investigate how this mutates the data.
 
 	/* Precess the lunar position
 	 * to ecliptic and equinox of J2000.0

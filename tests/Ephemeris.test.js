@@ -85,28 +85,40 @@ describe('Ephemeris', () => {
     })
 
     it('calculates position', () => {
-      expect(body.position.apparentLongitude).toEqual(279.85845746839465)
-      expect(body.position.apparentLongitudeString).toEqual("279°51'30\"")
+      expect(body.position.aberration.dDec).toEqual(1.543790024784711)
+      expect(body.position.aberration.dRA).toEqual(1.506044160265716)
+      expect(body.position.lightTime).toEqual(8.178122476657716)
 
-      expect(body.position.aberration).toEqual({"dDec": 1.543790024784711, "dRA": 1.506044160265716})
+      expect(body.position.altaz.atmosphericRefraction.deg).toEqual(0);
+      expect(body.position.altaz.atmosphericRefraction.dRA).toEqual(0);
+      expect(body.position.altaz.atmosphericRefraction.dDec).toEqual(-3.434999055980598e-11);
+
       expect(body.position.altaz.dLocalApparentSiderialTime).toEqual(0.5037761337802859)
 
-      expect(body.position.apparent.dDec).toEqual(-0.40266799895209826)
-      expect(body.position.apparent.dRA).toEqual(4.899579517039573)
+      expect(body.position.altaz.diurnalAberation.dec).toEqual(-0.40266843198178814);
+      expect(body.position.altaz.diurnalAberation.ra).toEqual(4.899579123558574);
 
-      expect(body.position.equinoxEclipticLonLat["1"]).toEqual(0.000004016332594980136)
-      expect(body.position.equinoxEclipticLonLat["2"]).toEqual(0.9833318985267808)
-      expect(body.position.equinoxEclipticLonLat["3"]).toEqual({"degree": 279, "minutes": 52, "seconds": 5.2109247263433645})
-      expect(body.position.equinoxEclipticLonLat["4"]).toEqual({"degree": 0, "minutes": 0, "seconds": 0.8284280645274755})
+      expect(body.position.altaz.diurnalParallax.dec).toEqual(-0.40269068182927387);
+      expect(body.position.altaz.diurnalParallax.ra).toEqual(4.899545465332441);
+
+      expect(body.position.altaz.topocentric.altitude).toEqual(-28.292954029774886);
+      expect(body.position.altaz.topocentric.azimuth).toEqual(263.16585592925907);
+      expect(body.position.altaz.topocentric.dec).toEqual(-0.40269068182927403);
+      expect(body.position.altaz.topocentric.ra).toEqual(-1.3836398418471454);
 
       expect(body.position.altaz.transit.UTdate).toEqual(0.6987754419144846);
       expect(body.position.altaz.transit.dApproxRiseUT).toEqual(3.1819716937961133);
       expect(body.position.altaz.transit.dApproxSetUT).toEqual(5.599667168395834);
 
-      expect(body.position.altaz.atmosphericRefraction).toEqual({"dDec": -3.434999055980598e-11, "dRA": 0, "deg": 0})
-      expect(body.position.altaz.diurnalAberation).toEqual({"dDec": -0.08931878508841723, "dRA": -0.005410752130287809, "dec": -0.40266843198178814, "ra": 4.899579123558574})
-      expect(body.position.altaz.topocentric).toEqual({"altitude": -28.292954029774886, "azimuth": 263.16585592925907, "dDec": {"degree": 23, "minutes": 4, "seconds": 20.915465026334914}, "dRA": {"hours": 18, "milliseconds": 586, "minutes": 42, "seconds": 53}, "dec": -0.40269068182927403, "ra": -1.3836398418471454})
-      expect(body.position.lightTime).toEqual(8.178122476657716)
+      expect(body.position.apparent.dDec).toEqual(-0.40266799895209826)
+      expect(body.position.apparent.dRA).toEqual(4.899579517039573)
+
+      expect(body.position.apparentLongitude).toBeCloseTo(279.85845786893725, 6)
+      expect(body.position.apparentLongitudeString).toEqual("279°51'30\"")
+
+      expect(body.position.equinoxEclipticLonLat[0]).toEqual(4.884620063190782)
+      expect(body.position.equinoxEclipticLonLat[1]).toEqual(0.000004016332594980136)
+      expect(body.position.equinoxEclipticLonLat[2]).toEqual(0.9833318985267808)
 
       expect(body.position.constellation).toEqual("Sgr Sagittarii");
 
@@ -119,9 +131,9 @@ describe('Ephemeris', () => {
       const body = ephemeris.moon
       expect(body.position.Semidiameter.seconds).toEqual(54.08744547118285)
 
-      expect(body.position.altaz.transit.UTdate).toEqual(0.5064727340111443);
-    	expect(body.position.altaz.transit.dApproxRiseUT).toEqual(1.6649300072171158);
-      expect(body.position.altaz.transit.dApproxSetUT).toEqual(4.670279494052207);
+      expect(body.position.altaz.atmosphericRefraction.deg).toEqual(0);
+      expect(body.position.altaz.atmosphericRefraction.dRA).toEqual(0);
+      expect(body.position.altaz.atmosphericRefraction.dDec).toEqual(-5.7249984266343304e-11);
 
     	expect(body.position.altaz.diurnalAberation.ra).toEqual(3.781446167769749);
     	expect(body.position.altaz.diurnalAberation.dec).toEqual(-0.15693168722230524);
@@ -129,14 +141,14 @@ describe('Ephemeris', () => {
     	expect(body.position.altaz.diurnalParallax.ra).toEqual( 3.779823523994774);
     	expect(body.position.altaz.diurnalParallax.dec).toEqual(-0.1652988947491685);
 
-    	expect(body.position.altaz.atmosphericRefraction.deg).toEqual(0);
-    	expect(body.position.altaz.atmosphericRefraction.dRA).toEqual(0);
-    	expect(body.position.altaz.atmosphericRefraction.dDec).toEqual(-5.7249984266343304e-11);
-
     	expect(body.position.altaz.topocentric.altitude).toEqual(-57.38373112405539);
     	expect(body.position.altaz.topocentric.ra).toEqual(-2.503361783184812);
     	expect(body.position.altaz.topocentric.dec).toEqual(-0.16529889474916878);
     	expect(body.position.altaz.topocentric.azimuth).toEqual(345.8000378405458);
+
+      expect(body.position.altaz.transit.UTdate).toEqual(0.5064727340111443);
+      expect(body.position.altaz.transit.dApproxRiseUT).toEqual(1.6649300072171158);
+      expect(body.position.altaz.transit.dApproxSetUT).toEqual(4.670279494052207);
 
       expect(body.position.apparent.dRA).toEqual(3.7814473341623236);
       expect(body.position.apparent.dDec).toEqual(-0.15693166256853608);
@@ -180,9 +192,9 @@ describe('Ephemeris', () => {
 
       expect(body.position.phaseQuarter).toEqual(0);
       expect(body.position.phaseQuarterString).toEqual("New Moon");
-      expect(body.position.illuminatedFraction).toEqual(0.0006617445257049992);
+      expect(body.position.illuminatedFraction).toBeCloseTo(0.0006617445257049992, 14);
       expect(body.position.phaseDaysBefore).toEqual(undefined);
-      expect(body.position.phaseDaysPast).toEqual(0.22075147788362653);
+      expect(body.position.phaseDaysPast).toBeCloseTo(0.22075147788362653, 14);
 
       ephemeris = new Ephemeris({...defaultOrigin, day: 15, key: 'moon'})
       body = ephemeris.moon
@@ -198,9 +210,9 @@ describe('Ephemeris', () => {
 
       expect(body.position.phaseQuarter).toEqual(2);
       expect(body.position.phaseQuarterString).toEqual("Full Moon");
-      expect(body.position.illuminatedFraction).toEqual(0.9906443297921943);
+      expect(body.position.illuminatedFraction).toBeCloseTo(0.9906443297921943, 14);
       expect(body.position.phaseDaysBefore).toEqual(undefined);
-      expect(body.position.phaseDaysPast).toEqual(0.8464007357321963);
+      expect(body.position.phaseDaysPast).toBeCloseTo(0.8464007357321963, 14);
 
       ephemeris = new Ephemeris({...defaultOrigin, day: 29, key: 'moon'})
       body = ephemeris.moon

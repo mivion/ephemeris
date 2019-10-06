@@ -1,55 +1,14 @@
-import { STR, J2000 } from '../constants'
+import { freqs, phases, STR, RTS, J2000 } from '../constants'
 import { moonlr } from '../ptables/moonlr'
 import { moonlat } from '../ptables/moonlat'
 
 import { util } from './util'
 import Epsilon from './Epsilon'
 
-// TODO - all date params should be replaced with julian date
-// TODO - the gplan object is storing dynamic state - might be better as a class instance. investigate further
-export const gplan = {
-	/* From Simon et al (1994)  */
-	freqs: [
-		/* Arc sec per 10000 Julian years.  */
-		53810162868.8982,
-		21066413643.3548,
-		12959774228.3429,
-		6890507749.3988,
-		1092566037.7991,
-		439960985.5372,
-		154248119.3933,
-		78655032.0744,
-		52272245.1795
-	],
-
-	phases: [
-		/* Arc sec.  */
-		252.25090552 * 3600.,
-		181.97980085 * 3600.,
-		100.46645683 * 3600.,
-		355.43299958 * 3600.,
-		34.35151874 * 3600.,
-		50.07744430 * 3600.,
-		314.05500511 * 3600.,
-		304.34866548 * 3600.,
-		860492.1546
-	],
-
-	ss: [],
-	cc: [],
-
-	Args: [],
-	LP_equinox: 0,
-	NF_arcsec: 0,
-	Ea_arcsec: 0,
-	pA_precession: 0
-
-};
-
 /*
  Routines to chew through tables of perturbations.
 */
-gplan.calc = function (date, body_ptable, polar) {
+export const gPlanCalc = (julianDate, body_ptable, polar) => {
 	var su, cu, sv, cv, T; // double
 	var t, sl, sb, sr; // double
 	var i, j, k, m, n, k1, ip, np, nt; // int
@@ -57,15 +16,16 @@ gplan.calc = function (date, body_ptable, polar) {
 	var pl; // double array
 	var pb; // double array
 	var pr; // double array
-
-	T = (date.julian - J2000) / body_ptable.timescale;
+	T = (julianDate - J2000) / body_ptable.timescale;
 	n = body_ptable.maxargs;
-	/* Calculate sin( i*MM ), etc. for needed multiple angles.  */
+
+  let sscc = { ss: [], cc: [] }
+  /* Calculate sin( i*MM ), etc. for needed multiple angles.  */
 	for (i = 0; i < n; i++) {
 		if ((j = body_ptable.max_harmonic[i]) > 0)
 		{
-			sr = (util.mods3600 (gplan.freqs [i] * T) + gplan.phases [i]) * STR;
-			gplan.sscc (i, sr, j);
+			sr = (util.mods3600 (freqs[i] * T) + phases[i]) * STR;
+			sscc = gplanSSCC(i, sr, j, sscc);
 		}
 	}
 
@@ -132,10 +92,10 @@ gplan.calc = function (date, body_ptable, polar) {
 				if (j < 0)
 					k = -k;
 				k -= 1;
-				su = gplan.ss[m][k];	/* sin(k*angle) */
+				su =sscc.ss[m][k];	/* sin(k*angle) */
 				if (j < 0)
 					su = -su;
-				cu = gplan.cc[m][k];
+				cu = sscc.cc[m][k];
 				if (k1 == 0)
 				{		/* set first angle */
 					sv = su;
@@ -191,38 +151,39 @@ gplan.calc = function (date, body_ptable, polar) {
 /* Prepare lookup table of sin and cos ( i*Lj )
  * for required multiple angles
  */
-gplan.sscc = function (k, arg, n) {
-	var cu, su, cv, sv, s; // double
-	var i; // int
+export const gplanSSCC = (k, arg, n, sscc= { ss: [], cc: []}) => {
+	const su = Math.sin (arg);
+	const cu = Math.cos (arg);
+  let cv, sv, s;
 
-	su = Math.sin (arg);
-	cu = Math.cos (arg);
-	gplan.ss[k] = [];
-	gplan.cc[k] = [];
+  sscc.ss[k] = [];
+	sscc.cc[k] = [];
 
-	gplan.ss[k][0] = su;		/* sin(L) */
-	gplan.cc[k][0] = cu;		/* cos(L) */
+  sscc.ss[k][0] = su;		/* sin(L) */
+	sscc.cc[k][0] = cu;		/* cos(L) */
 	sv = 2.0 * su * cu;
 	cv = cu * cu - su * su;
-	gplan.ss[k][1] = sv;		/* sin(2L) */
-	gplan.cc[k][1] = cv;
-	for (i = 2; i < n; i++)
+  sscc.ss[k][1] = sv;		/* sin(2L) */
+  sscc.cc[k][1] = cv;
+	for (let i = 2; i < n; i++)
 	{
 		s = su * cv + cu * sv;
 		cv = cu * cv - su * sv;
 		sv = s;
-		gplan.ss[k][i] = sv;		/* sin( i+1 L ) */
-		gplan.cc[k][i] = cv;
+    sscc.ss[k][i] = sv;		/* sin( i+1 L ) */
+		sscc.cc[k][i] = cv;
 	}
+  // console.log(sscc)
+  return sscc
 };
 
 /* Compute mean elements at Julian date J.  */
-gplan.meanElements = date => {
+export const meanElements = julianDate => {
   let Args = []
 	var x, T, T2; // double
 
 	/* Time variables.  T is in Julian centuries.  */
-	T = (date.julian - 2451545.0) / 36525.0;
+	T = (julianDate - 2451545.0) / 36525.0;
 	T2 = T * T;
 
 	/* Mean longitudes of planets (Simon et al, 1994)
@@ -244,7 +205,6 @@ gplan.meanElements = date => {
 	x = util.mods3600( 129597742.283429 * T + 361679.198 );
 	x += (-5.23e-6 * T
 		- 2.04411e-2 ) * T2;
-	gplan.Ea_arcsec = x;
 	Args[2] = STR * x;
 
 	/* Mars */
@@ -300,7 +260,6 @@ gplan.meanElements = date => {
 		- 2.165750777942e-006) * T
 		- 7.5311878482337989e-04) * T /* F, t^3 */
 		- 1.3117809789650071e+01) * T2; /* F, t^2 */
-	gplan.NF_arcsec = x;
 	Args[10] = STR * x;
 
 	/* Mean anomaly of sun = l' (J. Laskar) */
@@ -335,7 +294,7 @@ gplan.meanElements = date => {
 		- 6.073960534117e-005) * T
 		+ 6.9017248528380490e-03) * T /* L, t^3 */
 		- 5.6550460027471399e+00) * T2; /* L, t^2 */
-	gplan.LP_equinox = x;
+
 	Args[13] = STR * x;
 
 	/* Precession of the equinox  */
@@ -352,7 +311,7 @@ gplan.meanElements = date => {
 	/*
 	 Args[13] -= x;
 	 */
-	gplan.pA_precession = STR * x;
+	// gplan.pA_precession = STR * x;
 
 	/* Free librations.  */
 	/* longitudinal libration 2.891725 years */
@@ -373,7 +332,7 @@ gplan.meanElements = date => {
 /* Generic program to accumulate sum of trigonometric series
  in three variables (e.g., longitude, latitude, radius)
  of the same list of arguments.  */
-gplan.calc3 = function (date, body_ptable, polar, body_number) {
+export const gPlanCalc3 = (julianDate, body_ptable, polar, body_number) => {
 	var i, j, k, m, n, k1, ip, np, nt; // int
 	var p; // int array
 	var pl; // double array
@@ -383,16 +342,18 @@ gplan.calc3 = function (date, body_ptable, polar, body_number) {
 	var su, cu, sv, cv; // double
 	var T, t, sl, sb, sr; // double
 
-	gplan.Args = gplan.meanElements(date);
+	const Args = meanElements(julianDate);
 
-	T = (date.julian - J2000) / body_ptable.timescale;
+	T = (julianDate - J2000) / body_ptable.timescale;
 	n = body_ptable.maxargs;
-	/* Calculate sin( i*MM ), etc. for needed multiple angles.  */
+
+  let sscc = { ss: [], cc: [] }
+  /* Calculate sin( i*MM ), etc. for needed multiple angles.  */
 	for (i = 0; i < n; i++)
 	{
 		if ((j = body_ptable.max_harmonic [i]) > 0)
 		{
-			gplan.sscc (i, gplan.Args [i], j);
+			sscc = gplanSSCC(i, Args[i], j, sscc);
 		}
 	}
 
@@ -461,10 +422,10 @@ gplan.calc3 = function (date, body_ptable, polar, body_number) {
 				else
 					k = j;
 				k -= 1;
-				su = gplan.ss[m][k];	/* sin(k*angle) */
+				su =sscc.ss[m][k];	/* sin(k*angle) */
 				if (j < 0)
 					su = -su;
-				cu = gplan.cc[m][k];
+				cu = sscc.cc[m][k];
 				if (k1 == 0)
 				{		/* set first angle */
 					sv = su;
@@ -509,7 +470,7 @@ gplan.calc3 = function (date, body_ptable, polar, body_number) {
 		sr += cu * cv + su * sv;
 	}
 	t = body_ptable.trunclvl;
-	polar[0] = gplan.Args[body_number - 1] + STR * t * sl;
+	polar[0] = Args[body_number - 1] + STR * t * sl;
 	polar[1] = STR * t * sb;
 	polar[2] = body_ptable.distance * (1.0 + STR * t * sr);
 
@@ -519,7 +480,7 @@ gplan.calc3 = function (date, body_ptable, polar, body_number) {
 /* Generic program to accumulate sum of trigonometric series
  in two variables (e.g., longitude, radius)
  of the same list of arguments.  */
-gplan.calc2 = (date, body_ptable, polar) => {
+export const gPlanCalc2 = (julianDate, body_ptable, polar) => {
 	var i, j, k, m, n, k1, ip, np, nt; // int
 	var p; // int array
 	var pl; // double array
@@ -528,16 +489,18 @@ gplan.calc2 = (date, body_ptable, polar) => {
 	var su, cu, sv, cv; // double
 	var T, t, sl, sr; // double
 
-	gplan.Args = gplan.meanElements(date);
+	const Args = meanElements(julianDate);
 
-	T = (date.julian - J2000) / body_ptable.timescale;
+	T = (julianDate - J2000) / body_ptable.timescale;
 	n = body_ptable.maxargs;
-	/* Calculate sin( i*MM ), etc. for needed multiple angles.  */
+
+  let sscc = { ss: [], cc: [] }
+  /* Calculate sin( i*MM ), etc. for needed multiple angles.  */
 	for (i = 0; i < n; i++)
 	{
 		if ((j = body_ptable.max_harmonic[i]) > 0)
 		{
-			gplan.sscc (i, gplan.Args[i], j);
+			sscc = gplanSSCC(i, Args[i], j, sscc);
 		}
 	}
 
@@ -598,10 +561,10 @@ gplan.calc2 = (date, body_ptable, polar) => {
 				else
 					k = j;
 				k -= 1;
-				su = gplan.ss[m][k];	/* sin(k*angle) */
+				su =sscc.ss[m][k];	/* sin(k*angle) */
 				if (j < 0)
 					su = -su;
-				cu = gplan.cc[m][k];
+				cu = sscc.cc[m][k];
 				if (k1 == 0)
 				{		/* set first angle */
 					sv = su;
@@ -646,7 +609,7 @@ gplan.calc2 = (date, body_ptable, polar) => {
 
 /* Generic program to accumulate sum of trigonometric series
  in one variable.  */
-gplan.calc1 = function (date, body_ptable) {
+export const gPlanCalc1 = (julianDate, body_ptable) => {
 	var i, j, k, m, k1, ip, np, nt; // int
 	var p; // int array
 	var pl; // double array
@@ -654,14 +617,16 @@ gplan.calc1 = function (date, body_ptable) {
 	var su, cu, sv, cv; // double
 	var T, t, sl; // double
 
-	T = (date.julian - J2000) / body_ptable.timescale;
-	gplan.Args = gplan.meanElements(date);
-	/* Calculate sin( i*MM ), etc. for needed multiple angles.  */
-	for (i = 0; i < gplan.Args.length; i++)
+	T = (julianDate - J2000) / body_ptable.timescale;
+	const Args = meanElements(julianDate);
+
+  let sscc = { ss: [], cc: [] }
+  /* Calculate sin( i*MM ), etc. for needed multiple angles.  */
+	for (i = 0; i < Args.length; i++)
 	{
 		if ((j = body_ptable.max_harmonic[i]) > 0)
 		{
-			gplan.sscc (i, gplan.Args[i], j);
+			sscc = gplanSSCC(i, Args[i], j, sscc);
 		}
 	}
 
@@ -710,10 +675,10 @@ gplan.calc1 = function (date, body_ptable) {
 				else
 					k = j;
 				k -= 1;
-				su = gplan.ss[m][k];	/* sin(k*angle) */
+				su =sscc.ss[m][k];	/* sin(k*angle) */
 				if (j < 0)
 					su = -su;
-				cu = gplan.cc[m][k];
+				cu = sscc.cc[m][k];
 				if (k1 == 0)
 				{		/* set first angle */
 					sv = su;
@@ -744,13 +709,13 @@ gplan.calc1 = function (date, body_ptable) {
 };
 
 /* Compute geocentric moon.  */
-gplan.moon = (date, rect, pol) => {
+export const gPlanMoon = (julianDate, rect, pol, lp_equinox) => {
 	var x, cosB, sinB, cosL, sinL; // double
 
-	pol = gplan.calc2(date, moonlr, pol);
+	pol = gPlanCalc2(julianDate, moonlr, pol);
 
 	x = pol[0];
-	x += gplan.LP_equinox;
+	x += lp_equinox;
 	if (x < -6.48e5) {
 		x += 1.296e6;
 	}
@@ -758,12 +723,12 @@ gplan.moon = (date, rect, pol) => {
 		x -= 1.296e6;
 	}
 	pol[0] = STR * x;
-	x = gplan.calc1(date, moonlat);
+	x = gPlanCalc1(julianDate, moonlat);
 	pol[1] = STR * x;
 	x = (1.0 + STR * pol[2]) * moonlr.distance;
 	pol[2] = x;
 	/* Convert ecliptic polar to equatorial rectangular coordinates.  */
-	const epsilonObject = new Epsilon(date.julian);
+	const epsilonObject = new Epsilon(julianDate);
 	cosB = Math.cos(pol[1]);
 	sinB = Math.sin(pol[1]);
 	cosL = Math.cos(pol[0]);
@@ -775,3 +740,21 @@ gplan.moon = (date, rect, pol) => {
   return rect
 
 };
+
+export const get_lp_equinox = julianDate => {
+  const Args = meanElements(julianDate);
+  const lp_equinox = Args[13] * RTS
+  return lp_equinox
+}
+
+export const get_nf_arcsec = julianDate => {
+  const Args = meanElements(julianDate);
+  const nf_arcsec = Args[10] * RTS
+  return nf_arcsec
+}
+
+export const get_ea_arcsec = julianDate => {
+  const Args = meanElements(julianDate);
+  const ea_arcsec = Args[2] * RTS
+  return ea_arcsec
+}
