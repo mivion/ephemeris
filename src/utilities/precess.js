@@ -2,7 +2,6 @@ import { J2000, STR } from '../constants'
 import Epsilon from './Epsilon'
 
 
-// TODO - all date params should be replaced with julian date
 export const precess = {
 	/* In WILLIAMS and SIMON, Laskar's terms of order higher than t^4
 	 have been retained, because Simon et al mention that the solution
