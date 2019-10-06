@@ -3,7 +3,7 @@ import { util } from './util'
 import VelocityEarth from './VelocityEarth'
 
 export const aberration = {
-  calc: (p, earthBody, body, result) => {
+  calc: (p, earthBody, observer, body, result) => {
   	var A, B, C; // double
   	var betai, pV; // double
   	var x = [], V = []; // double
@@ -11,7 +11,7 @@ export const aberration = {
 
   	/* Calculate the velocity of the earth (see vearth.c).
   	 */
-  	const velocityEarth = new VelocityEarth(earthBody.date.julian, earthBody);
+  	const velocityEarth = new VelocityEarth(observer.Date.julian, earthBody);
   	betai = 0.0;
   	pV = 0.0;
   	for( i=0; i<3; i++ ) {

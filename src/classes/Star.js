@@ -138,7 +138,7 @@ export default class Star {
 
   	/* Correct for proper motion and parallax
   	 */
-  	T = (earthBody.date.julian - epoch)/36525.0;
+  	T = (observer.Date.julian - epoch)/36525.0;
   	for( i=0; i<3; i++ ) {
   		p[i] = q[i]  +  T * m[i]  -  body.parallax * e[i];
   	}
@@ -180,7 +180,7 @@ export default class Star {
   		temp[i] = p[i];
   	}
 
-  	temp = precess.calc ( temp, earthBody.date.julian, -1 );
+  	temp = precess.calc ( temp, observer.Date.julian, -1 );
   	body.position.astrimetricDate = util.showrd (temp, polar);
 
   	/* Correct position for light deflection
@@ -190,19 +190,19 @@ export default class Star {
 
   	/* Correct for annual aberration
   	 */
-  	body.position.aberration = aberration.calc(p, earthBody, body);
+  	body.position.aberration = aberration.calc(p, earthBody, observer, body);
 
   	/* Precession of the equinox and ecliptic
   	 * from J2000.0 to ephemeris date
   	 */
-  	p = precess.calc ( p, earthBody.date.julian, -1 );
+  	p = precess.calc ( p, observer.Date.julian, -1 );
 
   	/* Ajust for nutation
   	 * at current ecliptic.
   	 */
 
-  	// const epsilonObject = new Epsilon( earthBody.date.julian); // NOTE - has no effect on result
-  	nutation.calc(earthBody.date, p); // NOTE mutates p
+  	// const epsilonObject = new Epsilon( observer.Date.julian); // NOTE - has no effect on result
+  	nutation.calc(observer.Date, p); // NOTE mutates p
 
   	/* Display the final apparent R.A. and Dec.
   	 * for equinox of date.
@@ -232,7 +232,7 @@ export default class Star {
   	body.locals.ddecdt = 0.0;
   	polar [2] = 1.0e38; /* make it ignore diurnal parallax */
 
-  	body.position.altaz = altaz.calc ( polar, earthBody.date, body, observer);
+  	body.position.altaz = altaz.calc ( polar, observer.Date, body, observer);
 
     return body
   }

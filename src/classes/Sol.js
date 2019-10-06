@@ -37,7 +37,7 @@ export default class Sol {
   	}
   	r = earthBody.position.polar[2]; //eapolar [2];
 
-  	body.position.equinoxEclipticLonLat = lonlat.calc(ecr, earthBody.date, pol, 1); // TDT
+  	body.position.equinoxEclipticLonLat = lonlat.calc(ecr, observer.Date, pol, 1); // TDT
 
   	/* Philosophical note: the light time correction really affects
   	 * only the Sun's barymetric position; aberration is due to
@@ -49,11 +49,11 @@ export default class Sol {
   	 * correction, however.
   	 */
   	pol[2] = r;
-    let earthTDT = new Earth({...celestialBodies.find(b => b.key === 'earth')}, earthBody.date) // clone to prevent mutation
+    let earthTDT = new Earth({...celestialBodies.find(b => b.key === 'earth')}, observer.Date) // clone to prevent mutation
   	for( i=0; i<2; i++ ) {
   		t = pol [2] / 173.1446327;
   		/* Find the earth at time TDT - t */
-  		earthTDT = kepler.calc(earthTDT.date.julian - t, earthTDT, ecr, pol );
+  		earthTDT = kepler.calc(observer.Date.julian - t, earthTDT, ecr, pol );
   	}
   	r = pol[2];
 
@@ -66,7 +66,6 @@ export default class Sol {
   	}
 
   	body.position = {...body.position, ...{
-  		date: earthTDT.date,
   		lightTime: 1440.0*t,
   		aberration: util.showcor(ecr, pol)
   	}};
@@ -87,7 +86,7 @@ export default class Sol {
 
   	/* precess to equinox of date
   	 */
-  	ecr = precess.calc( ecr, earthTDT.date.julian, -1);
+  	ecr = precess.calc( ecr, observer.Date.julian, -1);
 
   	for( i=0; i<3; i++ ) {
   		rec[i] = ecr[i];
@@ -95,14 +94,14 @@ export default class Sol {
 
   	/* Nutation.
   	 */
-  	let epsilonObject = new Epsilon(earthTDT.date.julian);
-    let nutationObject = nutation.getObject(earthTDT.date)
-    nutation.calc(earthTDT.date, ecr); // NOTE nutation mutates the nutation object AND returns a result.
+  	let epsilonObject = new Epsilon(observer.Date.julian);
+    let nutationObject = nutation.getObject(observer.Date)
+    nutation.calc(observer.Date, ecr); // NOTE nutation mutates the nutation object AND returns a result.
 
   	/* Display the final apparent R.A. and Dec.
   	 * for equinox of date.
   	 */
-  	body.position.constellation = constellation.calc(ecr, earthTDT.date);
+  	body.position.constellation = constellation.calc(ecr, observer.Date);
 
   	body.position.apparent = util.showrd(ecr, pol);
 
@@ -127,7 +126,7 @@ export default class Sol {
 
   	/* Report altitude and azimuth
   	 */
-  	body.position.altaz = altaz.calc( pol, earthTDT.date, body, observer );
+  	body.position.altaz = altaz.calc( pol, observer.Date, body, observer );
 
     return body
   }

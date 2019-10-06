@@ -30,7 +30,7 @@ export default class HeliocentricOrbitalBody {
   	}
 
   	/* calculate heliocentric position of the object */
-  	body = kepler.calc(earthBody.date.julian, body); // NOTE mutates body
+  	body = kepler.calc(observer.Date.julian, body); // NOTE mutates body
   	/* apply correction factors and print apparent place */
   	return this.reduceBody(body, body.position.rect, earthBody.position.rect, earthBody, observer);
   }
@@ -48,11 +48,11 @@ export default class HeliocentricOrbitalBody {
 
   	/* Display ecliptic longitude and latitude, precessed to equinox
   	 of date.  */
-  	body.equinoxEclipticLonLat = lonlat.calc(q, earthBody.date, polar, 1 );
+  	body.equinoxEclipticLonLat = lonlat.calc(q, observer.Date, polar, 1 );
 
   	/* Adjust for light time (planetary aberration)
   	 */
-  	light.calc( body, q, e, earthBody); // NOTE mutates body
+  	light.calc( body, q, e, earthBody, observer); // NOTE mutates body
 
   	/* Find Euclidean vectors between earth, object, and the sun
   	 */
@@ -124,31 +124,31 @@ export default class HeliocentricOrbitalBody {
 
   	/* Correct for annual aberration
   	 */
-  	body.position.aberration = aberration.calc(p, earthBody, body);
+  	body.position.aberration = aberration.calc(p, earthBody, observer, body);
 
   	/* Precession of the equinox and ecliptic
   	 * from J2000.0 to ephemeris date
   	 */
-  	p = precess.calc( p, earthBody.date.julian, -1 );
+  	p = precess.calc( p, observer.Date.julian, -1 );
 
   	/* Ajust for nutation
   	 * at current ecliptic.
   	 */
 
-  	// const epsilonObject = new Epsilon(earthBody.date.julian); // NOTE - has no affect on result
-  	body.position.nutation = nutation.calc ( earthBody.date, p ); // NOTE mutates p
+  	// const epsilonObject = new Epsilon(observer.Date.julian); // NOTE - has no affect on result
+  	body.position.nutation = nutation.calc ( observer.Date, p ); // NOTE mutates p
 
   	/* Display the final apparent R.A. and Dec.
   	 * for equinox of date.
   	 */
-  	body.position.constellation = constellation.calc (p, earthBody.date);
+  	body.position.constellation = constellation.calc (p, observer.Date);
   	body.position.apparent = util.showrd(p, polar);
 
   	/* Geocentric ecliptic longitude and latitude.  */
   	for( i=0; i<3; i++ ) {
   		p[i] *= body.locals.EO;
   	}
-  	body.position.apparentGeocentric = lonlat.calc ( p, earthBody.date, temp, 0 );
+  	body.position.apparentGeocentric = lonlat.calc ( p, observer.Date, temp, 0 );
   	body.position.apparentLongitude = body.position.apparentGeocentric [0] * RTD;
   	body.position.apparentLongitudeString =
   		body.position.apparentGeocentric [3].degree + '\u00B0' +
@@ -167,7 +167,7 @@ export default class HeliocentricOrbitalBody {
   	/* Go do topocentric reductions.
   	 */
   	polar[2] = body.locals.EO;
-  	body.position.altaz = altaz.calc(polar, earthBody.date, body, observer);
+  	body.position.altaz = altaz.calc(polar, observer.Date, body, observer);
 
     return body
   }
@@ -179,7 +179,7 @@ planet.calc = (body, earthBody, observer) => {
 	body = planet.prepare(body);
 
 	/* calculate heliocentric position of the object */
-	body = kepler.calc(earthBody.date.julian, body); // NOTE mutates body
+	body = kepler.calc(observer.Date.julian, body); // NOTE mutates body
 	/* apply correction factors and print apparent place */
 	return planet.reduce(body, body.position.rect, earthBody.position.rect, earthBody, observer);
 };
@@ -202,11 +202,11 @@ planet.reduce = (body, q, e, earthBody, observer) => {
 
 	/* Display ecliptic longitude and latitude, precessed to equinox
 	 of date.  */
-	body.equinoxEclipticLonLat = lonlat.calc(q, earthBody.date, polar, 1 );
+	body.equinoxEclipticLonLat = lonlat.calc(q, observer.Date, polar, 1 );
 
 	/* Adjust for light time (planetary aberration)
 	 */
-	light.calc( body, q, e, earthBody); // NOTE mutates body
+	light.calc( body, q, e, earthBody, observer); // NOTE mutates body
 
 	/* Find Euclidean vectors between earth, object, and the sun
 	 */
@@ -278,31 +278,31 @@ planet.reduce = (body, q, e, earthBody, observer) => {
 
 	/* Correct for annual aberration
 	 */
-	body.position.aberration = aberration.calc(p, earthBody, body);
+	body.position.aberration = aberration.calc(p, earthBody, observer, body);
 
 	/* Precession of the equinox and ecliptic
 	 * from J2000.0 to ephemeris date
 	 */
-	p = precess.calc( p, earthBody.date.julian, -1 );
+	p = precess.calc( p, observer.Date.julian, -1 );
 
 	/* Ajust for nutation
 	 * at current ecliptic.
 	 */
 
-	// const epsilonObject = new Epsilon(earthBody.date.julian); // NOTE - has no affect on result
-	body.position.nutation = nutation.calc ( earthBody.date, p ); // NOTE mutates p
+	// const epsilonObject = new Epsilon(observer.Date.julian); // NOTE - has no affect on result
+	body.position.nutation = nutation.calc ( observer.Date, p ); // NOTE mutates p
 
 	/* Display the final apparent R.A. and Dec.
 	 * for equinox of date.
 	 */
-	body.position.constellation = constellation.calc (p, earthBody.date);
+	body.position.constellation = constellation.calc (p, observer.Date);
 	body.position.apparent = util.showrd(p, polar);
 
 	/* Geocentric ecliptic longitude and latitude.  */
 	for( i=0; i<3; i++ ) {
 		p[i] *= body.locals.EO;
 	}
-	body.position.apparentGeocentric = lonlat.calc ( p, earthBody.date, temp, 0 );
+	body.position.apparentGeocentric = lonlat.calc ( p, observer.Date, temp, 0 );
 	body.position.apparentLongitude = body.position.apparentGeocentric [0] * RTD;
 	body.position.apparentLongitudeString =
 		body.position.apparentGeocentric [3].degree + '\u00B0' +
@@ -321,7 +321,7 @@ planet.reduce = (body, q, e, earthBody, observer) => {
 	/* Go do topocentric reductions.
 	 */
 	polar[2] = body.locals.EO;
-	body.position.altaz = altaz.calc(polar, earthBody.date, body, observer);
+	body.position.altaz = altaz.calc(polar, observer.Date, body, observer);
 
   return body
 };

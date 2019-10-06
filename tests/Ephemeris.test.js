@@ -11,26 +11,6 @@ describe('Ephemeris', () => {
       expect(!!ephemeris).toEqual(true)
     })
 
-    it('validates inputs', () => {
-      expect(() => new Ephemeris({year: -1, month: 1, day: 1, hours: 1, minutes: 0, seconds: 1, latitude: 0, longitude: 0})).toThrowError("The year: \"-1\" - must be an integer and > 0 (C.E.)")
-
-      expect(() => new Ephemeris({year: 1, month: 12, day: 1, hours: 1, minutes: 0, seconds: 1, latitude: 0, longitude: 0})).toThrowError("The month: \"12\" - must be an integer and between 0 - 11. (0 = January, 11 = December)")
-
-      expect(() => new Ephemeris({year: 1, month: 1, day: 0, hours: 1, minutes: 0, seconds: 1, latitude: 0, longitude: 0})).toThrowError("The day: \"0 must be between 1 - 31")
-
-      expect(() => new Ephemeris({year: 1, month: 1, day: 1, hours: 24, minutes: 0, seconds: 1, latitude: 0, longitude: 0})).toThrowError("The hour: \"24\" - must be an integer and between 0 - 23. (0 = midnight 00:00, 23 = 11pm (23:00))")
-
-      expect(() => new Ephemeris({year: 1, month: 1, day: 1, hours: 1, minutes: 60, seconds: 1, latitude: 0, longitude: 0})).toThrowError("The minute: \"60\" - must be an integer and between 0 - 59")
-
-      expect(() => new Ephemeris({year: 1, month: 1, day: 1, hours: 1, minutes: 0, seconds: 60, latitude: 0, longitude: 0})).toThrowError("The second: \"60\" - must be an integer and between 0 - 59")
-
-      expect(() => new Ephemeris({year: 1, month: 1, day: 1, hours: 1, minutes: 0, seconds: 0, latitude: -91, longitude: 0})).toThrowError("The latitude: \"-91\" - must be an float and between -90.00 to 90.00")
-
-      expect(() => new Ephemeris({year: 1, month: 1, day: 1, hours: 1, minutes: 0, seconds: 0, latitude: 0, longitude: 181})).toThrowError("The longitude: \"181\" - must be an float and between -180.00 to 180.00")
-
-      expect(() => new Ephemeris({year: 1, month: 1, day: 1, hours: 1, minutes: 0, seconds: 0, latitude: 0, longitude: 0, height: "0"})).toThrowError("Parameter value of: \"0\" - must be a number (int or float type).")
-    })
-
     it('assigns Observer', () => {
       const ephemeris = new Ephemeris(defaultOrigin)
       expect(ephemeris.Observer.glat).toEqual(41.37)
@@ -40,21 +20,16 @@ describe('Ephemeris', () => {
       expect(ephemeris.Observer.atpress).toEqual(1010)
       expect(ephemeris.Observer.tlat).toEqual(41.17920042308457)
       expect(ephemeris.Observer.trho).toEqual(0.9985423669162051)
-    })
 
-    it('calculates dates', () => {
-      const ephemeris = new Ephemeris(defaultOrigin)
-      // Julian
-      expect(ephemeris.Date.julian).toEqual(2451544.5)
-      expect(ephemeris.Date.j2000).toEqual(1999.9986310746065)
-      expect(ephemeris.Date.b1950).toEqual(1999.998841889117)
-      expect(ephemeris.Date.j2000).toEqual(1999.9986310746065)
+      expect(ephemeris.Observer.Date.julian).toEqual(2451544.5)
+      expect(ephemeris.Observer.Date.j2000).toEqual(1999.9986310746065)
+      expect(ephemeris.Observer.Date.b1950).toEqual(1999.998841889117)
+      expect(ephemeris.Observer.Date.j2000).toEqual(1999.9986310746065)
 
-      expect(ephemeris.Date.utc).toEqual(new Date("2000-01-01T00:00:00.000Z"))
+      expect(ephemeris.Observer.Date.utc).toEqual(new Date("2000-01-01T00:00:00.000Z"))
       // Universal
-      expect(ephemeris.Date.universalDate).toEqual(new Date("1999-12-31T23:58:56.170Z"))
-      expect(ephemeris.Date.universalJulian).toEqual(2451544.4992612316)
-
+      expect(ephemeris.Observer.Date.universalDate).toEqual(new Date("1999-12-31T23:58:56.170Z"))
+      expect(ephemeris.Observer.Date.universalJulian).toEqual(2451544.4992612316)
     })
 
     it('calculates Earth', () => {
@@ -728,8 +703,7 @@ describe('Ephemeris', () => {
     })
 
     it('calculates position', () => {
-      expect(ephemeris.Earth.date.julian).toEqual(2451544.5);
-      expect(ephemeris.Date.julian).toEqual(2451544.5);
+      expect(ephemeris.Observer.Date.julian).toEqual(2451544.5);
 
       expect(body.aberration.dDec).toEqual(0.26671942000413534);
       expect(body.aberration.dRA).toEqual(-0.491483989794519);
@@ -792,6 +766,7 @@ describe('Ephemeris', () => {
     })
 
     it('calculates position', () => {
+
       expect(body.position.astrimetricJ2000.dRA).toEqual(1.767791005321612);
       expect(body.position.astrimetricJ2000.dDec).toEqual(-0.291752264892662);
 
@@ -800,6 +775,8 @@ describe('Ephemeris', () => {
 
       expect(body.position.apparentLongitude).toEqual(1.767843531323971)
       expect(body.position.apparentLongitudeString).toEqual("101°17'23\"")
+
+      expect(body.position.approxVisualMagnitude).toEqual(-1.46);
 
       expect(body.position.altaz.transit.UTdate).toEqual(1.1998945488600037);
     	expect(body.position.altaz.transit.dApproxRiseUT).toEqual(6.225421628040243);

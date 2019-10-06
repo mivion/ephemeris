@@ -4,7 +4,6 @@ export default class Earth {
   constructor(body, date) {
 
     this._body = this.calculateBody(body, date.julian)
-    this.date = date
 
     Object.keys(this._body).forEach(key => {
       this[key] = this._body[key]

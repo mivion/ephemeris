@@ -62,13 +62,13 @@ export default class Luna {
   	 */
 
 
-  	this.calcll(earthBody.date.julian - 0.001, moonpp, moonpol, body, earthBody); // TDT - 0.001
+  	this.calcll(observer.Date.julian - 0.001, moonpp, moonpol, body, earthBody, observer); // TDT - 0.001
   	ra0 = this.ra;
   	dec0 = this.dec;
   	lon0 = moonpol[0];
   	/* Calculate for present instant.
   	 */
-  	body.position.nutation = this.calcll(earthBody.date.julian, moonpp, moonpol, body, earthBody).nutation;
+  	body.position.nutation = this.calcll(observer.Date.julian, moonpp, moonpol, body, earthBody, observer).nutation;
 
   	body.position.geometric = {
   		longitude: RTD * body.position.polar[0],
@@ -101,17 +101,17 @@ export default class Luna {
   	}
 
   	/* aberration of light. */
-  	body.position.annualAberration = aberration.calc(re, earthBody, body);
+  	body.position.annualAberration = aberration.calc(re, earthBody, observer, body);
 
   	/* pe[0] -= STR * (20.496/(RTS*pe[2])); */
-  	re = precess.calc(re, earthBody.date.julian, -1);
-  	nutation.calc(earthBody.date, re); // NOTE mutates re
+  	re = precess.calc(re, observer.Date.julian, -1);
+  	nutation.calc(observer.Date, re); // NOTE mutates re
 
   	for (i = 0; i < 3; i++) {
   		re[i] *= z;
   	}
 
-  	pe = lonlat.calc( re, earthBody.date, pe, 0 );
+  	pe = lonlat.calc( re, observer.Date, pe, 0 );
 
   	/* Find sun-moon-earth angles */
   	for( i=0; i<3; i++ ) {
@@ -199,12 +199,12 @@ export default class Luna {
   	pp[0] = this.ra;
   	pp[1] = this.dec;
   	pp[2] = moonpol[2];
-  	body.position.altaz = altaz.calc(pp, earthBody.date, body, observer);
+  	body.position.altaz = altaz.calc(pp, observer.Date, body, observer);
 
     return body
   }
 
-  calcll(julianDate, rect, pol, body, earthBody, result) {
+  calcll(julianDate, rect, pol, body, earthBody, observer, result) {
   	var cosB, sinB, cosL, sinL, y, z; // double
   	var qq = [], pp = []; // double
   	var i; // int
@@ -237,7 +237,7 @@ export default class Luna {
   	rect[2] = epsilonObject.sineps*cosB*sinL + epsilonObject.coseps*sinB;
 
   	/* Rotate to J2000. */
-  	rect = precess.calc( rect, earthBody.date.julian, 1 ); // TDT
+  	rect = precess.calc( rect, observer.Date.julian, 1 ); // TDT
 
   	/* Find Euclidean vectors and angles between earth, object, and the sun
   	 */
@@ -261,12 +261,12 @@ export default class Luna {
   	/* annuab (rect); */
 
   	/* Precess to date.  */
-  	rect = precess.calc(rect, earthBody.date.julian, -1); // TDT
+  	rect = precess.calc(rect, observer.Date.julian, -1); // TDT
 
   	/* Correct for nutation at date TDT.
   	 */
-    const nutationObject = nutation.getObject({julian: earthBody.date.julian})
-  	result.nutation = nutation.calc ({julian: earthBody.date.julian}, rect); // TDT
+    const nutationObject = nutation.getObject({julian: observer.Date.julian})
+  	result.nutation = nutation.calc ({julian: observer.Date.julian}, rect); // TDT
 
   	/* Apparent geocentric right ascension and declination.  */
   	this.ra = util.zatan2(rect[0],rect[1]);
