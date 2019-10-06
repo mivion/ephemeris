@@ -16,7 +16,7 @@
     "Moshier"
   ],
   "author": "mivion",
-  "license": "GPL-2",
+  "license": "GPL-3",
   "devDependencies": {
     "@babel/core": "^7.6.2",
     "@babel/preset-env": "^7.6.2",
