@@ -6,12 +6,12 @@ describe('Ephemeris', () => {
   } // Jan 1st. 2000 0:00:00, Cambridge MA
 
   describe('constructor', () => {
-    test('constructs a new class without error', () => {
+    it('constructs a new class without error', () => {
       const ephemeris = new Ephemeris(defaultOrigin)
       expect(!!ephemeris).toEqual(true)
     })
 
-    test('validates inputs', () => {
+    it('validates inputs', () => {
       expect(() => new Ephemeris({year: -1, month: 1, day: 1, hours: 1, minutes: 0, seconds: 1, latitude: 0, longitude: 0})).toThrowError("The year: \"-1\" - must be an integer and > 0 (C.E.)")
 
       expect(() => new Ephemeris({year: 1, month: 12, day: 1, hours: 1, minutes: 0, seconds: 1, latitude: 0, longitude: 0})).toThrowError("The month: \"12\" - must be an integer and between 0 - 11. (0 = January, 11 = December)")
@@ -31,13 +31,13 @@ describe('Ephemeris', () => {
       expect(() => new Ephemeris({year: 1, month: 1, day: 1, hours: 1, minutes: 0, seconds: 0, latitude: 0, longitude: 0, height: "0"})).toThrowError("Parameter value of: \"0\" - must be a number (int or float type).")
     })
 
-    test('assigns _bodyData', () => {
+    it('assigns _bodyData', () => {
       const ephemeris = new Ephemeris(defaultOrigin)
       expect(ephemeris._bodyData.find(b => b.key === 'earth').anomaly).toEqual(1.1791)
       expect(ephemeris._bodyData.find(b => b.key === 'earth').ptable.distance).toEqual(1.000139872959708)
     })
 
-    test('assigns Observer', () => {
+    it('assigns Observer', () => {
       const ephemeris = new Ephemeris(defaultOrigin)
       expect(ephemeris.Observer.glat).toEqual(41.37)
       expect(ephemeris.Observer.tlong).toEqual(-71.1)
@@ -48,7 +48,7 @@ describe('Ephemeris', () => {
       expect(ephemeris.Observer.trho).toEqual(0.9985423669162051)
     })
 
-    test('calculates dates', () => {
+    it('calculates dates', () => {
       const ephemeris = new Ephemeris(defaultOrigin)
       // Julian
       expect(ephemeris.Date.julian).toEqual(2451544.5)
@@ -63,7 +63,7 @@ describe('Ephemeris', () => {
 
     })
 
-    test('calculates Earth', () => {
+    it('calculates Earth', () => {
       const ephemeris = new Ephemeris(defaultOrigin)
       expect(ephemeris.Earth.epoch).toEqual(2451544.5)
       expect(ephemeris.Earth.distance).toEqual(0.983316965107044)
@@ -71,7 +71,7 @@ describe('Ephemeris', () => {
       expect(ephemeris.Earth.position.rect).toEqual([-0.16852457737110144, 0.8888429510893577, 0.38535606623087776])
     })
 
-    test('calculates Results', () => {
+    it('calculates Results', () => {
       const ephemeris = new Ephemeris(defaultOrigin)
       expect(ephemeris.Results.length).toEqual(12)
     })
@@ -84,7 +84,7 @@ describe('Ephemeris', () => {
       body = ephemeris.sun
     })
 
-    test('calculates position', () => {
+    it('calculates position', () => {
       expect(body.position.apparentLongitude).toEqual(279.85845746839465)
       expect(body.position.apparentLongitudeString).toEqual("279°51'30\"")
 
@@ -114,13 +114,9 @@ describe('Ephemeris', () => {
   })
 
   describe('Moon', () => {
-    let ephemeris, body
-    beforeAll(() => {
-      ephemeris = new Ephemeris({...defaultOrigin, key: 'moon'})
-      body = ephemeris.moon
-    })
-
-    test('calculates position', () => {
+    it('calculates position', () => {
+      const ephemeris = new Ephemeris({...defaultOrigin, key: 'moon'})
+      const body = ephemeris.moon
       expect(body.position.Semidiameter.seconds).toEqual(54.08744547118285)
 
       expect(body.position.altaz.transit.UTdate).toEqual(0.5064727340111443);
@@ -164,9 +160,56 @@ describe('Ephemeris', () => {
     	expect(body.position.nutation.dDec).toEqual(7.884225007355425);
 
       expect(body.position.phaseDaysPast).toEqual(2.308172935055592);
-      expect(body.position.phaseQuarter).toEqual(1);
+      expect(body.position.phaseQuarter).toEqual(3);
 
       expect(body.position.sunElongation).toEqual(62.70937512973823);
+    })
+
+    it ('calculates moon phases', () => {
+      let ephemeris = new Ephemeris({...defaultOrigin, day: 1, key: 'moon'})
+      let body = ephemeris.moon
+
+      expect(body.position.phaseQuarter).toEqual(3);
+      expect(body.position.phaseQuarterString).toEqual("Last Quarter");
+      expect(body.position.illuminatedFraction).toEqual(0.2718262029195282);
+      expect(body.position.phaseDaysBefore).toEqual(undefined);
+      expect(body.position.phaseDaysPast).toEqual(2.308172935055592);
+
+      ephemeris = new Ephemeris({...defaultOrigin, day: 7, key: 'moon'})
+      body = ephemeris.moon
+
+      expect(body.position.phaseQuarter).toEqual(0);
+      expect(body.position.phaseQuarterString).toEqual("New Moon");
+      expect(body.position.illuminatedFraction).toEqual(0.0006617445257049992);
+      expect(body.position.phaseDaysBefore).toEqual(undefined);
+      expect(body.position.phaseDaysPast).toEqual(0.22075147788362653);
+
+      ephemeris = new Ephemeris({...defaultOrigin, day: 15, key: 'moon'})
+      body = ephemeris.moon
+
+      expect(body.position.phaseQuarter).toEqual(1);
+      expect(body.position.phaseQuarterString).toEqual("First Quarter");
+      expect(body.position.illuminatedFraction).toEqual(0.5488689342271671);
+      expect(body.position.phaseDaysBefore).toEqual(undefined);
+      expect(body.position.phaseDaysPast).toEqual(0.4328134799840978);
+
+      ephemeris = new Ephemeris({...defaultOrigin, day: 22, key: 'moon'})
+      body = ephemeris.moon
+
+      expect(body.position.phaseQuarter).toEqual(2);
+      expect(body.position.phaseQuarterString).toEqual("Full Moon");
+      expect(body.position.illuminatedFraction).toEqual(0.9906443297921943);
+      expect(body.position.phaseDaysBefore).toEqual(undefined);
+      expect(body.position.phaseDaysPast).toEqual(0.8464007357321963);
+
+      ephemeris = new Ephemeris({...defaultOrigin, day: 29, key: 'moon'})
+      body = ephemeris.moon
+
+      expect(body.position.phaseQuarter).toEqual(3);
+      expect(body.position.phaseQuarterString).toEqual("Last Quarter");
+      expect(body.position.illuminatedFraction).toEqual(0.4367005906508668);
+      expect(body.position.phaseDaysBefore).toEqual(undefined);
+      expect(body.position.phaseDaysPast).toEqual(0.626845766795706);
     })
   })
 
@@ -177,7 +220,7 @@ describe('Ephemeris', () => {
       body = ephemeris.mercury
     })
 
-    test('calculates position', () => {
+    it('calculates position', () => {
       expect(body.aberration.dDec).toEqual(2.642824379820767);
       expect(body.aberration.dRA).toEqual(-1.8347798396792003);
       expect(body.lightTime).toEqual(11.752301624521882);
@@ -237,7 +280,7 @@ describe('Ephemeris', () => {
       body = ephemeris.venus
     })
 
-    test('calculates position', () => {
+    it('calculates position', () => {
       expect(body.aberration.dDec).toEqual(3.594110309815848);
       expect(body.aberration.dRA).toEqual(-0.8276189755227943);
       expect(body.lightTime).toEqual(9.433926903810674);
@@ -300,7 +343,7 @@ describe('Ephemeris', () => {
       body = ephemeris.mars
     })
 
-    test('calculates position', () => {
+    it('calculates position', () => {
       expect(body.aberration.dDec).toEqual(-5.613032725581474);
       expect(body.aberration.dRA).toEqual(-1.0083599380745256);
       expect(body.lightTime).toEqual(15.360801317338371);
@@ -363,7 +406,7 @@ describe('Ephemeris', () => {
       body = ephemeris.jupiter
     })
 
-    test('calculates position', () => {
+    it('calculates position', () => {
       expect(body.aberration.dDec).toEqual(-3.421325376823254);
       expect(body.aberration.dRA).toEqual(-0.5805249930804995);
       expect(body.lightTime).toEqual(38.368621424659786);
@@ -426,7 +469,7 @@ describe('Ephemeris', () => {
       body = ephemeris.saturn
     })
 
-    test('calculates position', () => {
+    it('calculates position', () => {
       expect(body.aberration.dDec).toEqual(-2.2046023855032524);
       expect(body.aberration.dRA).toEqual(-0.44266610542533197);
       expect(body.lightTime).toEqual(71.9033531619632);
@@ -489,7 +532,7 @@ describe('Ephemeris', () => {
       body = ephemeris.uranus
     })
 
-    test('calculates position', () => {
+    it('calculates position', () => {
       expect(body.aberration.dDec).toEqual(-1.2927914290168074);
       expect(body.aberration.dRA).toEqual(-0.30107280077581705);
       expect(body.lightTime).toEqual(172.34122018692491);
@@ -552,7 +595,7 @@ describe('Ephemeris', () => {
       body = ephemeris.neptune
     })
 
-    test('calculates position', () => {
+    it('calculates position', () => {
       expect(body.aberration.dDec).toEqual(-0.7492494859050659);
       expect(body.aberration.dRA).toEqual(-0.2581126223572197);
       expect(body.lightTime).toEqual(257.9949213433013);
@@ -615,7 +658,7 @@ describe('Ephemeris', () => {
       body = ephemeris.pluto
     })
 
-    test('calculates position', () => {
+    it('calculates position', () => {
       expect(body.aberration.dDec).toEqual(1.4531163509068303);
       expect(body.aberration.dRA).toEqual(-0.2616999534608717);
       expect(body.lightTime).toEqual(258.38754870735244);
@@ -678,7 +721,7 @@ describe('Ephemeris', () => {
       body = ephemeris.chiron
     })
 
-    test('calculates position', () => {
+    it('calculates position', () => {
       expect(ephemeris.Earth.position.date.julian).toEqual(2451544.5);
       expect(ephemeris.Date.julian).toEqual(2451544.5);
 
@@ -742,7 +785,7 @@ describe('Ephemeris', () => {
       body = ephemeris.sirius
     })
 
-    test('calculates position', () => {
+    it('calculates position', () => {
       expect(body.position.astrimetricJ2000.dRA).toEqual(1.767791005321612);
       expect(body.position.astrimetricJ2000.dDec).toEqual(-0.291752264892662);
 
@@ -779,23 +822,15 @@ describe('Ephemeris', () => {
 
 
   describe('Single key ephemeris', () => {
-    let ephemeris
-    beforeAll(() => {
-      ephemeris = new Ephemeris({...defaultOrigin, key: 'venus'})
-    })
-
-    test('returns a single result (venus)', () => {
+    it('returns a single result (venus)', () => {
+      const ephemeris = new Ephemeris({...defaultOrigin, key: 'venus'})
       expect(ephemeris.Results.length).toEqual(1)
     })
   })
 
   describe('Multi key ephemeris', () => {
-    let ephemeris
-    beforeAll(() => {
-      ephemeris = new Ephemeris({...defaultOrigin, key: ['sun', 'moon', 'VENUS', 'jupiter', 'neptune']})
-    })
-
-    test('returns a single result (venus, jupiter, neptune)', () => {
+    it('returns a single result (sun, moon, venus, jupiter, neptune)', () => {
+      const ephemeris = new Ephemeris({...defaultOrigin, key: ['sun', 'moon', 'VENUS', 'jupiter', 'neptune']})
       expect(ephemeris.Results.length).toEqual(5)
     })
   })

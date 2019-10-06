@@ -158,13 +158,14 @@ moon.calc = (body, earthBody, observer) => {
 	if( x > 45.0 ) {
 		y = -(x - 90.0)*z;
 		body.position.phaseDaysBefore = y;
-		i = (i+1) & 3;
 	} else {
 		y = x*z;
 		body.position.phaseDaysPast = y;
 	}
 
+  i = (i+2) % 4;
 	body.position.phaseQuarter = i;
+  body.position.phaseQuarterString = moon.getPhaseQuarterString(i);
 
 	body.position.apparent = {
 		dRA: moon.ra,
@@ -270,3 +271,18 @@ moon.calcll = (date, rect, pol, body, earthBody, result) => {
 
 	return result;
 };
+
+moon.getPhaseQuarterString = quarterIndex => {
+  switch(quarterIndex) {
+    case 0:
+      return "New Moon"
+    case 1:
+      return "First Quarter"
+    case 2:
+      return "Full Moon"
+    case 3:
+      return "Last Quarter"
+    default:
+      throw new Error(`Quarter Index: ${quarterIndex} not valid (must be beteen 0 - 3)`)
+  }
+}
