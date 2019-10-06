@@ -1,12 +1,20 @@
+# Changelog
+<hr>
+
 #### **v1.0.0**
-10/6/19
 
-**Non-breaking changes**
+##### Fixed
+- Fixed Moon `phaseQuarter` bug where integer did not align with expected moon phase start.
 
-- Refactors much of the codebase into ES+ modules, classes, and OOP styles where easy.
-- Fixes Moon Phase `phaseQuarter` bug, and adds `phaseQuarterString` property to the moon result with a descriptor of the phase ("Full Moon", etc).
+##### Added
 
-**Breaking Changes**
+- Added `phaseQuarterString` property to the `moon` result with a descriptor of the phase ("Full Moon", etc).
+- Complete test coverage for all calculated bodies.
 
-- Added Ephemeris class to access calculations (see README for usage examples)
+##### Changed
+- Refactors much of the codebase into ES+ modules, classes, and OOP patterns where easy to do.
+
+##### Breaking Changes
+
+- Added Ephemeris class to access calculations (see `README` for usage examples)
 - Requires month range 0 - 11 on instantiation
