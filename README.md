@@ -25,6 +25,6 @@ var body = $moshier.body.sun;
 
 $processor.calc (date, body);
 
-console.log(body.position);
+document.write(`<p style="white-space: pre-wrap">${JSON.stringify(body.position, '', 2)}</p>`);
 </script>
 ```
