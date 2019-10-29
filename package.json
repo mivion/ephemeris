@@ -4,7 +4,7 @@
   "description": "Pure javascript implementation of ephemeris calculations for sun, planets, comets, asteroids and stars.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/mivion/ephemeris"
+    "url": "https://github.com/bittnkr/ephemeris"
   },
   "main": "index.js",
   "scripts": {
@@ -21,6 +21,6 @@
     "grunt-cli": "^1.2.0",
     "load-grunt-tasks": "^3.5.0",
     "grunt-contrib-concat": "^1.0.1",
-    "grunt-contrib-uglify": "^1.0.1"    
+    "grunt-contrib-uglify": "^1.0.1"
   }
 }
